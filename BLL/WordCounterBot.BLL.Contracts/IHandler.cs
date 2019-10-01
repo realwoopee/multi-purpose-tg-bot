@@ -6,7 +6,7 @@ using Telegram.Bot.Types;
 
 namespace WordCounterBot.BLL.Contracts
 {
-    public interface IController
+    public interface IHandler
     {
         Task HandleUpdate(Update update);
     }

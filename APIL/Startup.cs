@@ -54,6 +54,8 @@ namespace WordCounterBot
             services.AddTransient<ILogger, NullLogger>();
             services.AddTransient<WordCounterUtil>();
 
+            services.AddSingleton(_botClient);
+
             services.AddTransient<ICounterDao, CounterDao>();
 
             //services.AddTransient<IController, CommandExecutor>();
@@ -70,20 +72,16 @@ namespace WordCounterBot
             services.AddTransient<CommandFilter>();
             services.AddTransient<WordsFilter>();
 
-            var serviceBuilder = services.BuildServiceProvider();
-
-            var routerConfig = new RouterConfig(serviceBuilder)
-            {
-                DefaultControllerPreset = typeof(DefaultController),
-                ControllerPresets = new List<RouterConfigPair>()
-                {
-                    new RouterConfigPair { Filter = typeof(WordsFilter), Controller = typeof(WordCounter) },
-                    new RouterConfigPair { Filter = typeof(CommandFilter), Controller = typeof(CommandExecutor) },
-                }
-            };
-
-            services.AddSingleton(routerConfig);
-            services.AddTransient<IRouter, UpdateRouter>();
+            services.AddTransient<IRouter, UpdateRouter>(
+                services => new UpdateRouter(services.GetRequiredService<ILogger>())
+                    {
+                        DefaultHandler = services.GetRequiredService<DefaultController>(),
+                        Handlers = new List<(IFilter, IHandler)>()
+                            {
+                                (services.GetService<CommandFilter>(), services.GetService<CommandExecutor>()),
+                                (services.GetService<WordsFilter>(), services.GetService<WordCounter>())
+                            }
+                    });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

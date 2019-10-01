@@ -7,7 +7,7 @@ using WordCounterBot.BLL.Contracts;
 
 namespace WordCounterBot.BLL.Core.Controllers
 {
-    public class CommandExecutor : IController
+    public class CommandExecutor : IHandler
     {
         private Dictionary<string, ICommand> _commands;
         public async Task HandleUpdate(Update update)

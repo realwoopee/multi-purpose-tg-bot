@@ -2,16 +2,27 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using Telegram.Bot;
 using Telegram.Bot.Types;
 using WordCounterBot.BLL.Contracts;
 
 namespace WordCounterBot.BLL.Core.Controllers
 {
-    public class DefaultController : IController
+    public class DefaultController : IHandler
     {
-        public Task HandleUpdate(Update update)
+        private TelegramBotClient _client;
+        public DefaultController(TelegramBotClient client)
         {
-            return Task.CompletedTask;
+            _client = client;
+        }
+
+        public async Task HandleUpdate(Update update)
+        {
+            await _client.SendTextMessageAsync(
+                chatId: update.Message.Chat.Id, 
+                text: "Принял", 
+                replyToMessageId: update.Message.MessageId);
+            return;
         }
     }
 }

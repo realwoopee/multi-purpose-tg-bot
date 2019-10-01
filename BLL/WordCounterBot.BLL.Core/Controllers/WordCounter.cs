@@ -10,7 +10,7 @@ using WordCounterBot.DAL.Postgresql;
 
 namespace WordCounterBot.BLL.Core.Controllers
 {
-    public class WordCounter : IController
+    public class WordCounter : IHandler
     {
         private ICounterDao _counterDao;
         private WordCounterUtil _util;

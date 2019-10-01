@@ -10,14 +10,13 @@ namespace WordCounterBot.BLL.Core
 {
     public class UpdateRouter : IRouter
     {
-        private List<(IFilter, IController)> _controllers;
-        private IController _defaultController;
         private ILogger _logger;
 
-        public UpdateRouter(RouterConfig config, ILogger logger)
+        public List<(IFilter, IHandler)> Handlers { get; set; }
+        public IHandler DefaultHandler { get; set; }
+
+        public UpdateRouter(ILogger logger)
         {
-            _controllers = config.Controllers;
-            _defaultController = config.DefaultController;
             _logger = logger;
         }
 
@@ -25,13 +24,13 @@ namespace WordCounterBot.BLL.Core
         {
             try
             {
-                foreach (var tuple in _controllers)
+                foreach (var tuple in Handlers)
                 {
-                    var func = tuple.Item1;
-                    var controller = tuple.Item2;
-                    if (func.Predicate(update))
+                    var filter = tuple.Item1;
+                    var handler = tuple.Item2;
+                    if (filter.Predicate(update))
                     {
-                        await controller.HandleUpdate(update);
+                        await handler.HandleUpdate(update);
                         return;
                     }
                 }
@@ -43,9 +42,9 @@ namespace WordCounterBot.BLL.Core
             }
             //No filtered controller has matched
 
-            if (_defaultController != null)
+            if (DefaultHandler != null)
             {
-                await _defaultController.HandleUpdate(update);
+                await DefaultHandler.HandleUpdate(update);
                 return;
             }
             //No default controller
