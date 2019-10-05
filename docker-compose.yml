@@ -1,0 +1,6 @@
+bot:
+  image: multi-purpose-tg-bot:latest
+  ports:
+    - "8443"
+  env_file: env
+  restart: unless-stopped

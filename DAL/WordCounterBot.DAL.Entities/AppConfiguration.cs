@@ -31,15 +31,15 @@ namespace WordCounterBot.Common.Entities
 
         public AppConfiguration(string dbConnectionString, string telegramToken, string webhookUrl, bool socks5Enabled, string socks5Host = null, int? socks5Port = null)
         {
-            DbConnectionString = dbConnectionString ?? throw new ArgumentNullException(nameof(dbConnectionString));
-            TelegramToken = telegramToken ?? throw new ArgumentNullException(nameof(telegramToken));
-            WebhookUrl = webhookUrl ?? throw new ArgumentNullException(nameof(webhookUrl));
+            DbConnectionString = dbConnectionString ?? throw new ArgumentNullException(nameof(dbConnectionString), "Probably env DB_CONNECTION_STRING is not set");
+            TelegramToken = telegramToken ?? throw new ArgumentNullException(nameof(telegramToken), "Probably env TOKEN is not set");
+            WebhookUrl = webhookUrl ?? throw new ArgumentNullException(nameof(webhookUrl), "Probably env WEBHOOK_URL is not set");
             Socks5Enabled = socks5Enabled;
 
             if (Socks5Enabled)
             {
-                Socks5Host = socks5Host ?? throw new ArgumentNullException(nameof(socks5Host));
-                Socks5Port = socks5Port.HasValue ? socks5Port.Value : throw new ArgumentNullException(nameof(socks5Port));
+                Socks5Host = socks5Host ?? throw new ArgumentNullException(nameof(socks5Host), "Probably env SOCKS5_HOST is not set");
+                Socks5Port = socks5Port ?? throw new ArgumentNullException(nameof(socks5Port), "Probably env SOCKS5_PORT is not set");
             }
         }
     }
