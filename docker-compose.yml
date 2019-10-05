@@ -7,14 +7,14 @@ services:
     network_mode: "host"
     env_file: env
     restart: unless-stopped
-  configs:
-    - source: bot-config
-      target: /app/APIL/appsettings.json
-      mode: 0444
-  secrets:
-    - source: bot-ssl-crt
-      target: /app/bot-ssl.crt
-      mode: 0444
+    configs:
+      - source: bot-config
+        target: /app/APIL/appsettings.json
+        mode: 0444
+    secrets:
+      - source: bot-ssl-crt
+        target: /app/bot-ssl.crt
+        mode: 0444
 configs:
   bot-config:
     file: ./APIL/appsettings.json
