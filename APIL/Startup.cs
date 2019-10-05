@@ -22,25 +22,31 @@ using WordCounterBot.DAL.Postgresql;
 using WordCounterBot.Common.Logging;
 using Microsoft.AspNetCore.Mvc.NewtonsoftJson;
 using Npgsql;
+using WordCounterBot.Common.Entities;
 
 namespace WordCounterBot
 {
     public class Startup
     {
-        private TelegramBotClient _botClient;
-        private IWebProxy _proxy;
+        private readonly TelegramBotClient _botClient;
+        private readonly AppConfiguration _appConfig;
 
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
 
-            _proxy = new HttpToSocks5Proxy(Configuration["SOCKS5_HOST"], Configuration.GetValue<int>("SOCKS5_PORT"));
+            _appConfig = new AppConfiguration(configuration);
 
-            _botClient = Configuration.GetValue<bool>("SOCKS5_ENABLED") ? new TelegramBotClient(
-                Configuration["TOKEN"],
-                _proxy)
-                : new TelegramBotClient(
-                Configuration["TOKEN"]);
+            IWebProxy _proxy = null;
+
+            if (_appConfig.Socks5Enabled)
+            {
+                _proxy = new HttpToSocks5Proxy(_appConfig.Socks5Host, _appConfig.Socks5Port);
+            }
+
+            _botClient = new TelegramBotClient(
+                _appConfig.TelegramToken,
+                _proxy);
         }
 
         public IConfiguration Configuration { get; }
@@ -53,21 +59,15 @@ namespace WordCounterBot
 
             services.AddTransient<ILogger, NullLogger>();
             services.AddTransient<WordCounterUtil>();
+            services.AddSingleton(_appConfig);
 
             services.AddSingleton(_botClient);
 
             services.AddTransient<ICounterDao, CounterDao>();
 
-            //services.AddTransient<IController, CommandExecutor>();
-            //services.AddTransient<IController, DefaultController>();
-            //services.AddTransient<IController, WordCounter>();
-
             services.AddTransient<CommandExecutor>();
             services.AddTransient<WordCounter>();
             services.AddTransient<DefaultController>();
-
-            //services.AddTransient<IFilter, CommandFilter>();
-            //services.AddTransient<IFilter, WordsFilter>();
 
             services.AddTransient<CommandFilter>();
             services.AddTransient<WordsFilter>();
@@ -85,7 +85,7 @@ namespace WordCounterBot
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IServiceProvider serviceProvider)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {

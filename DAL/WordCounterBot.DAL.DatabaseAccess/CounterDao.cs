@@ -2,17 +2,18 @@
 using Microsoft.Extensions.Configuration;
 using Npgsql;
 using System.Threading.Tasks;
+using WordCounterBot.Common.Entities;
 using WordCounterBot.DAL.Contracts;
 
 namespace WordCounterBot.DAL.Postgresql
 {
     public class CounterDao : ICounterDao
     {
-        private NpgsqlConnection _connection;
+        private readonly NpgsqlConnection _connection;
 
-        public CounterDao(IConfiguration configuration)
+        public CounterDao(AppConfiguration appConfig)
         {
-            _connection = new NpgsqlConnection(configuration["DB_CONNECTION_STRING"]);
+            _connection = new NpgsqlConnection(appConfig.DbConnectionString);
         }
 
         public async Task AddCounter(long chatId, long userId)
