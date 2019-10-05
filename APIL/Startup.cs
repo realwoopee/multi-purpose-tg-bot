@@ -23,6 +23,7 @@ using WordCounterBot.Common.Logging;
 using Microsoft.AspNetCore.Mvc.NewtonsoftJson;
 using Npgsql;
 using WordCounterBot.Common.Entities;
+using Telegram.Bot.Types.InputFiles;
 
 namespace WordCounterBot
 {
@@ -39,7 +40,7 @@ namespace WordCounterBot
 
             IWebProxy _proxy = null;
 
-            if (_appConfig.Socks5Enabled)
+            if (_appConfig.UseSocks5)
             {
                 _proxy = new HttpToSocks5Proxy(_appConfig.Socks5Host, _appConfig.Socks5Port);
             }
@@ -103,8 +104,15 @@ namespace WordCounterBot
                 endpoints.MapControllers();
             });
 
+            InputFileStream sslCert = null;
+
+            if (!string.IsNullOrEmpty(_appConfig.SSLCertPath))
+            {
+                sslCert = new InputFileStream(env.ContentRootFileProvider.GetFileInfo(_appConfig.SSLCertPath).CreateReadStream());
+            }
+
             _botClient.DeleteWebhookAsync()
-                .ContinueWith(async (t) => await _botClient.SetWebhookAsync(Configuration["WEBHOOK_URL"]));
+                .ContinueWith(async (t) => await _botClient.SetWebhookAsync(_appConfig.WebhookUrl, sslCert));
         }
     }
 }

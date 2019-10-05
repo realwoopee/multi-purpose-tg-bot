@@ -1,0 +1,2 @@
+ASPNETCORE_ENVIRONMENT=Production
+ASPNETCORE_URLS=https://localhost:8443/

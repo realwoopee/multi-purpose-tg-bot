@@ -14,32 +14,45 @@ namespace WordCounterBot.Common.Entities
 
         public string WebhookUrl { get; set; }
 
-        public bool Socks5Enabled { get; set; }
+        public string SSLCertPath { get; set; }
+
+        public bool UseSocks5 { get; set; }
 
         public string Socks5Host { get; set; }
 
         public int Socks5Port { get; set; }
 
-        public AppConfiguration(IConfiguration configuration) :
-            this(configuration.GetValue<string>("DB_CONNECTION_STRING"),
-                 configuration.GetValue<string>("TOKEN"),
-                 configuration.GetValue<string>("WEBHOOK_URL"),
-                 configuration.GetValue<bool>("SOCKS5_ENABLED"),
-                 configuration.GetValue<string>("SOCKS5_HOST"),
-                 configuration.GetValue<int>("SOCKS5_PORT"))
-        { }
-
-        public AppConfiguration(string dbConnectionString, string telegramToken, string webhookUrl, bool socks5Enabled, string socks5Host = null, int? socks5Port = null)
+        public AppConfiguration(IConfiguration configuration)
         {
-            DbConnectionString = dbConnectionString ?? throw new ArgumentNullException(nameof(dbConnectionString), "Probably env DB_CONNECTION_STRING is not set");
-            TelegramToken = telegramToken ?? throw new ArgumentNullException(nameof(telegramToken), "Probably env TOKEN is not set");
-            WebhookUrl = webhookUrl ?? throw new ArgumentNullException(nameof(webhookUrl), "Probably env WEBHOOK_URL is not set");
-            Socks5Enabled = socks5Enabled;
-
-            if (Socks5Enabled)
+            if (configuration is null)
             {
-                Socks5Host = socks5Host ?? throw new ArgumentNullException(nameof(socks5Host), "Probably env SOCKS5_HOST is not set");
-                Socks5Port = socks5Port ?? throw new ArgumentNullException(nameof(socks5Port), "Probably env SOCKS5_PORT is not set");
+                throw new ArgumentNullException(nameof(configuration));
+            }
+
+            var appConf = configuration.GetSection("Configuration");
+
+            DbConnectionString = appConf.GetValue<string>("DbConnectionString");
+            TelegramToken = appConf.GetValue<string>("TgToken");
+            WebhookUrl = appConf.GetValue<string>("WebhookUrl");
+            SSLCertPath = appConf.GetValue<string>("SSLCertPath");
+            UseSocks5 = appConf.GetValue<bool>("UseSocks5");
+            Socks5Host = appConf.GetValue<string>("Socks5Host");
+            Socks5Port = appConf.GetValue<int>("Socks5Port");
+
+        }
+
+        public AppConfiguration(string dbConnectionString, string telegramToken, string webhookUrl, string pathToSSLCert, bool socks5Enabled, string socks5Host = null, int? socks5Port = null)
+        {
+            DbConnectionString = dbConnectionString ?? throw new ArgumentNullException(nameof(dbConnectionString));
+            TelegramToken = telegramToken ?? throw new ArgumentNullException(nameof(telegramToken));
+            SSLCertPath = pathToSSLCert ?? throw new ArgumentNullException(nameof(telegramToken));
+            WebhookUrl = webhookUrl ?? throw new ArgumentNullException(nameof(webhookUrl));
+            UseSocks5 = socks5Enabled;
+
+            if (UseSocks5)
+            {
+                Socks5Host = socks5Host ?? throw new ArgumentNullException(nameof(socks5Host));
+                Socks5Port = socks5Port ?? throw new ArgumentNullException(nameof(socks5Port));
             }
         }
     }
