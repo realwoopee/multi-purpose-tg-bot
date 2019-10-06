@@ -1,23 +1,22 @@
 version: '3.7'
 services:
   bot:
+    build:
+      context: .
+      dockerfile: Dockerfile
     image: multi-purpose-tg-bot:latest
     ports:
       - "443"
     network_mode: "host"
     env_file: env
     restart: unless-stopped
-    configs:
-      - source: bot-config
-        target: /app/APIL/appsettings.json
-        mode: 0444
     secrets:
+      - source: bot-config
+        target: /app/appsettings.json
       - source: bot-ssl-crt
         target: /app/bot-ssl.crt
-        mode: 0444
-configs:
-  bot-config:
-    file: ./APIL/appsettings.json
 secrets:
   bot-ssl-crt:
     file: ./ssl.crt
+  bot-config:
+    file: ./APIL/appsettings.json

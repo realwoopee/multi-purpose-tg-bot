@@ -1,2 +1,4 @@
 ASPNETCORE_ENVIRONMENT=Production
 ASPNETCORE_URLS=https://localhost:8443/
+ASPNETCORE_Kestrel__Certificates__Default__Password=[your password]
+ASPNETCORE_Kestrel__Certificates__Default__Path=/app/bot-ssl.crt
