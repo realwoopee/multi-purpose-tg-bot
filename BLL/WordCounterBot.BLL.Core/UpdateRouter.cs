@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Bot.Types;
 using WordCounterBot.BLL.Contracts;
-using WordCounterBot.Common.Logging;
 
 namespace WordCounterBot.BLL.Core
 {
@@ -15,7 +15,7 @@ namespace WordCounterBot.BLL.Core
         public List<(IFilter, IHandler)> Handlers { get; set; }
         public IHandler DefaultHandler { get; set; }
 
-        public UpdateRouter(ILogger logger)
+        public UpdateRouter(ILogger<UpdateRouter> logger)
         {
             _logger = logger;
         }
@@ -37,7 +37,7 @@ namespace WordCounterBot.BLL.Core
             }
             catch (Exception ex)
             {
-                _logger.Log($"Error during routing: {ex.Message}");
+                _logger.LogError(ex, "Error during routing: {Message};\nUpdate: {Update}", new { Message = ex.Message, Update = update.ToString() });
                 throw;
             }
             //No filtered controller has matched
@@ -49,7 +49,7 @@ namespace WordCounterBot.BLL.Core
             }
             //No default controller
 
-            _logger.Log($"Error during routing: Controller for that update was not found. Default controller is not specified.");
+            _logger.LogError($"Error during routing: Controller for that update was not found. Default controller is not specified.");
             throw new InvalidOperationException("Controller for that update was not found. Default controller is not specified.");
         }
     }

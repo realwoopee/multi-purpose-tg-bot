@@ -19,35 +19,20 @@ using WordCounterBot.BLL.Core.Filters;
 using WordCounterBot.BLL.Common;
 using WordCounterBot.DAL.Contracts;
 using WordCounterBot.DAL.Postgresql;
-using WordCounterBot.Common.Logging;
-using Microsoft.AspNetCore.Mvc.NewtonsoftJson;
-using Npgsql;
 using WordCounterBot.Common.Entities;
 using Telegram.Bot.Types.InputFiles;
+using Microsoft.Extensions.Logging;
 
 namespace WordCounterBot
 {
     public class Startup
     {
-        private readonly TelegramBotClient _botClient;
-        private readonly AppConfiguration _appConfig;
+        private TelegramBotClient _botClient;
+        private AppConfiguration _appConfig;
 
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
-
-            _appConfig = new AppConfiguration(configuration);
-
-            IWebProxy _proxy = null;
-
-            if (_appConfig.UseSocks5)
-            {
-                _proxy = new HttpToSocks5Proxy(_appConfig.Socks5Host, _appConfig.Socks5Port);
-            }
-
-            _botClient = new TelegramBotClient(
-                _appConfig.TelegramToken,
-                _proxy);
         }
 
         public IConfiguration Configuration { get; }
@@ -57,8 +42,6 @@ namespace WordCounterBot
         {
             services.AddControllers()
                 .AddNewtonsoftJson();
-
-            services.AddTransient<ILogger, NullLogger>();
             services.AddTransient<WordCounterUtil>();
             services.AddSingleton(_appConfig);
 
@@ -74,7 +57,7 @@ namespace WordCounterBot
             services.AddTransient<WordsFilter>();
 
             services.AddTransient<IRouter, UpdateRouter>(
-                services => new UpdateRouter(services.GetRequiredService<ILogger>())
+                services => new UpdateRouter(services.GetRequiredService<ILogger<UpdateRouter>>())
                     {
                         DefaultHandler = services.GetRequiredService<DefaultController>(),
                         Handlers = new List<(IFilter, IHandler)>()
@@ -86,7 +69,7 @@ namespace WordCounterBot
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> logger)
         {
             if (env.IsDevelopment())
             {
@@ -103,6 +86,22 @@ namespace WordCounterBot
             {
                 endpoints.MapControllers();
             });
+
+
+            logger.LogDebug(Configuration.ToString());
+
+            _appConfig = new AppConfiguration(Configuration);
+
+            IWebProxy _proxy = null;
+
+            if (_appConfig.UseSocks5)
+            {
+                _proxy = new HttpToSocks5Proxy(_appConfig.Socks5Host, _appConfig.Socks5Port);
+            }
+
+            _botClient = new TelegramBotClient(
+                _appConfig.TelegramToken,
+                _proxy);
 
             InputFileStream sslCert = null;
 
