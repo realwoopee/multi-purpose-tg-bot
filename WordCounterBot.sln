@@ -23,7 +23,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WordCounterBot.DAL.Postgres
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WordCounterBot.DAL.Contracts", "DAL\WordCounterBot.DAL.Contracts\WordCounterBot.DAL.Contracts.csproj", "{06880430-D3A9-4D9F-BD19-BA8857EE3163}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WordCounterBot.Common.Entities", "DAL\WordCounterBot.DAL.Entities\WordCounterBot.Common.Entities.csproj", "{4D3F255E-856E-49CD-A5C5-C3CC35565BC0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WordCounterBot.Common.Entities", "Common\WordCounterBot.Common.Entities\WordCounterBot.Common.Entities.csproj", "{4D3F255E-856E-49CD-A5C5-C3CC35565BC0}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WordCounterBot.Common.Logging", "Common\WordCounterBot.Common.Logging\WordCounterBot.Common.Logging.csproj", "{F312C721-B47B-40AB-A805-4BFDE45E3E73}"
 EndProject

@@ -14,7 +14,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\BLL\WordCounterBot.BLL.Contracts\WordCounterBot.BLL.Contracts.csproj" />
     <ProjectReference Include="..\WordCounterBot.DAL.Contracts\WordCounterBot.DAL.Contracts.csproj" />
-    <ProjectReference Include="..\WordCounterBot.DAL.Entities\WordCounterBot.Common.Entities.csproj" />
+    <ProjectReference Include="..\..\Common\WordCounterBot.Common.Entities\WordCounterBot.Common.Entities.csproj" />
   </ItemGroup>
 
 </Project>

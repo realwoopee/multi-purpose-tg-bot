@@ -9,7 +9,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\WordCounterBot.DAL.Entities\WordCounterBot.Common.Entities.csproj" />
+    <ProjectReference Include="..\..\Common\WordCounterBot.Common.Entities\WordCounterBot.Common.Entities.csproj" />
   </ItemGroup>
 
 </Project>
