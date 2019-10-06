@@ -33,7 +33,7 @@ namespace WordCounterBot.APIL.WebApi.Controllers
             }
             catch (InvalidOperationException ex)
             {
-                _logger.LogError(ex, "Error during processing update with BotController: {Message};\nUpdate: {Update}", new { Message = ex.Message, Update = update.ToString()});
+                _logger.LogError(ex, $"Error during processing update with BotController: {ex.Message};\nUpdate: {update}");
                 throw;
             }
         }

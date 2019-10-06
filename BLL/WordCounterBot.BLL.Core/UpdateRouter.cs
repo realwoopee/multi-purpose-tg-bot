@@ -10,7 +10,7 @@ namespace WordCounterBot.BLL.Core
 {
     public class UpdateRouter : IRouter
     {
-        private ILogger _logger;
+        private readonly ILogger _logger;
 
         public List<(IFilter, IHandler)> Handlers { get; set; }
         public IHandler DefaultHandler { get; set; }
@@ -37,7 +37,7 @@ namespace WordCounterBot.BLL.Core
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error during routing: {Message};\nUpdate: {Update}", new { Message = ex.Message, Update = update.ToString() });
+                _logger.LogError(ex, $"Error during routing: {ex.Message};\nUpdate: {update}");
                 throw;
             }
             //No filtered controller has matched

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Newtonsoft.Json;
 
 namespace WordCounterBot.Common.Entities
 {
@@ -54,6 +55,11 @@ namespace WordCounterBot.Common.Entities
                 Socks5Host = socks5Host ?? throw new ArgumentNullException(nameof(socks5Host));
                 Socks5Port = socks5Port ?? throw new ArgumentNullException(nameof(socks5Port));
             }
+        }
+
+        public override string ToString()
+        {
+            return JsonConvert.SerializeObject(this, Formatting.Indented);
         }
     }
 }

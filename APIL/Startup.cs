@@ -33,6 +33,19 @@ namespace WordCounterBot
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+
+            _appConfig = new AppConfiguration(Configuration);
+
+            IWebProxy _proxy = null;
+
+            if (_appConfig.UseSocks5)
+            {
+                _proxy = new HttpToSocks5Proxy(_appConfig.Socks5Host, _appConfig.Socks5Port);
+            }
+
+            _botClient = new TelegramBotClient(
+                _appConfig.TelegramToken,
+                _proxy);
         }
 
         public IConfiguration Configuration { get; }
@@ -87,22 +100,6 @@ namespace WordCounterBot
                 endpoints.MapControllers();
             });
 
-
-            logger.LogDebug(Configuration.ToString());
-
-            _appConfig = new AppConfiguration(Configuration);
-
-            IWebProxy _proxy = null;
-
-            if (_appConfig.UseSocks5)
-            {
-                _proxy = new HttpToSocks5Proxy(_appConfig.Socks5Host, _appConfig.Socks5Port);
-            }
-
-            _botClient = new TelegramBotClient(
-                _appConfig.TelegramToken,
-                _proxy);
-
             InputFileStream sslCert = null;
 
             if (!string.IsNullOrEmpty(_appConfig.SSLCertPath))
@@ -111,7 +108,10 @@ namespace WordCounterBot
             }
 
             _botClient.DeleteWebhookAsync()
-                .ContinueWith(async (t) => await _botClient.SetWebhookAsync(_appConfig.WebhookUrl, sslCert));
+                .ContinueWith(async (t) => await _botClient.SetWebhookAsync(_appConfig.WebhookUrl, sslCert))
+                .ContinueWith(async (t) => logger.LogInformation($"Set webhook to {_appConfig.WebhookUrl}, SSL cert is {sslCert?.ToString() ?? "null"}"));
+
+            logger.LogInformation($"Configured HTTP pipeline. AppSettings is {_appConfig}");
         }
     }
 }
