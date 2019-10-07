@@ -13,10 +13,14 @@ services:
     secrets:
       - source: bot-config
         target: /app/appsettings.json
-      - source: bot-ssl-crt
-        target: /app/bot-ssl.crt
+      - source: bot-ssl-pfx
+        target: /app/ssl.pfx
+      - source: bot-ssl-pem
+        target: /app/ssl.pem
 secrets:
-  bot-ssl-crt:
-    file: ./ssl.crt
+  bot-ssl-pfx:
+    file: ./cert/ssl.pfx
+  bot-ssl-pem:
+    file: ./cert/ssl.pem
   bot-config:
     file: ./APIL/appsettings.json
