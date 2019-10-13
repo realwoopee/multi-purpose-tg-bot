@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using Telegram.Bot.Types;
 using WordCounterBot.BLL.Contracts;
@@ -24,10 +23,8 @@ namespace WordCounterBot.BLL.Core
         {
             try
             {
-                foreach (var tuple in Handlers)
+                foreach (var (filter, handler) in Handlers)
                 {
-                    var filter = tuple.Item1;
-                    var handler = tuple.Item2;
                     if (filter.Predicate(update))
                     {
                         await handler.HandleUpdate(update);

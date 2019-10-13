@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Telegram.Bot.Types;
-using WordCounterBot.BLL.Core;
 using WordCounterBot.BLL.Contracts;
 using Microsoft.Extensions.Logging;
 

@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Telegram.Bot.Types;
+﻿using Telegram.Bot.Types;
+using WordCounterBot.BLL.Contracts;
 
 namespace WordCounterBot.BLL.Core.Filters
 {
