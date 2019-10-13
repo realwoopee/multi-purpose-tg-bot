@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace WordCounterBot.BLL.Core
+﻿namespace WordCounterBot.BLL.Contracts
 {
     public interface ICommand
     {
-        public void Execute();
+        void Execute();
     }
 }

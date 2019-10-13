@@ -1,0 +1,26 @@
+version: '3.7'
+services:
+  bot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: multi-purpose-tg-bot:latest
+    ports:
+      - "443"
+    network_mode: "host"
+    env_file: env
+    restart: unless-stopped
+    secrets:
+      - source: bot-config
+        target: /app/appsettings.json
+      - source: bot-ssl-pfx
+        target: /app/ssl.pfx
+      - source: bot-ssl-pem
+        target: /app/ssl.pem
+secrets:
+  bot-ssl-pfx:
+    file: ./cert/ssl.pfx
+  bot-ssl-pem:
+    file: ./cert/ssl.pem
+  bot-config:
+    file: ./APIL/appsettings.json

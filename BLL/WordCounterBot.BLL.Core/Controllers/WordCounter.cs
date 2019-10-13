@@ -1,19 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Telegram.Bot.Types;
 using WordCounterBot.BLL.Common;
 using WordCounterBot.BLL.Contracts;
 using WordCounterBot.DAL.Contracts;
-using WordCounterBot.DAL.Postgresql;
 
 namespace WordCounterBot.BLL.Core.Controllers
 {
     public class WordCounter : IHandler
     {
-        private ICounterDao _counterDao;
-        private WordCounterUtil _util;
+        private readonly ICounterDao _counterDao;
+        private readonly WordCounterUtil _util;
 
         public WordCounter(ICounterDao dao, WordCounterUtil util)
         {

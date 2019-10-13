@@ -1,5 +1,4 @@
 ﻿using Dapper;
-using Microsoft.Extensions.Configuration;
 using Npgsql;
 using System.Threading.Tasks;
 using WordCounterBot.Common.Entities;

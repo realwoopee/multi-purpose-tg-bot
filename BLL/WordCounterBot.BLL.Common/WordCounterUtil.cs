@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 
 namespace WordCounterBot.BLL.Common
 {
@@ -7,9 +6,9 @@ namespace WordCounterBot.BLL.Common
     {
         public int CountWords(string text)
         {
-            return text.Split(' ')
-                .Where(s => !string.IsNullOrEmpty(s))
-                .Count();
+            return text
+                .Split(' ')
+                .Count(s => !string.IsNullOrEmpty(s));
         }
     }
 }

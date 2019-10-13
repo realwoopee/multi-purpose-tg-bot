@@ -2,7 +2,12 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
-    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile></DocumentationFile>
+    <DebugType>portable</DebugType>
+    <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
 
   <ItemGroup>
@@ -18,10 +23,9 @@
     <ProjectReference Include="..\BLL\WordCounterBot.BLL.Common\WordCounterBot.BLL.Common.csproj" />
     <ProjectReference Include="..\BLL\WordCounterBot.BLL.Contracts\WordCounterBot.BLL.Contracts.csproj" />
     <ProjectReference Include="..\BLL\WordCounterBot.BLL.Core\WordCounterBot.BLL.Core.csproj" />
-    <ProjectReference Include="..\Common\WordCounterBot.Common.Logging\WordCounterBot.Common.Logging.csproj" />
     <ProjectReference Include="..\DAL\WordCounterBot.DAL.Contracts\WordCounterBot.DAL.Contracts.csproj" />
     <ProjectReference Include="..\DAL\WordCounterBot.DAL.DatabaseAccess\WordCounterBot.DAL.Postgresql.csproj" />
-    <ProjectReference Include="..\DAL\WordCounterBot.DAL.Entities\WordCounterBot.Common.Entities.csproj" />
+    <ProjectReference Include="..\Common\WordCounterBot.Common.Entities\WordCounterBot.Common.Entities.csproj" />
   </ItemGroup>
 
 </Project>

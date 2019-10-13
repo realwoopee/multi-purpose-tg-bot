@@ -1,11 +1,9 @@
-﻿using System;
-using System.Linq;
-using Telegram.Bot.Types;
+﻿using Telegram.Bot.Types;
 
-namespace WordCounterBot.BLL.Core
+namespace WordCounterBot.BLL.Contracts
 {
     public interface IFilter
     {
-        public bool Predicate(Update update);
+        bool Predicate(Update update);
     }
 }

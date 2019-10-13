@@ -1,23 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Telegram.Bot.Types;
-using WordCounterBot.BLL.Core;
 using WordCounterBot.BLL.Contracts;
-using WordCounterBot.Common.Logging;
+using Microsoft.Extensions.Logging;
 
 namespace WordCounterBot.APIL.WebApi.Controllers
 {
     [ApiController]
     public class BotController : ControllerBase
     {
-        private IRouter _router;
-        private ILogger _logger;
+        private readonly IRouter _router;
+        private readonly ILogger<BotController> _logger;
 
-        public BotController(IRouter router, ILogger logger)
+        public BotController(IRouter router, ILogger<BotController> logger)
         {
             _router = router;
             _logger = logger;
@@ -33,8 +29,7 @@ namespace WordCounterBot.APIL.WebApi.Controllers
             }
             catch (InvalidOperationException ex)
             {
-                _logger.LogException(ex.Message);
-                _logger.LogData(update);
+                _logger.LogError(ex, $"Error during processing update with BotController: {ex.Message};\nUpdate: {update}");
                 throw;
             }
         }

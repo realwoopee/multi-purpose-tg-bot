@@ -1,21 +1,20 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using Telegram.Bot.Types;
 using WordCounterBot.BLL.Contracts;
-using WordCounterBot.Common.Logging;
 
 namespace WordCounterBot.BLL.Core
 {
     public class UpdateRouter : IRouter
     {
-        private ILogger _logger;
+        private readonly ILogger _logger;
 
         public List<(IFilter, IHandler)> Handlers { get; set; }
         public IHandler DefaultHandler { get; set; }
 
-        public UpdateRouter(ILogger logger)
+        public UpdateRouter(ILogger<UpdateRouter> logger)
         {
             _logger = logger;
         }
@@ -24,10 +23,8 @@ namespace WordCounterBot.BLL.Core
         {
             try
             {
-                foreach (var tuple in Handlers)
+                foreach (var (filter, handler) in Handlers)
                 {
-                    var filter = tuple.Item1;
-                    var handler = tuple.Item2;
                     if (filter.Predicate(update))
                     {
                         await handler.HandleUpdate(update);
@@ -37,7 +34,7 @@ namespace WordCounterBot.BLL.Core
             }
             catch (Exception ex)
             {
-                _logger.Log($"Error during routing: {ex.Message}");
+                _logger.LogError(ex, $"Error during routing: {ex.Message};\nUpdate: {update}");
                 throw;
             }
             //No filtered controller has matched
@@ -49,7 +46,7 @@ namespace WordCounterBot.BLL.Core
             }
             //No default controller
 
-            _logger.Log($"Error during routing: Controller for that update was not found. Default controller is not specified.");
+            _logger.LogError($"Error during routing: Controller for that update was not found. Default controller is not specified.");
             throw new InvalidOperationException("Controller for that update was not found. Default controller is not specified.");
         }
     }
