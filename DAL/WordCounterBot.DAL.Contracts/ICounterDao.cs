@@ -18,11 +18,19 @@ namespace WordCounterBot.DAL.Contracts
         Task<long> GetCounter(long chatId, long userId);
 
         /// <summary>
-        /// Gets top 10 counters from specified chat
+        /// Get counters from specified chat
         /// </summary>
         /// <param name="chatId"></param>
         /// <returns></returns>
-        Task<List<(long userId, long counter)>> GetCountersByChat(long chatId);
+        Task<List<(long userId, long counter)>> GetCounters(long chatId);
+
+        /// <summary>
+        /// Get top N counters from specified chat
+        /// </summary>
+        /// <param name="chatId"></param>
+        /// <param name="limit"></param>
+        /// <returns></returns>
+        Task<List<(long userId, long counter)>> GetCountersWithLimit(long chatId, int limit);
 
         Task<bool> CheckCounter(long chatId, long userId);
     }

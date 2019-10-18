@@ -75,14 +75,25 @@ namespace WordCounterBot.DAL.Postgresql
             return value;
         }
 
-        public async Task<List<(long userId, long counter)>> GetCountersByChat(long chatId)
+        public async Task<List<(long userId, long counter)>> GetCounters(long chatId)
         {
-            //order by counter
-            //limit 10
             await _connection.OpenAsync();
             var value = await _connection.QueryAsync<(long, long)>($@"select ""userId"", counter from counters
-                                     where counters.""chatId"" = @chatId",
+                                     where counters.""chatId"" = @chatId
+                                     order by counter desc",
                 new { chatId });
+            await _connection.CloseAsync();
+            return value.ToList();
+        }
+
+        public async Task<List<(long userId, long counter)>> GetCountersWithLimit(long chatId, int limit = 10)
+        {
+            await _connection.OpenAsync();
+            var value = await _connection.QueryAsync<(long, long)>($@"select ""userId"", counter from counters
+                                     where counters.""chatId"" = @chatId
+                                     order by counter desc
+                                     limit @limit",
+                new { chatId, limit });
             await _connection.CloseAsync();
             return value.ToList();
         }
