@@ -1,4 +1,6 @@
-﻿using Dapper;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Dapper;
 using Npgsql;
 using System.Threading.Tasks;
 using WordCounterBot.Common.Entities;
@@ -71,6 +73,18 @@ namespace WordCounterBot.DAL.Postgresql
                                             new { chatId, userId });
             await _connection.CloseAsync();
             return value;
+        }
+
+        public async Task<List<(long userId, long counter)>> GetCountersByChat(long chatId)
+        {
+            //order by counter
+            //limit 10
+            await _connection.OpenAsync();
+            var value = await _connection.QueryAsync<(long, long)>($@"select ""userId"", counter from counters
+                                     where counters.""chatId"" = @chatId",
+                new { chatId });
+            await _connection.CloseAsync();
+            return value.ToList();
         }
 
         public async Task<bool> CheckCounter(long chatId, long userId)
