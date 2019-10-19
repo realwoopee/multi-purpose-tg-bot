@@ -13,7 +13,6 @@ using WordCounterBot.BLL.Common;
 using WordCounterBot.BLL.Contracts;
 using WordCounterBot.BLL.Core;
 using WordCounterBot.BLL.Core.Controllers;
-using WordCounterBot.BLL.Core.Filters;
 using WordCounterBot.Common.Entities;
 using WordCounterBot.DAL.Contracts;
 using WordCounterBot.DAL.Postgresql;
@@ -50,33 +49,22 @@ namespace WordCounterBot.APIL.WebApi
         {
             services.AddControllers()
                 .AddNewtonsoftJson();
-            services.AddTransient<WordCounterUtil>();
             services.AddSingleton(_appConfig);
 
             services.AddSingleton(_botClient);
+            services.AddScoped<UserUpdater>();
 
-            services.AddTransient<ICounterDao, CounterDao>();
+            services.AddScoped<ICounterDao, CounterDao>();
+            services.AddScoped<IUserDao, UserDao>();
 
-            services.AddTransient<SystemMessageHandler>();
-            services.AddTransient<CommandExecutor>();
-            services.AddTransient<WordCounter>();
+            services.AddTransient<ICommand, GetCountersCommand>();
+            services.AddTransient<IHandler, CommandExecutor>();
+
+            services.AddTransient<IHandler, SystemMessageHandler>();
+            services.AddTransient<IHandler, WordCounter>();
             services.AddTransient<DefaultHandler>();
 
-            services.AddTransient<SystemMessageFilter>();
-            services.AddTransient<CommandFilter>();
-            services.AddTransient<WordsFilter>();
-
-            services.AddTransient<IRouter, UpdateRouter>(
-                services => new UpdateRouter(services.GetRequiredService<ILogger<UpdateRouter>>())
-                    {
-                        DefaultHandler = services.GetRequiredService<DefaultHandler>(),
-                        Handlers = new List<(IFilter, IHandler)>()
-                            {
-                                (services.GetService<SystemMessageFilter>(), services.GetService<SystemMessageHandler>()),
-                                (services.GetService<CommandFilter>(), services.GetService<CommandExecutor>()),
-                                (services.GetService<WordsFilter>(), services.GetService<WordCounter>())
-                            }
-                    });
+            services.AddScoped<IRouter, UpdateRouter>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

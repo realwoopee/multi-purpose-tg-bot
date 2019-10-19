@@ -2,9 +2,9 @@
 
 namespace WordCounterBot.BLL.Common
 {
-    public class WordCounterUtil
+    public static class WordCounterUtil
     {
-        public int CountWords(string text)
+        public static int CountWords(string text)
         {
             return text
                 .Split(' ')

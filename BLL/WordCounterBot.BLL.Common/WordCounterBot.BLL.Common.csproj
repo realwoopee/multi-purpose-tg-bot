@@ -4,4 +4,8 @@
     <TargetFramework>netcoreapp3.0</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\DAL\WordCounterBot.DAL.Contracts\WordCounterBot.DAL.Contracts.csproj" />
+  </ItemGroup>
+
 </Project>
