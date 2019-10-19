@@ -3,19 +3,18 @@ solution: WordCounterBot.sln
 mono: none
 dotnet: 3.0
 
-services:
-  - docker
-
 script:
 - dotnet build
+after_success:
 deploy:
   provider: script
-  script:
-    - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-    - docker build -t "$DOCKER_USERNAME/multi-purpose-tg-bot" .
-    - docker push "$DOCKER_USERNAME/multi-purpose-tg-bot"
+  script: sh ./deploy_to_docker.sh
   on:
     branch: master
+    tags: true
+
+services:
+ - docker
 
 notifications:
   email:
