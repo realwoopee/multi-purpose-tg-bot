@@ -7,5 +7,5 @@ TgToken=your_token
 WebhookUrl=example_webhook
 SSLCertPath=ssl.pem
 UseSocks5=false
-Socks5Host=your_host,
+Socks5Host=your_host
 Socks5Port=-1
