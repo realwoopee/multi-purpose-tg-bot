@@ -9,24 +9,25 @@ namespace WordCounterBot.DAL.Postgresql
 {
     public class UserDao : IUserDao
     {
-        private readonly NpgsqlConnection _connection;
+        private readonly string _connectionString;
         public UserDao(AppConfiguration appConfig)
         {
-            _connection = new NpgsqlConnection(appConfig.DbConnectionString);
+            _connectionString = appConfig.DbConnectionString;
         }
 
         public async Task UpdateUser(User user)
         {
+            var connection = new NpgsqlConnection(_connectionString);
             try
             {
-                await _connection.OpenAsync();
-                await _connection.QueryAsync(
+                await connection.OpenAsync();
+                await connection.QueryAsync(
                     $@"insert into users(user_id, first_name, last_name, user_name)
-                       values (@user_id, @first_name, @last_name, @user_name)
-                       on conflict (user_id) do update
-                            set first_name = @first_name,
-                            last_name = @last_name,
-                            user_name = @user_name;",
+                   values (@user_id, @first_name, @last_name, @user_name)
+                   on conflict (user_id) do update
+                        set first_name = @first_name,
+                        last_name = @last_name,
+                        user_name = @user_name;",
                     new
                     {
                         user_id = user.Id,
@@ -37,25 +38,40 @@ namespace WordCounterBot.DAL.Postgresql
             }
             finally
             {
-                await _connection.CloseAsync();
+                await connection.CloseAsync();
             }
         }
 
         public async Task<User> GetUserById(long userId)
         {
+            var connection = new NpgsqlConnection(_connectionString);
             try
             {
-                await _connection.OpenAsync();
-                var result = await _connection.QuerySingleAsync<User>(
+                await connection.OpenAsync();
+                var result = await connection.QuerySingleOrDefaultAsync(
                     $@"select * from users where user_id = @user_id",
                     new { user_id = userId });
-                return result;
+                if (result != null)
+                {
+                    return new User()
+                    {
+                        Id = (int)result.user_id,
+                        FirstName = result.first_name,
+                        LastName = result.last_name,
+                        Username = result.user_name
+                    };
+                }
+                else
+                {
+                    return null;
+                }
+
             }
             finally
             {
-                await _connection.CloseAsync();
+                await connection.CloseAsync();
             }
-
+            
         }
     }
 }
