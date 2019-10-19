@@ -52,8 +52,10 @@ namespace WordCounterBot.APIL.WebApi
             services.AddSingleton(_appConfig);
 
             services.AddSingleton(_botClient);
+            services.AddScoped<UserUpdater>();
 
-            services.AddTransient<ICounterDao, CounterDao>();
+            services.AddScoped<ICounterDao, CounterDao>();
+            services.AddScoped<IUserDao, UserDao>();
 
             services.AddTransient<ICommand, GetCountersCommand>();
             services.AddTransient<IHandler, CommandExecutor>();
