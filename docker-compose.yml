@@ -4,6 +4,7 @@ services:
     image: admiralwoop/multi-purpose-tg-bot:latest
     ports:
       - "443"
+    network_mode: "host"
     env_file: env
     restart: unless-stopped
     secrets:
