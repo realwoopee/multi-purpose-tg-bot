@@ -1,0 +1,18 @@
+version: '3.7'
+services:
+  bot:
+    image: admiralwoop/multi-purpose-tg-bot:latest
+    ports:
+      - "443"
+    env_file: env
+    restart: unless-stopped
+    secrets:
+      - source: bot-ssl-pfx
+        target: /app/ssl.pfx
+      - source: bot-ssl-pem
+        target: /app/ssl.pem
+secrets:
+  bot-ssl-pfx:
+    file: ./cert/ssl.pfx
+  bot-ssl-pem:
+    file: ./cert/ssl.pem
