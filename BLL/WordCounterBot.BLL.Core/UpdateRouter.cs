@@ -1,9 +1,11 @@
 ﻿using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Bot.Types;
 using WordCounterBot.BLL.Contracts;
+using WordCounterBot.BLL.Core.Controllers;
 
 namespace WordCounterBot.BLL.Core
 {
@@ -11,21 +13,23 @@ namespace WordCounterBot.BLL.Core
     {
         private readonly ILogger _logger;
 
-        public List<(IFilter, IHandler)> Handlers { get; set; }
+        public IEnumerable<IHandler> Handlers { get; set; }
         public IHandler DefaultHandler { get; set; }
 
-        public UpdateRouter(ILogger<UpdateRouter> logger)
+        public UpdateRouter(ILogger<UpdateRouter> logger, IEnumerable<IHandler> handlers, DefaultHandler defaultHandler)
         {
             _logger = logger;
+            Handlers = handlers;
+            DefaultHandler = defaultHandler;
         }
 
         public async Task Route(Update update)
         {
             try
             {
-                foreach (var (filter, handler) in Handlers)
+                foreach (var handler in Handlers)
                 {
-                    if (filter.Predicate(update))
+                    if (await handler.Predicate(update))
                     {
                         await handler.HandleUpdate(update);
                         return;

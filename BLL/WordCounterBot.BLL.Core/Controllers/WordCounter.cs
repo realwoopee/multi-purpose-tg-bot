@@ -9,19 +9,20 @@ namespace WordCounterBot.BLL.Core.Controllers
     public class WordCounter : IHandler
     {
         private readonly ICounterDao _counterDao;
-        private readonly WordCounterUtil _util;
 
-        public WordCounter(ICounterDao dao, WordCounterUtil util)
+        public WordCounter(ICounterDao dao)
         {
             _counterDao = dao;
-            _util = util;
         }
+
+        public async  Task<bool> Predicate(Update update) =>
+            await Task.Run(() => update.Message.Text != null);
 
         public async Task HandleUpdate(Update update)
         {
             var chatId = update.Message.Chat.Id;
             var msgId = update.Message.From.Id;
-            var wordsCount = _util.CountWords(update.Message.Text);
+            var wordsCount = WordCounterUtil.CountWords(update.Message.Text);
 
             if (await _counterDao.CheckCounter(chatId, msgId))
             {
