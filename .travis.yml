@@ -1,0 +1,23 @@
+language: csharp
+solution: WordCounterBot.sln
+mono: none
+dotnet: 3.0
+
+services:
+  - docker
+
+script:
+- dotnet build
+deploy:
+  provider: script
+  script:
+    - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+    - docker build -t "$DOCKER_USERNAME/multi-purpose-tg-bot" .
+    - docker push "$DOCKER_USERNAME/multi-purpose-tg-bot"
+  on:
+    branch: master
+
+notifications:
+  email:
+    on_success: never
+    on_failure: always

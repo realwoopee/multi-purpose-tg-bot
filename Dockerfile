@@ -11,10 +11,8 @@ COPY ["Common/WordCounterBot.Common.Entities/WordCounterBot.Common.Entities.cspr
 COPY ["DAL/WordCounterBot.DAL.Contracts/WordCounterBot.DAL.Contracts.csproj", "DAL/WordCounterBot.DAL.Contracts/"]
 COPY ["DAL/WordCounterBot.DAL.DatabaseAccess/WordCounterBot.DAL.Postgresql.csproj", "DAL/WordCounterBot.DAL.DatabaseAccess/"]
 COPY ["BLL/WordCounterBot.BLL.Contracts/WordCounterBot.BLL.Contracts.csproj", "BLL/WordCounterBot.BLL.Contracts/"]
-RUN dotnet restore "APIL/WordCounterBot.APIL.WebApi.csproj"
 COPY . .
 WORKDIR /src/APIL
-RUN dotnet build "WordCounterBot.APIL.WebApi.csproj" -c Release -o /app/build
 
 FROM build AS publish
 RUN dotnet publish "WordCounterBot.APIL.WebApi.csproj" -c Release -o /app/publish
