@@ -1,0 +1,16 @@
+{
+  "profiles": {
+    "WordCounterBot": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "DbConnectionString": "",
+        "TgToken": "",
+        "WebhookUrl": "",
+        "SSLCertPath": "ssl.pem",
+        "UseSocks5": false,
+        "Socks5Host": "",
+        "Socks5Port": -1
+      }
+    }
+  }
+}
