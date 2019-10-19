@@ -1,5 +1,8 @@
 Multi-purpose Telegram Bot
 ======
+
+![travis-ci-build-status](https://travis-ci.com/admiralWoop/multi-purpose-tg-bot.svg?branch=dev)
+
 **Multi-purpose Telegram Bot** is a telegram bot inside a ASP.NET Core app.
 
 The main idea of this bot is use of a architecture where bot uses filters and corresponding handlers to handle updates received from Telegram.
