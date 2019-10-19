@@ -7,19 +7,19 @@ namespace WordCounterBot.Common.Entities
     public class AppConfiguration
     {
         
-        public string DbConnectionString { get; set; }
+        public string DbConnectionString { get; }
 
-        public string TelegramToken { get; set; }
+        public string TelegramToken { get; }
 
-        public string WebhookUrl { get; set; }
+        public string WebhookUrl { get; }
 
-        public string SSLCertPath { get; set; }
+        public string SSLCertPath { get; }
 
-        public bool UseSocks5 { get; set; }
+        public bool UseSocks5 { get; }
 
-        public string Socks5Host { get; set; }
+        public string Socks5Host { get; }
 
-        public int Socks5Port { get; set; }
+        public int Socks5Port { get; }
 
         public AppConfiguration(IConfiguration configuration)
         {
