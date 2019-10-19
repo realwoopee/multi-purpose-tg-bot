@@ -21,8 +21,8 @@ namespace WordCounterBot.APIL.WebApi
 {
     public class Startup
     {
-        private TelegramBotClient _botClient;
-        private AppConfiguration _appConfig;
+        private readonly TelegramBotClient _botClient;
+        private readonly AppConfiguration _appConfig;
 
         public Startup(IConfiguration configuration)
         {
