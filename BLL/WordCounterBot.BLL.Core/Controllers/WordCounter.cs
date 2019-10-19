@@ -10,13 +10,13 @@ namespace WordCounterBot.BLL.Core.Controllers
     {
         private readonly ICounterDao _counterDao;
 
-        public WordCounter(ICounterDao dao)
+        public WordCounter(ICounterDao counterDao)
         {
-            _counterDao = dao;
+            _counterDao = counterDao;
         }
 
         public async  Task<bool> Predicate(Update update) =>
-            await Task.Run(() => update.Message.Text != null);
+            await Task.Run(() => update.Message?.Text != null && !update.Message.Text.StartsWith('/'));
 
         public async Task HandleUpdate(Update update)
         {
