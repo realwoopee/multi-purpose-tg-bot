@@ -9,7 +9,7 @@ namespace WordCounterBot.BLL.Contracts
 {
     public class GetCountersCommand : ICommand
     {
-        public string RegexPattern { get; } = @"get_top";
+        public string Name { get; } = @"get_top";
 
         private IUserDao _userDao;
         private TelegramBotClient _client;

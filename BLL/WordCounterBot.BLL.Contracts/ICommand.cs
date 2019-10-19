@@ -6,7 +6,7 @@ namespace WordCounterBot.BLL.Contracts
 {
     public interface ICommand
     {
-        string RegexPattern { get; }
+        string Name { get; }
         Task Execute(Update update, string command, params string[] args);
     }
 }
