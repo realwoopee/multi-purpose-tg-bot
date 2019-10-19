@@ -3,9 +3,6 @@ solution: WordCounterBot.sln
 mono: none
 dotnet: 3.0
 
-services:
-  - docker
-
 script:
 - dotnet build
 deploy:
@@ -16,6 +13,9 @@ deploy:
     - docker push "$DOCKER_USERNAME/multi-purpose-tg-bot"
   on:
     branch: master
+
+services:
+  - docker
 
 notifications:
   email:
