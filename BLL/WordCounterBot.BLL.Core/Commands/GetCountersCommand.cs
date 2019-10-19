@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Telegram.Bot;
 using Telegram.Bot.Types;
+using Telegram.Bot.Types.Enums;
 using WordCounterBot.BLL.Common;
 using WordCounterBot.DAL.Contracts;
 
@@ -9,7 +10,7 @@ namespace WordCounterBot.BLL.Contracts
 {
     public class GetCountersCommand : ICommand
     {
-        public string Name { get; } = @"get_top";
+        public string Name { get; } = @"getcounters";
 
         private IUserDao _userDao;
         private TelegramBotClient _client;
@@ -24,22 +25,7 @@ namespace WordCounterBot.BLL.Contracts
 
         public async Task Execute(Update update, string command, params string[] args)
         {
-            switch (command)
-            {
-                case "get_top_10":
-                    await GetTopNAndRespond(update, 10);
-                    break;
-                case "get_top_n":
-                    if (!int.TryParse(args[0], out var arg))
-                    {
-                        await  _client.SendTextMessageAsync(
-                            update.Message.Chat.Id,
-                            "Command argument is not a number",
-                            replyToMessageId: update.Message.MessageId);
-                    }
-                    await GetTopNAndRespond(update, arg);
-                    break;
-            }
+            await GetTopNAndRespond(update, 10);
         }
 
         private async Task GetTopNAndRespond(Update update, int N)
@@ -48,25 +34,24 @@ namespace WordCounterBot.BLL.Contracts
 
             var userId = update.Message.From.Id;
 
-            await _userDao.UpdateUser(update.Message.From);
-
             var userCounters =
                 await Task.WhenAll(counters.Select(async (c) => new
                 {
-                    User = await _userDao.GetUserById(userId),
+                    User = await _userDao.GetUserById(c.userId),
                     Counter = c.counter
                 }));
 
             var result = userCounters.Select(uc => 
-                ((object)(uc.User.FirstName + " " + uc.User.LastName), (object)uc.Counter)
+                ((object)(uc.User != null ? uc.User.FirstName + " " + uc.User.LastName : "%Unknown%"), (object)uc.Counter)
             ).ToList();
 
-            var table = TableGenerator.GenerateTable("user name", "words", result);
+            var table = TableGenerator.GenerateTable("person", "words", result);
 
             await _client.SendTextMessageAsync(
                 update.Message.Chat.Id,
-                table,
-                replyToMessageId: update.Message.MessageId);
+                "<pre>" + table + "</pre>",
+                replyToMessageId: update.Message.MessageId,
+                parseMode: ParseMode.Html);
         }
     }
 }
