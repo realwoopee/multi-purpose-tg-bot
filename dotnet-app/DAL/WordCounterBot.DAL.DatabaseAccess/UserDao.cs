@@ -21,7 +21,7 @@ namespace WordCounterBot.DAL.Postgresql
             try
             {
                 await connection.OpenAsync();
-                await connection.QueryAsync(
+                await connection.ExecuteAsync(
                     $@"insert into users(user_id, first_name, last_name, user_name)
                    values (@user_id, @first_name, @last_name, @user_name)
                    on conflict (user_id) do update

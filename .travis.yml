@@ -4,7 +4,7 @@ mono: none
 dotnet: 3.0
 
 script:
-- dotnet build
+- dotnet build ./dotnet-app/
 after_success:
 deploy:
   provider: script
