@@ -7,7 +7,31 @@ Please check [docker documentation](https://docs.docker.com/get-started/)
 ```bash
 git clone -b example/docker https://github.com/admiralWoop/multi-purpose-tg-bot.git
 ```
-## 3. Configure `env` file
+## 3. Prepare for deployment
+### 3.1 Create certificates
+```bash
+# create a directory for certificates
+mkdir cert
+# create a certificate for the Kestrel
+openssl req \
+ -newkey rsa:2048 \
+ -sha256 \
+ -subj "/CN=[your domain]" \
+ -passout 'pass:[your password]' \
+ -keyout ssl.key \
+ -x509 \
+ -days 365 \
+ -out cert/ssl.pem
+# create a certificate that will be sent to the telegram server
+openssl pkcs12 \
+ -export \
+ -out cert/ssl.pfx \
+ -inkey cert/ssl.key \
+ -passin 'pass:[your password]' \
+ -passout 'pass:[your password]' \
+ -in cert/ssl.pem
+```
+### 3.2 Configure `env` file
 ```bash
 ASPNETCORE_ENVIRONMENT=Production # sets ASP.NET Core enviroment to Production
 ASPNETCORE_URLS=https://0.0.0.0:443/ # sets a port to wich bot will listen to
