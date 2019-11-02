@@ -31,7 +31,7 @@ openssl pkcs12 \
  -passout 'pass:[your password]' \
  -in cert/ssl.pem
 ```
-### 3.2 Configure `env` file
+### 3.2 Create and configure `env` file
 ```bash
 ASPNETCORE_ENVIRONMENT=Production # sets ASP.NET Core enviroment to Production
 ASPNETCORE_URLS=https://0.0.0.0:443/ # sets a port to wich bot will listen to
