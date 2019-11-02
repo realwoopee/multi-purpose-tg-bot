@@ -1,8 +1,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
-using WordCounterBot.APIL.WebApi;
 
-namespace WordCounterBot
+namespace WordCounterBot.APIL.WebApi
 {
     public class Program
     {
