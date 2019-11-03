@@ -28,3 +28,6 @@ jobs:
         PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
         IMAGE_NAME: "admiralwoop/multi-purpose-tg-bot"
         LATEST: "true"
+    - name: Notify MicroBadger
+      if: success()
+      run: curl -X POST https://hooks.microbadger.com/images/admiralwoop/multi-purpose-tg-bot/LPihsqNbWfnJYRdtST6fL5NyRmc=

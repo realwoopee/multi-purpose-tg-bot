@@ -65,13 +65,11 @@ namespace WordCounterBot.DAL.Postgresql
                 {
                     return null;
                 }
-
             }
             finally
             {
                 await connection.CloseAsync();
             }
-            
         }
     }
 }
