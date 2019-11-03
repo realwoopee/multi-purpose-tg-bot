@@ -11,9 +11,9 @@ COPY ["dotnet-app/Common/WordCounterBot.Common.Entities/WordCounterBot.Common.En
 COPY ["dotnet-app/DAL/WordCounterBot.DAL.Contracts/WordCounterBot.DAL.Contracts.csproj", "DAL/WordCounterBot.DAL.Contracts/"]
 COPY ["dotnet-app/DAL/WordCounterBot.DAL.DatabaseAccess/WordCounterBot.DAL.Postgresql.csproj", "DAL/WordCounterBot.DAL.DatabaseAccess/"]
 COPY ["dotnet-app/BLL/WordCounterBot.BLL.Contracts/WordCounterBot.BLL.Contracts.csproj", "BLL/WordCounterBot.BLL.Contracts/"]
-COPY . .
-WORKDIR /src/APIL
+COPY ./dotnet-app/ ./
 
+WORKDIR /src/APIL
 FROM build AS publish
 RUN dotnet publish "WordCounterBot.APIL.WebApi.csproj" -c Release -o /app/publish
 
