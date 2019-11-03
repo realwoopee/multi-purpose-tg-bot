@@ -1,8 +1,7 @@
 Multi-purpose Telegram Bot
 ======
 ![](https://img.shields.io/github/last-commit/admiralWoop/multi-purpose-tg-bot/dev)
-
-[![](https://img.shields.io/travis/com/admiralwoop/multi-purpose-tg-bot/dev?label=travis%20build)](https://travis-ci.com/admiralWoop/multi-purpose-tg-bot)
+[![](https://www.codefactor.io/repository/github/admiralwoop/multi-purpose-tg-bot/badge)](https://www.codefactor.io/repository/github/admiralwoop/multi-purpose-tg-bot/dev)
 
 **Multi-purpose Telegram Bot** is a telegram bot inside a ASP.NET Core app.
 
