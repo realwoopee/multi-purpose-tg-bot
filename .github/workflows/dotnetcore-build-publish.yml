@@ -1,0 +1,30 @@
+name: Build & Publish
+
+on:
+  release:
+    types: [ published ]
+
+jobs:
+  build_and_deploy:
+    name: Build an ASP.NET Core app and push it to Docker Hub
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Get tag version
+      id: get_version
+      run: echo ::set-env name=TAG_NAME::$(echo ${GITHUB_REF/refs\/tags\//})
+    - name: Setup .NET Core SDK
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.0.100
+    - name: Build .NET Core App
+      run: dotnet publish dotnet-app/APIL/WordCounterBot.APIL.WebApi.csproj -c Release -o ./app
+    - name: Build & Publish Docker image
+      if: success()
+      uses: opspresso/action-docker@v0.2.1
+      env:
+        USERNAME: ${{ secrets.DOCKER_USERNAME }}
+        PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        IMAGE_NAME: "admiralwoop/multi-purpose-tg-bot"
+        LATEST: "true"
