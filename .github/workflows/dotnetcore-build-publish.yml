@@ -30,4 +30,4 @@ jobs:
         LATEST: "true"
     - name: Notify MicroBadger
       if: success()
-      run: curl -x POST https://hooks.microbadger.com/images/admiralwoop/multi-purpose-tg-bot/LPihsqNbWfnJYRdtST6fL5NyRmc=
+      run: curl -X POST https://hooks.microbadger.com/images/admiralwoop/multi-purpose-tg-bot/LPihsqNbWfnJYRdtST6fL5NyRmc=
