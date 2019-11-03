@@ -70,7 +70,6 @@ namespace WordCounterBot.DAL.Postgresql
             {
                 await connection.CloseAsync();
             }
-            
         }
     }
 }
