@@ -65,7 +65,6 @@ namespace WordCounterBot.DAL.Postgresql
                 {
                     return null;
                 }
-
             }
             finally
             {

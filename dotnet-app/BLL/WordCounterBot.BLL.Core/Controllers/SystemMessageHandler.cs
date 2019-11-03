@@ -19,7 +19,6 @@ namespace WordCounterBot.BLL.Core.Controllers
             MessageType.GroupCreated, MessageType.SupergroupCreated
         };
 
-        
         public SystemMessageHandler(TelegramBotClient client)
         {
             _client = client;
