@@ -1,5 +1,6 @@
 Multi-purpose Telegram Bot
 ======
+![](https://img.shields.io/github/last-commit/admiralWoop/multi-purpose-tg-bot/dev)
 
 [![](https://img.shields.io/travis/com/admiralwoop/multi-purpose-tg-bot/dev?label=travis%20build)](https://travis-ci.com/admiralWoop/multi-purpose-tg-bot)
 
