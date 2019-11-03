@@ -1,7 +1,10 @@
 Multi-purpose Telegram Bot
 ======
+![](https://img.shields.io/github/v/release/admiralwoop/multi-purpose-tg-bot?include_prereleases&sort=semver)
+![](https://img.shields.io/github/last-commit/admiralWoop/multi-purpose-tg-bot)
+[![](https://www.codefactor.io/repository/github/admiralwoop/multi-purpose-tg-bot/badge)](https://www.codefactor.io/repository/github/admiralwoop/multi-purpose-tg-bot)
 
-[![](https://travis-ci.com/admiralWoop/multi-purpose-tg-bot.svg?branch=master)](https://travis-ci.com/admiralWoop/multi-purpose-tg-bot)
+[![](https://img.shields.io/travis/com/admiralwoop/multi-purpose-tg-bot/master?label=travis%20build)](https://travis-ci.com/admiralWoop/multi-purpose-tg-bot)
 [![](https://images.microbadger.com/badges/version/admiralwoop/multi-purpose-tg-bot.svg)](hhttps://microbadger.com/images/admiralwoop/multi-purpose-tg-bot)
 [![](https://img.shields.io/badge/docker%20images-099cec)](https://cloud.docker.com/u/admiralwoop/repository/docker/admiralwoop/multi-purpose-tg-bot)
 
