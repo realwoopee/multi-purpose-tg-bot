@@ -1,7 +1,7 @@
 Multi-purpose Telegram Bot
 ======
 
-![travis-ci](https://travis-ci.com/admiralWoop/multi-purpose-tg-bot.svg?branch=master)
+![travis-ci](https://travis-ci.com/admiralWoop/multi-purpose-tg-bot.svg?branch=dev)
 
 **Multi-purpose Telegram Bot** is a telegram bot inside a ASP.NET Core app.
 
