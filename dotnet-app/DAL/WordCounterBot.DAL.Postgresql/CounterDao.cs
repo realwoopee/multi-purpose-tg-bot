@@ -23,7 +23,7 @@ namespace WordCounterBot.DAL.Postgresql
             try
             {
                 await connection.OpenAsync();
-                await connection.QueryAsync($@"insert into counters(""chatId"", ""userId"", counter)
+                await connection.ExecuteAsync($@"insert into counters(chat_id, user_id, counter)
                                     values (@chatId, @userId, 0)",
                     new { chatId, userId });
             }
@@ -39,7 +39,7 @@ namespace WordCounterBot.DAL.Postgresql
             try
             {
                 await connection.OpenAsync();
-                await connection.QueryAsync($@"insert into counters(""chatId"", ""userId"", counter)
+                await connection.ExecuteAsync($@"insert into counters(chat_id, user_id, counter)
                                     values (@chatId, @userId, @counts)",
                                         new { chatId, userId, counts });
             }
@@ -55,9 +55,9 @@ namespace WordCounterBot.DAL.Postgresql
             try
             {
                 await connection.OpenAsync();
-                await connection.QueryAsync($@"update counters
+                await connection.ExecuteAsync($@"update counters
                                     set counter = counter + 1
-                                 where counters.""chatId"" = @chatId and counters.""userId"" = @userId",
+                                 where counters.chat_id = @chatId and counters.user_id = @userId",
                                     new { chatId, userId });
             }
             finally
@@ -72,9 +72,9 @@ namespace WordCounterBot.DAL.Postgresql
             try
             {
                 await connection.OpenAsync();
-                await connection.QueryAsync($@"update counters
+                await connection.ExecuteAsync($@"update counters
                                     set counter = counter + @counts
-                                 where counters.""chatId"" = @chatId and counters.""userId"" = @userId",
+                                 where counters.chat_id = @chatId and counters.user_id = @userId",
                                         new { chatId, userId, counts });
             }
             finally
@@ -89,9 +89,9 @@ namespace WordCounterBot.DAL.Postgresql
             try
             {
                 await connection.OpenAsync();
-                await connection.QueryAsync($@"update counters
+                await connection.ExecuteAsync($@"update counters
                                     set counter = 0
-                                 where counters.""chatId"" = @chatId and counters.""userId"" = @userId",
+                                 where counters.chat_id = @chatId and counters.user_id = @userId",
                                             new { chatId, userId });
             }
             finally
@@ -107,7 +107,7 @@ namespace WordCounterBot.DAL.Postgresql
             {
                 await connection.OpenAsync();
                 var result = await connection.QuerySingleAsync<long>($@"select counter from counters
-                                 where counters.""chatId"" = @chatId and counters.""userId"" = @userId",
+                                 where counters.chat_id = @chatId and counters.user_id = @userId",
                     new { chatId, userId });
                 return result;
             }
@@ -123,8 +123,8 @@ namespace WordCounterBot.DAL.Postgresql
             try
             {
                 await connection.OpenAsync();
-                var result = await connection.QueryAsync<(long, long)>($@"select ""userId"", counter from counters
-                                     where counters.""chatId"" = @chatId
+                var result = await connection.QueryAsync<(long, long)>($@"select user_id, counter from counters
+                                     where counters.chat_id = @chatId
                                      order by counter desc",
                     new { chatId });
                 return result.ToList();
@@ -141,8 +141,8 @@ namespace WordCounterBot.DAL.Postgresql
             try
             {
                 await connection.OpenAsync();
-                var result = await connection.QueryAsync<(long, long)>($@"select ""userId"", counter from counters
-                                     where counters.""chatId"" = @chatId
+                var result = await connection.QueryAsync<(long, long)>($@"select user_id, counter from counters
+                                     where counters.chat_id = @chatId
                                      order by counter desc
                                      limit @limit",
                     new { chatId, limit });
@@ -163,7 +163,7 @@ namespace WordCounterBot.DAL.Postgresql
                 await connection.OpenAsync();
                 return await connection.QuerySingleAsync<bool>($@"select exists(
                                      select 1 from counters
-                                     where counters.""chatId"" = @chatId and counters.""userId"" = @userId)",
+                                     where counters.chat_id = @chatId and counters.user_id = @userId)",
                     new { chatId, userId });
             }
             finally

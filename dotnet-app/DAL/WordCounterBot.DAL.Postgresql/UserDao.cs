@@ -22,18 +22,18 @@ namespace WordCounterBot.DAL.Postgresql
             {
                 await connection.OpenAsync();
                 await connection.ExecuteAsync(
-                    $@"insert into users(user_id, first_name, last_name, user_name)
-                   values (@user_id, @first_name, @last_name, @user_name)
+                    $@"insert into users(user_id, user_name, first_name, last_name)
+                   values (@user_id, @user_name, @first_name, @last_name)
                    on conflict (user_id) do update
-                        set first_name = @first_name,
-                        last_name = @last_name,
-                        user_name = @user_name;",
+                        set user_name = @user_name,
+                        first_name = @first_name,
+                        last_name = @last_name;",
                     new
                     {
                         user_id = user.Id,
+                        user_name = user.Username,
                         first_name = user.FirstName,
                         last_name = user.LastName,
-                        user_name = user.Username
                     });
             }
             finally
