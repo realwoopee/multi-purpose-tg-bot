@@ -332,3 +332,6 @@ ASALocalRun/
 # MFractors (Xamarin productivity tool) working folder 
 .mfractor/
 /dotnet-app/APIL/Properties/launchSettings.json
+
+# Visual Studio Code
+/.vscode
