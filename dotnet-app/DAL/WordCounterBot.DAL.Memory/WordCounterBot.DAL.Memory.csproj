@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Telegram.Bot" Version="15.0.0" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\..\BLL\WordCounterBot.BLL.Contracts\WordCounterBot.BLL.Contracts.csproj" />
+    <ProjectReference Include="..\WordCounterBot.DAL.Contracts\WordCounterBot.DAL.Contracts.csproj" />
+    <ProjectReference Include="..\..\Common\WordCounterBot.Common.Entities\WordCounterBot.Common.Entities.csproj" />
+  </ItemGroup>
+</Project>
