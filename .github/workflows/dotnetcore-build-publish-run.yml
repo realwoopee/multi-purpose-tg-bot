@@ -28,7 +28,7 @@ jobs:
         PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
         IMAGE_NAME: "admiralwoop/multi-purpose-tg-bot"
         LATEST: "true"
-    - name: Install docker-compose:
+    - name: Install docker-compose
       run: sudo curl -L "https://github.com/docker/compose/releases/download/1.24.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
     - name: Switch to example/docker
       run: git checkout -f example/docker
