@@ -42,7 +42,7 @@ namespace WordCounterBot.BLL.Contracts
                 }));
 
             var result = userCounters.Select(uc => 
-                ((object)(uc.User != null ? uc.User.FirstName + " " + uc.User.LastName : "%Unknown%"), (object)uc.Counter)
+                ((object)(uc.User != null ? uc.User.FirstName + " " + uc.User.LastName : "%Unknown%").Escape(), (object)uc.Counter)
             ).ToList();
 
             var table = TableGenerator.GenerateTable("person", "words", result);
