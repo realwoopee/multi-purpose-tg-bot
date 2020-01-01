@@ -73,3 +73,14 @@ docker run -env-file env -p 443 \
  --secret src=ssl_pem,target="/app/ssl.pem" \
  admiralwoop/multi-purpose-tg-bot:latest
 ```
+## 5. Update
+Run
+```bash
+docker pull admiralwoop/multi-purpose-tg-bot
+docker-compose up -d
+```
+or
+```bash
+update.sh
+```
+To get the latest version of the bot and run it using docker-compose
