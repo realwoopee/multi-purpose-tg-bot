@@ -13,7 +13,7 @@ namespace WordCounterBot.BLL.Core.Controllers
             _client = client;
         }
 
-        public async Task<bool> Predicate(Update update) => 
+        public async Task<bool> IsHandable(Update update) => 
             await Task.Run(() => true);
 
         public async Task HandleUpdate(Update update) => 

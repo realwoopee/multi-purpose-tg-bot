@@ -5,7 +5,7 @@ namespace WordCounterBot.BLL.Contracts
 {
     public interface IHandler
     {
-        Task<bool> Predicate(Update update);
+        Task<bool> IsHandable(Update update);
         Task HandleUpdate(Update update);
     }
 }

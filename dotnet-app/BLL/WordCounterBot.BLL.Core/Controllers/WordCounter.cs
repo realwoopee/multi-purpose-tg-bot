@@ -15,14 +15,18 @@ namespace WordCounterBot.BLL.Core.Controllers
             _counterDao = counterDao;
         }
 
-        public async  Task<bool> Predicate(Update update) =>
-            await Task.Run(() => update.Message?.Text != null && !update.Message.Text.StartsWith('/'));
+        public async  Task<bool> IsHandable(Update update) =>
+            await Task.Run(() => 
+                (update.Message?.Text != null 
+                    && !update.Message.Text.StartsWith('/'))
+                 || update.Message?.Caption != null);
 
         public async Task HandleUpdate(Update update)
         {
             var chatId = update.Message.Chat.Id;
             var msgId = update.Message.From.Id;
-            var wordsCount = WordCounterUtil.CountWords(update.Message.Text);
+            var text = update.Message.Text ?? update.Message.Caption;
+            var wordsCount = WordCounterUtil.CountWords(text);
 
             if (await _counterDao.CheckCounter(chatId, msgId))
             {
