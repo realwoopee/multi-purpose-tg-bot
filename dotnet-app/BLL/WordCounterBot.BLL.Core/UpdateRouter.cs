@@ -35,7 +35,7 @@ namespace WordCounterBot.BLL.Core
                 await _userUpdater.Update(update.Message?.From);
                 foreach (var handler in Handlers)
                 {
-                    if (await handler.Predicate(update))
+                    if (await handler.IsHandable(update))
                     {
                         _logger.LogInformation(
                             $"Update \"{JsonConvert.SerializeObject(update, Formatting.Indented)}\" matched with {handler.GetType()} handler");
