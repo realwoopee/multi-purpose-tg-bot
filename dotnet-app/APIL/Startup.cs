@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Net;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -55,7 +54,7 @@ namespace WordCounterBot.APIL.WebApi
             services.AddScoped<UserUpdater>();
 
             services.AddScoped<ICounterDao, CounterDao>();
-            services.AddScoped<IUserDao, UserDao>();
+            services.AddScoped<IUserDao, UserDaoPostgreSQL>();
 
             services.AddTransient<ICommand, GetCountersCommand>();
             services.AddTransient<IHandler, CommandExecutor>();

@@ -7,10 +7,10 @@ using WordCounterBot.DAL.Contracts;
 
 namespace WordCounterBot.DAL.Postgresql
 {
-    public class UserDao : IUserDao
+    public class UserDaoPostgreSQL : IUserDao
     {
         private readonly string _connectionString;
-        public UserDao(AppConfiguration appConfig)
+        public UserDaoPostgreSQL(AppConfiguration appConfig)
         {
             _connectionString = appConfig.DbConnectionString;
         }

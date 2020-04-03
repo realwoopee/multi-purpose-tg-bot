@@ -1,26 +1,18 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Telegram.Bot;
 using Telegram.Bot.Types;
-using Telegram.Bot.Types.Enums;
 using WordCounterBot.BLL.Contracts;
-using WordCounterBot.DAL.Contracts;
 
 namespace WordCounterBot.BLL.Core.Controllers
 {
     public class CommandExecutor : IHandler
     {
-        private ICounterDao _counterDao;
         private IEnumerable<ICommand> _commands;
-        private TelegramBotClient _client;
 
-        public CommandExecutor(IEnumerable<ICommand> commands, TelegramBotClient client, ICounterDao counterDao, IUserDao userDao)
+        public CommandExecutor(IEnumerable<ICommand> commands)
         {
-            _counterDao = counterDao;
             _commands = commands;
-            _client = client;
         }
 
         public async Task<bool> IsHandable(Update update) =>

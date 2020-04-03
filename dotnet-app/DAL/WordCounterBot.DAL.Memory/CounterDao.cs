@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using WordCounterBot.Common.Entities;
 using WordCounterBot.DAL.Contracts;
 
 namespace WordCounterBot.DAL.Memory
@@ -55,9 +54,9 @@ namespace WordCounterBot.DAL.Memory
         public Task ResetCounter(long chatId, long userId)
         {
             var counter = _counters
-                .First(counter => 
-                    counter.ChatId == chatId 
-                    && counter.UserId == userId);
+                .First(c => 
+                    c.ChatId == chatId 
+                    && c.UserId == userId);
             counter.Value = 0;
             return Task.CompletedTask;
         }
@@ -65,9 +64,9 @@ namespace WordCounterBot.DAL.Memory
         public Task<long> GetCounter(long chatId, long userId)
         {
             var counter = _counters
-                .First(counter => 
-                    counter.ChatId == chatId 
-                    && counter.UserId == userId);
+                .First(c => 
+                    c.ChatId == chatId 
+                    && c.UserId == userId);
             return Task.FromResult(counter.Value);
         }
 

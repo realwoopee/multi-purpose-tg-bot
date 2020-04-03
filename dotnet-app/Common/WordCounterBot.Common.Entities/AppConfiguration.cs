@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using System;
-using Newtonsoft.Json;
+using System.Globalization;
 
 namespace WordCounterBot.Common.Entities
 {
@@ -31,7 +31,7 @@ namespace WordCounterBot.Common.Entities
             SSLCertPath = configuration["SSLCertPath"];
             UseSocks5 = bool.Parse(configuration["UseSocks5"]);
             Socks5Host = configuration["Socks5Host"];
-            Socks5Port = int.Parse(configuration["Socks5Port"]);
+            Socks5Port = int.Parse(configuration["Socks5Port"], new NumberFormatInfo());
         }
     }
 }

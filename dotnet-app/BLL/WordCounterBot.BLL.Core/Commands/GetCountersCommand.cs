@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,9 +15,9 @@ namespace WordCounterBot.BLL.Contracts
     {
         public string Name { get; } = @"getcounters";
 
-        private IUserDao _userDao;
-        private TelegramBotClient _client;
-        private ICounterDao _counterDao;
+        private readonly IUserDao _userDao;
+        private readonly TelegramBotClient _client;
+        private readonly ICounterDao _counterDao;
 
         public GetCountersCommand(ICounterDao counterDao, IUserDao userDao, TelegramBotClient client)
         {
@@ -38,8 +37,6 @@ namespace WordCounterBot.BLL.Contracts
 
             N = Math.Min(counters.Count(), N);
 
-            var userId = update.Message.From.Id;
-
             var userCounters =
                 await Task.WhenAll(counters.Select(async (c) => new
                 {
@@ -48,8 +45,9 @@ namespace WordCounterBot.BLL.Contracts
                 }));
 
             var result = userCounters
-                .Select(uc =>
-                    ((uc.User != null ? uc.User.FirstName + " " + uc.User.LastName : "%Unknown%").Escape(), uc.Counter));
+                .Select(uc => (
+                    (uc.User != null ? uc.User.FirstName + " " + uc.User.LastName : "%Unknown%").Escape(), 
+                    uc.Counter));
 
             var text = await CreateText(result, N);
 
