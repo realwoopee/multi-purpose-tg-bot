@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using System;
+using System.Data;
 using System.Globalization;
 
 namespace WordCounterBot.Common.Entities
@@ -20,6 +21,8 @@ namespace WordCounterBot.Common.Entities
 
         public int Socks5Port { get; }
 
+        public int UserIdForLogger { get; }
+
         public AppConfiguration(IConfiguration configuration)
         {
             if (configuration == null) 
@@ -32,6 +35,7 @@ namespace WordCounterBot.Common.Entities
             UseSocks5 = bool.Parse(configuration["UseSocks5"]);
             Socks5Host = configuration["Socks5Host"];
             Socks5Port = int.Parse(configuration["Socks5Port"], new NumberFormatInfo());
+            UserIdForLogger = int.Parse(configuration["UserToLog"], new NumberFormatInfo());
         }
     }
 }

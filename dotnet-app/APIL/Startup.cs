@@ -1,3 +1,4 @@
+using System;
 using System.Net;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -5,6 +6,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Console;
+using Microsoft.Extensions.Options;
 using MihaZupan;
 using Telegram.Bot;
 using Telegram.Bot.Types.InputFiles;
@@ -13,6 +16,7 @@ using WordCounterBot.BLL.Contracts;
 using WordCounterBot.BLL.Core;
 using WordCounterBot.BLL.Core.Controllers;
 using WordCounterBot.Common.Entities;
+using WordCounterBot.Common.Logging;
 using WordCounterBot.DAL.Contracts;
 using WordCounterBot.DAL.Postgresql;
 
@@ -64,11 +68,25 @@ namespace WordCounterBot.APIL.WebApi
             services.AddTransient<DefaultHandler>();
 
             services.AddScoped<IRouter, UpdateRouter>();
+
+            services.AddLogging(builder => builder
+                .AddProvider(new TelegramMessengerLoggerProvider(
+                    new TelegramMessengerLoggerConfiguration
+                    {
+                        LogLevel = LogLevel.Warning,
+                        TelegramToken = _appConfig.TelegramToken,
+                        UserId = _appConfig.UserIdForLogger,
+                        UseSocks5 = _appConfig.UseSocks5,
+                        Socks5Host = _appConfig.Socks5Host,
+                        Socks5Port = _appConfig.Socks5Port
+                    }))
+                .AddConsole(options => options.LogToStandardErrorThreshold = LogLevel.Trace));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> logger)
         {
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
