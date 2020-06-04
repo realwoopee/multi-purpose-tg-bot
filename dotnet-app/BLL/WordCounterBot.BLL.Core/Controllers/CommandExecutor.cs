@@ -8,7 +8,7 @@ namespace WordCounterBot.BLL.Core.Controllers
 {
     public class CommandExecutor : IHandler
     {
-        private IEnumerable<ICommand> _commands;
+        private readonly IEnumerable<ICommand> _commands;
 
         public CommandExecutor(IEnumerable<ICommand> commands)
         {

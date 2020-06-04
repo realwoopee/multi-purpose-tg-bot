@@ -21,7 +21,7 @@ namespace WordCounterBot.DAL.Memory
 
     public class CounterDao : ICounterDao
     {
-        private List<Counter> _counters = new List<Counter>();
+        private readonly List<Counter> _counters = new List<Counter>();
 
         private Task Add(long chatId, long userId, long value)
         {

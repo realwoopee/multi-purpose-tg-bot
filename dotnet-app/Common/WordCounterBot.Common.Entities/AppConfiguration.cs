@@ -10,7 +10,7 @@ namespace WordCounterBot.Common.Entities
 
         public string TelegramToken { get; }
 
-        public string WebhookUrl { get; }
+        public Uri WebhookUrl { get; }
 
         public string SSLCertPath { get; }
 
@@ -27,7 +27,7 @@ namespace WordCounterBot.Common.Entities
             
             DbConnectionString = configuration["DbConnectionString"];
             TelegramToken = configuration["TgToken"];
-            WebhookUrl = configuration["WebhookUrl"];
+            WebhookUrl = new Uri(configuration["WebhookUrl"]);
             SSLCertPath = configuration["SSLCertPath"];
             UseSocks5 = bool.Parse(configuration["UseSocks5"]);
             Socks5Host = configuration["Socks5Host"];

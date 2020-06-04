@@ -93,7 +93,7 @@ namespace WordCounterBot.APIL.WebApi
             }
 
             _botClient.DeleteWebhookAsync()
-                .ContinueWith(async (t) => await _botClient.SetWebhookAsync(_appConfig.WebhookUrl, sslCert))
+                .ContinueWith(async (t) => await _botClient.SetWebhookAsync(_appConfig.WebhookUrl.ToString(), sslCert))
                 .ContinueWith((t) => logger.LogInformation($"Set webhook to {_appConfig.WebhookUrl}, SSL cert is {sslCert?.ToString() ?? "null"}"));
 
             logger.LogInformation($"Configured HTTP pipeline. AppSettings is {_appConfig}");
