@@ -31,7 +31,6 @@ namespace WordCounterBot.Common.Logging
                 proxy);
         }
 
-
         public IDisposable BeginScope<TState>(TState state) => null;
 
         public bool IsEnabled(LogLevel logLevel) => logLevel >= _config.LogLevel;
