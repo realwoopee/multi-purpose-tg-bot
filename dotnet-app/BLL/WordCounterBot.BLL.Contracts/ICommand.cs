@@ -1,5 +1,4 @@
-﻿using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Telegram.Bot.Types;
 
 namespace WordCounterBot.BLL.Contracts

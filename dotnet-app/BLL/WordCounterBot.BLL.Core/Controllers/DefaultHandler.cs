@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using Telegram.Bot;
 using Telegram.Bot.Types;
 using WordCounterBot.BLL.Contracts;
 
@@ -7,12 +6,6 @@ namespace WordCounterBot.BLL.Core.Controllers
 {
     public class DefaultHandler : IHandler
     {
-        private TelegramBotClient _client;
-        public DefaultHandler(TelegramBotClient client)
-        {
-            _client = client;
-        }
-
         public async Task<bool> IsHandable(Update update) => 
             await Task.Run(() => true);
 

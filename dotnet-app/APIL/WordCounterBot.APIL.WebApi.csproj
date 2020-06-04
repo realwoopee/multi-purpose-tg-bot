@@ -23,6 +23,7 @@
     <ProjectReference Include="..\BLL\WordCounterBot.BLL.Common\WordCounterBot.BLL.Common.csproj" />
     <ProjectReference Include="..\BLL\WordCounterBot.BLL.Contracts\WordCounterBot.BLL.Contracts.csproj" />
     <ProjectReference Include="..\BLL\WordCounterBot.BLL.Core\WordCounterBot.BLL.Core.csproj" />
+    <ProjectReference Include="..\Common\WordCounterBot.Common.Logging\WordCounterBot.Common.Logging.csproj" />
     <ProjectReference Include="..\DAL\WordCounterBot.DAL.Contracts\WordCounterBot.DAL.Contracts.csproj" />
     <ProjectReference Include="..\DAL\WordCounterBot.DAL.Postgresql\WordCounterBot.DAL.Postgresql.csproj" />
     <ProjectReference Include="..\Common\WordCounterBot.Common.Entities\WordCounterBot.Common.Entities.csproj" />

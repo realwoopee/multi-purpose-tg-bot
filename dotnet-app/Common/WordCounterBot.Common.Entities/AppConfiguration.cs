@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using System;
-using Newtonsoft.Json;
+using System.Data;
+using System.Globalization;
 
 namespace WordCounterBot.Common.Entities
 {
@@ -10,7 +11,7 @@ namespace WordCounterBot.Common.Entities
 
         public string TelegramToken { get; }
 
-        public string WebhookUrl { get; }
+        public Uri WebhookUrl { get; }
 
         public string SSLCertPath { get; }
 
@@ -20,6 +21,8 @@ namespace WordCounterBot.Common.Entities
 
         public int Socks5Port { get; }
 
+        public int UserIdForLogger { get; }
+
         public AppConfiguration(IConfiguration configuration)
         {
             if (configuration == null) 
@@ -27,11 +30,12 @@ namespace WordCounterBot.Common.Entities
             
             DbConnectionString = configuration["DbConnectionString"];
             TelegramToken = configuration["TgToken"];
-            WebhookUrl = configuration["WebhookUrl"];
+            WebhookUrl = new Uri(configuration["WebhookUrl"]);
             SSLCertPath = configuration["SSLCertPath"];
             UseSocks5 = bool.Parse(configuration["UseSocks5"]);
             Socks5Host = configuration["Socks5Host"];
-            Socks5Port = int.Parse(configuration["Socks5Port"]);
+            Socks5Port = int.Parse(configuration["Socks5Port"], new NumberFormatInfo());
+            UserIdForLogger = int.Parse(configuration["UserToLog"], new NumberFormatInfo());
         }
     }
 }
