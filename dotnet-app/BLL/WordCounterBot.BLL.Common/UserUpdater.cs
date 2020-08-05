@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Telegram.Bot.Types;
 using WordCounterBot.DAL.Contracts;
+using WordCounterBot.Common.Entities;
 
 namespace WordCounterBot.BLL.Common
 {
@@ -12,10 +13,10 @@ namespace WordCounterBot.BLL.Common
             _userDao = userDao;
         }
 
-        public async Task Update(User user)
+        public async Task Update(Telegram.Bot.Types.User user)
         {
             if (user == null) return;
-            await _userDao.UpdateUser(user);
+            await _userDao.UpdateUser(new WordCounterBot.Common.Entities.User(user));
         }
     }
 }

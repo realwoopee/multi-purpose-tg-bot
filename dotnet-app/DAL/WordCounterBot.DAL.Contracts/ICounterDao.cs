@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using WordCounterBot.Common.Entities;
 
 namespace WordCounterBot.DAL.Contracts
 {
@@ -15,14 +16,14 @@ namespace WordCounterBot.DAL.Contracts
 
         Task ResetCounter(long chatId, long userId);
 
-        Task<long> GetCounter(long chatId, long userId);
+        Task<Counter> GetCounter(long chatId, long userId);
 
         /// <summary>
         /// Get counters from specified chat
         /// </summary>
         /// <param name="chatId"></param>
         /// <returns></returns>
-        Task<List<(long userId, long counter)>> GetCounters(long chatId);
+        Task<List<Counter>> GetCounters(long chatId);
 
         /// <summary>
         /// Get top N counters from specified chat
@@ -30,7 +31,7 @@ namespace WordCounterBot.DAL.Contracts
         /// <param name="chatId"></param>
         /// <param name="limit"></param>
         /// <returns></returns>
-        Task<List<(long userId, long counter)>> GetCountersWithLimit(long chatId, int limit);
+        Task<List<Counter>> GetCountersWithLimit(long chatId, int limit);
 
         Task<bool> CheckCounter(long chatId, long userId);
     }

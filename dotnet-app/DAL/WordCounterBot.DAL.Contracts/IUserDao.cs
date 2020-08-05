@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using Telegram.Bot.Types;
+using WordCounterBot.Common.Entities;
 
 namespace WordCounterBot.DAL.Contracts
 {

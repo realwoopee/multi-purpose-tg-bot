@@ -40,8 +40,8 @@ namespace WordCounterBot.BLL.Contracts
             var userCounters =
                 await Task.WhenAll(counters.Select(async (c) => new
                 {
-                    User = await _userDao.GetUserById(c.userId),
-                    Counter = c.counter
+                    User = await _userDao.GetUserById(c.UserId),
+                    Counter = c.Value
                 }));
 
             var result = userCounters

@@ -100,16 +100,22 @@ namespace WordCounterBot.DAL.Postgresql
             }
         }
 
-        public async Task<long> GetCounter(long chatId, long userId)
+        public async Task<Counter> GetCounter(long chatId, long userId)
         {
             var connection = new NpgsqlConnection(_connectionString);
             try
             {
                 await connection.OpenAsync();
-                var result = await connection.QuerySingleAsync<long>($@"select counter from counters
+                var result = await connection.QuerySingleAsync($@"select id, chat_id, user_id, counter from counters
                                  where counters.chat_id = @chatId and counters.user_id = @userId",
                     new { chatId, userId });
-                return result;
+                return new Counter
+                {
+                    Id = result.id,
+                    ChatId = result.chat_id,
+                    UserId = result.user_id,
+                    Value = result.counter
+                };
             }
             finally
             {
@@ -117,17 +123,24 @@ namespace WordCounterBot.DAL.Postgresql
             }
         }
 
-        public async Task<List<(long userId, long counter)>> GetCounters(long chatId)
+        public async Task<List<Counter>> GetCounters(long chatId)
         {
             var connection = new NpgsqlConnection(_connectionString);
             try
             {
                 await connection.OpenAsync();
-                var result = await connection.QueryAsync<(long, long)>($@"select user_id, counter from counters
+                var result = await connection.QueryAsync($@"select id, chat_id, user_id, counter from counters
                                      where counters.chat_id = @chatId
                                      order by counter desc",
                     new { chatId });
-                return result.ToList();
+                return result.Select(c => new Counter
+                    {
+                        Id = c.id,
+                        ChatId = c.chat_id,
+                        UserId = c.user_id,
+                        Value = c.counter
+                    })
+                             .ToList();
             }
             finally
             {
@@ -135,19 +148,26 @@ namespace WordCounterBot.DAL.Postgresql
             }
         }
 
-        public async Task<List<(long userId, long counter)>> GetCountersWithLimit(long chatId, int limit = 10)
+        public async Task<List<Counter>> GetCountersWithLimit(long chatId, int limit = 10)
         {
             var connection = new NpgsqlConnection(_connectionString);
             try
             {
                 await connection.OpenAsync();
-                var result = await connection.QueryAsync<(long, long)>($@"select user_id, counter from counters
+                var result = await connection.QueryAsync($@"select id, chat_id, user_id, counter from counters
                                      where counters.chat_id = @chatId
                                      order by counter desc
                                      limit @limit",
                     new { chatId, limit });
 
-                return result.ToList();
+                return result.Select(c => new Counter
+                    {
+                        Id = c.id,
+                        ChatId = c.chat_id,
+                        UserId = c.user_id,
+                        Value = c.counter
+                    })
+                    .ToList();
             }
             finally
             {
