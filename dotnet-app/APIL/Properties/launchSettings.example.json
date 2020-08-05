@@ -9,7 +9,8 @@
         "SSLCertPath": "ssl.pem",
         "UseSocks5": false,
         "Socks5Host": "",
-        "Socks5Port": -1
+        "Socks5Port": -1,
+        "UserToLog": "0"
       }
     }
   }
