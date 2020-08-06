@@ -11,19 +11,19 @@ using WordCounterBot.DAL.Contracts;
 
 namespace WordCounterBot.BLL.Contracts
 {
-    public class GetCountersCommand : ICommand
+    public class GetStatsForCurrentDayCommand : ICommand
     {
-        public string Name { get; } = @"getcounters";
+        public string Name { get; } = @"getstatscurrentday";
 
         private readonly IUserDao _userDao;
         private readonly TelegramBotClient _client;
-        private readonly ICounterDao _counterDao;
+        private readonly ICounterDatedDao _counterDatedDao;
 
-        public GetCountersCommand(ICounterDao counterDao, IUserDao userDao, TelegramBotClient client)
+        public GetStatsForCurrentDayCommand(ICounterDatedDao counterDatedDao, IUserDao userDao, TelegramBotClient client)
         {
             _userDao = userDao;
             _client = client;
-            _counterDao = counterDao;
+            _counterDatedDao = counterDatedDao;
         }
 
         public async Task Execute(Update update, string command, params string[] args)
@@ -33,9 +33,10 @@ namespace WordCounterBot.BLL.Contracts
 
         private async Task GetTopNAndRespond(Update update, int N)
         {
-            var chatId = update.Message.Chat.Id;
+            var date = update.Message.Date.Date;
+            var counters = await _counterDatedDao.GetCounters(update.Message.Chat.Id, date, N);
 
-            var counters = await _counterDao.GetCountersWithLimit(chatId, N);
+            N = Math.Min(counters.Count(), N);
 
             var userCounters =
                 await Task.WhenAll(counters.Select(async (c) => new
@@ -49,7 +50,7 @@ namespace WordCounterBot.BLL.Contracts
                     (uc.User != null ? uc.User.FirstName + " " + uc.User.LastName : "%Unknown%").Escape(), 
                     uc.Counter));
 
-            var text = await CreateText(result);
+            var text = CreateText(result, date);
 
             await _client.SendTextMessageAsync(
                 update.Message.Chat.Id,
@@ -58,13 +59,13 @@ namespace WordCounterBot.BLL.Contracts
                 parseMode: ParseMode.Html);
         }
 
-        private static Task<string> CreateText(IEnumerable<(string Username, long Counter)> users)
+        private static string CreateText(IEnumerable<(string Username, long Counter)> users, DateTime date)
         {
             var text = new StringBuilder();
 
             var values = users.ToList();
 
-            text.AppendLine($@"Top {values.Count()} counters:");
+            text.AppendLine($@"Top {values.Count()} counters for {date:dd MMMM yyyy}:");
 
             var table = TableGenerator.GenerateNumberedList(
                 values.OrderByDescending(uc => uc.Counter)
@@ -72,7 +73,7 @@ namespace WordCounterBot.BLL.Contracts
 
             text.AppendLine(table);
 
-            return Task.FromResult(text.ToString());
+            return text.ToString();
         }
     }
 }

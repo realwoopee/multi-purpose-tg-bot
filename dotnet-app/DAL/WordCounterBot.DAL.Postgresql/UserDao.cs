@@ -1,7 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Dapper;
 using Npgsql;
-using Telegram.Bot.Types;
 using WordCounterBot.Common.Entities;
 using WordCounterBot.DAL.Contracts;
 
@@ -53,7 +52,7 @@ namespace WordCounterBot.DAL.Postgresql
                     new { user_id = userId });
                 if (result != null)
                 {
-                    return new User()
+                    return new User
                     {
                         Id = (int)result.user_id,
                         FirstName = result.first_name,

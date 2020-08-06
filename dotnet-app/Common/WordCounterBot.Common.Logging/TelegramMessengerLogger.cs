@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using MihaZupan;
 using Telegram.Bot;
 using Telegram.Bot.Types.Enums;
+using WordCounterBot.BLL.Common;
 
 namespace WordCounterBot.Common.Logging
 {
@@ -38,14 +39,14 @@ namespace WordCounterBot.Common.Logging
 
             if (_config.EventId == 0 || _config.EventId == eventId.Id)
             {
-                var message = $"<b>Level</b>: {logLevel}\n" +
-                              $"<b>EventId</b>: {eventId.Id}\n" +
-                              $"<b>LoggerName</b>: {_name}\n" +
-                              $"<b>Error Formatted</b>: {formatter(state, exception)}\n";
+                var message = $"<b>Level</b>: {logLevel.ToString().Escape()}\n" +
+                              $"<b>EventId</b>: {eventId.Id.ToString().Escape()}\n" +
+                              $"<b>LoggerName</b>: {_name.Escape()}\n" +
+                              $"<b>Error Formatted</b>: {formatter(state, exception).Escape()}\n";
                 if (exception != null)
                 {
-                    message += $"<b>Exception message</b>: {exception.Message}\n" +
-                               $"<b>Stack trace</b>: <code>{exception.StackTrace}</code>";
+                    message += $"<b>Exception message</b>: {exception.Message.Escape()}\n" +
+                               $"<b>Stack trace</b>: <code>{exception.StackTrace.Escape()}</code>";
                 }
                 
                 await _botClient.SendTextMessageAsync(_config.UserId, message, ParseMode.Html);

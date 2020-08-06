@@ -58,9 +58,12 @@ namespace WordCounterBot.APIL.WebApi
             services.AddScoped<UserUpdater>();
 
             services.AddScoped<ICounterDao, CounterDao>();
+            services.AddScoped<ICounterDatedDao, CounterDatedDao>();
             services.AddScoped<IUserDao, UserDaoPostgreSQL>();
 
             services.AddTransient<ICommand, GetCountersCommand>();
+            services.AddTransient<ICommand, GetStatsForCurrentDayCommand>();
+            services.AddTransient<ICommand, GetStatsForLastWeekCommand>();
             services.AddTransient<IHandler, CommandExecutor>();
 
             services.AddTransient<IHandler, SystemMessageHandler>();
