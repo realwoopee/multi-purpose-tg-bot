@@ -33,7 +33,9 @@ namespace WordCounterBot.BLL.Contracts
 
         private async Task GetTopNAndRespond(Update update, int N)
         {
-            var counters = await _counterDao.GetCountersWithLimit(update.Message.Chat.Id, N);
+            var chatId = update.Message.Chat.Id;
+
+            var counters = await _counterDao.GetCountersWithLimit(chatId, N);
 
             var userCounters =
                 await Task.WhenAll(counters.Select(async (c) => new
