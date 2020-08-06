@@ -63,6 +63,7 @@ namespace WordCounterBot.APIL.WebApi
 
             services.AddTransient<ICommand, GetCountersCommand>();
             services.AddTransient<ICommand, GetStatsForCurrentDayCommand>();
+            services.AddTransient<ICommand, GetStatsForLastWeekCommand>();
             services.AddTransient<IHandler, CommandExecutor>();
 
             services.AddTransient<IHandler, SystemMessageHandler>();

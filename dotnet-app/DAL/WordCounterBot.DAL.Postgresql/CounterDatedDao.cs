@@ -48,6 +48,7 @@ namespace WordCounterBot.DAL.Postgresql
                                  order by counter desc
                                  limit @userLimit",
                     new { chatId, date, userLimit });
+
                 return result.Select(c => new CounterDated
                 {
                     Date = c.date,
@@ -62,16 +63,18 @@ namespace WordCounterBot.DAL.Postgresql
             }
         }
 
-        public async Task<List<CounterDated>> GetCounters(long chatId, long userId, TimeSpan dateLimit)
+        public async Task<List<CounterDated>> GetCounters(long chatId, DateTime dateFrom, TimeSpan dateLimit, int userLimit)
         {
             var connection = new NpgsqlConnection(_connectionString);
             try
             {
                 await connection.OpenAsync();
                 var result = await connection.QueryAsync($@"select chat_id, user_id, counter, date from counters_dated
-                                 where counters_dated.chat_id = @chatId and counters_dated.user_id = @userId and counters_dated.date > current_date - @dateLimit
-                                 order by date desc, user_id",
-                    new { chatId, userId, dateLimit });
+                                 where counters_dated.chat_id = @chatId and (counters_dated.date between @dateFrom and (@dateFrom + @dateLimit))
+                                 order by date desc, user_id
+                                 limit extract(day from @dateLimit) * @userLimit",
+                    new { chatId, dateFrom, dateLimit, userLimit });
+
                 return result.Select(c => new CounterDated
                 {
                     Date = c.date,
