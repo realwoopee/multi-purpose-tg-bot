@@ -37,61 +37,6 @@ namespace WordCounterBot.DAL.Postgresql
             }
         }
 
-        public async Task AddCounter(long chatId, long userId, DateTime date)
-        {
-            var connection = new NpgsqlConnection(_connectionString);
-            try
-            {
-                await connection.OpenAsync();
-                await connection.ExecuteAsync($@"insert into counters_dated(date, chat_id, user_id, counter)
-                                    values (@date, @chatId, @userId, 0)",
-                    new { date.Date, chatId, userId });
-            }
-            finally
-            {
-                await connection.CloseAsync();
-            }
-        }
-
-        public async Task AddCounter(long chatId, long userId, DateTime date, long counts)
-        {
-            var connection = new NpgsqlConnection(_connectionString);
-            try
-            {
-                await connection.OpenAsync();
-                await connection.ExecuteAsync($@"insert into counters_dated(date, chat_id, user_id, counter)
-                                    values (@date, @chatId, @userId, @counts)",
-                    new { date.Date, chatId, userId, counts });
-            }
-            finally
-            {
-                await connection.CloseAsync();
-            }
-        }
-
-        public async Task<CounterDated> GetCounter(long chatId, long userId, DateTime date)
-        {
-            var connection = new NpgsqlConnection(_connectionString);
-            try
-            {
-                await connection.OpenAsync();
-                var result = await connection.QuerySingleAsync($@"select chat_id, user_id, counter, date from counters_dated
-                                 where counters_dated.chat_id = @chatId and counters_dated.user_id = @userId and counters_dated.date = @date",
-                    new { chatId, userId, date.Date });
-                return new CounterDated
-                {
-                    Date = result.date,
-                    ChatId = result.chat_id,
-                    UserId = result.user_id,
-                    Value = result.counter
-                };
-            }
-            finally
-            {
-                await connection.CloseAsync();
-            }
-        }
-
         public async Task<List<CounterDated>> GetCounters(long chatId, DateTime date, int userLimit)
         {
             var connection = new NpgsqlConnection(_connectionString);
@@ -134,57 +79,6 @@ namespace WordCounterBot.DAL.Postgresql
                     UserId = c.user_id,
                     Value = c.counter
                 }).ToList();
-            }
-            finally
-            {
-                await connection.CloseAsync();
-            }
-        }
-
-        public async Task IncrementCounter(long chatId, long userId, DateTime date)
-        {
-            var connection = new NpgsqlConnection(_connectionString);
-            try
-            {
-                await connection.OpenAsync();
-                await connection.ExecuteAsync($@"update counters_dated
-                                    set counter = counter + 1
-                                 where counters_dated.chat_id = @chatId and counters_dated.user_id = @userId and counters_dated.date = @date",
-                    new { chatId, userId, date });
-            }
-            finally
-            {
-                await connection.CloseAsync();
-            }
-        }
-
-        public async Task IncrementCounter(long chatId, long userId, DateTime date, long counts)
-        {
-            var connection = new NpgsqlConnection(_connectionString);
-            try
-            {
-                await connection.OpenAsync();
-                await connection.ExecuteAsync($@"update counters_dated
-                                    set counter = counter + @counts
-                                 where counters_dated.chat_id = @chatId and counters_dated.user_id = @userId and counters_dated.date = @date",
-                    new { chatId, userId, date, counts });
-            }
-            finally
-            {
-                await connection.CloseAsync();
-            }
-        }
-
-        public async Task<bool> CheckCounter(long chatId, long userId, DateTime date)
-        {
-            var connection = new NpgsqlConnection(_connectionString);
-            try
-            {
-                await connection.OpenAsync();
-                return await connection.QuerySingleAsync<bool>($@"select exists(
-                                     select 1 from counters_dated
-                                     where counters_dated.chat_id = @chatId and counters_dated.user_id = @userId and counters_dated.date = @date)",
-                    new { chatId, userId, date });
             }
             finally
             {
