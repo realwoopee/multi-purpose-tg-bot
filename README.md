@@ -44,6 +44,7 @@ SSLCertPath=ssl.pem # path to SSL certificate that will be sent to telegram (see
 UseSocks5=false # should bot use a socks5 proxy when sending requests to telegram or not
 Socks5Host=[your_host] # IP of the socks5 proxy
 Socks5Port=[your_port] # port of the socks5 proxy
+UserToLog=[user_id] # a telegram user id used for logging
 ```
 ## 4. Deploy
 ### 4.1 Using docker-compose
