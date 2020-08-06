@@ -34,5 +34,7 @@ namespace WordCounterBot.DAL.Contracts
         Task<List<Counter>> GetCountersWithLimit(long chatId, int limit);
 
         Task<bool> CheckCounter(long chatId, long userId);
+
+        Task UpdateElseCreateCounter(long chatId, long userId, long counts);
     }
 }

@@ -19,10 +19,10 @@ namespace WordCounterBot.BLL.Core.Controllers
         }
 
         public async  Task<bool> IsHandable(Update update) =>
-            await Task.Run(() => 
-                (update.Message?.Text != null 
-                    && !update.Message.Text.StartsWith('/'))
-                 || update.Message?.Caption != null);
+            await Task.Run(() =>
+                update.Message?.ForwardFrom == null && update.Message?.ForwardFromChat == null 
+                && update.Message?.Text != null && !update.Message.Text.StartsWith('/')
+                || update.Message?.Caption != null);
 
         public async Task HandleUpdate(Update update)
         {
@@ -30,38 +30,18 @@ namespace WordCounterBot.BLL.Core.Controllers
             var userId = update.Message.From.Id;
             var text = update.Message.Text ?? update.Message.Caption;
             var wordsCount = WordCounterUtil.CountWords(text);
+            var currDate = update.Message.Date.Date;
 
-            if (await _counterDao.CheckCounter(chatId, userId))
-            {
-                await _counterDao.IncrementCounter(
+            await _counterDao.UpdateElseCreateCounter(
                         chatId,
                         userId,
                         wordsCount);
-            }
-            else
-            {
-                await _counterDao.AddCounter(
-                        chatId,
-                        userId,
-                        wordsCount);
-            }
 
-            if (await _counterDatedDao.CheckCounter(chatId, userId, DateTime.Today))
-            {
-                await _counterDatedDao.IncrementCounter(
+            await _counterDatedDao.UpdateElseCreateCounter(
                     chatId,
                     userId,
-                    DateTime.Today,
+                    currDate,
                     wordsCount);
-            }
-            else
-            {
-                await _counterDatedDao.AddCounter(
-                    chatId,
-                    userId,
-                    DateTime.Today,
-                    wordsCount);
-            }
         }
     }
 }

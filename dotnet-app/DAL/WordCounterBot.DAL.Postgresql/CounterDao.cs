@@ -17,6 +17,24 @@ namespace WordCounterBot.DAL.Postgresql
             _connectionString = appConfig.DbConnectionString;
         }
 
+        public async Task UpdateElseCreateCounter(long chatId, long userId, long counts)
+        {
+            var connection = new NpgsqlConnection(_connectionString);
+            try
+            {
+                await connection.OpenAsync();
+                await connection.ExecuteAsync($@"insert into counters(chat_id, user_id, counter)
+                                    values (@chatId, @userId, @counts)
+                                    on conflict (chat_id, user_id) do update
+                                    set counter = counters.counter + @counts",
+                    new { chatId, userId, counts });
+            }
+            finally
+            {
+                await connection.CloseAsync();
+            }
+        }
+
         public async Task AddCounter(long chatId, long userId)
         {
             var connection = new NpgsqlConnection(_connectionString);
@@ -106,12 +124,11 @@ namespace WordCounterBot.DAL.Postgresql
             try
             {
                 await connection.OpenAsync();
-                var result = await connection.QuerySingleAsync($@"select id, chat_id, user_id, counter from counters
+                var result = await connection.QuerySingleAsync($@"select chat_id, user_id, counter from counters
                                  where counters.chat_id = @chatId and counters.user_id = @userId",
                     new { chatId, userId });
                 return new Counter
                 {
-                    Id = result.id,
                     ChatId = result.chat_id,
                     UserId = result.user_id,
                     Value = result.counter
@@ -129,13 +146,12 @@ namespace WordCounterBot.DAL.Postgresql
             try
             {
                 await connection.OpenAsync();
-                var result = await connection.QueryAsync($@"select id, chat_id, user_id, counter from counters
+                var result = await connection.QueryAsync($@"select chat_id, user_id, counter from counters
                                      where counters.chat_id = @chatId
                                      order by counter desc",
                     new { chatId });
                 return result.Select(c => new Counter
                     {
-                        Id = c.id,
                         ChatId = c.chat_id,
                         UserId = c.user_id,
                         Value = c.counter
@@ -154,7 +170,7 @@ namespace WordCounterBot.DAL.Postgresql
             try
             {
                 await connection.OpenAsync();
-                var result = await connection.QueryAsync($@"select id, chat_id, user_id, counter from counters
+                var result = await connection.QueryAsync($@"select chat_id, user_id, counter from counters
                                      where counters.chat_id = @chatId
                                      order by counter desc
                                      limit @limit",
@@ -162,7 +178,6 @@ namespace WordCounterBot.DAL.Postgresql
 
                 return result.Select(c => new Counter
                     {
-                        Id = c.id,
                         ChatId = c.chat_id,
                         UserId = c.user_id,
                         Value = c.counter

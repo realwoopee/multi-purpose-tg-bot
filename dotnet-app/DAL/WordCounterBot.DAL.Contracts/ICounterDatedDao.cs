@@ -23,5 +23,7 @@ namespace WordCounterBot.DAL.Contracts
         Task<List<CounterDated>> GetCounters(long chatId, long userId, TimeSpan dateLimit);
 
         Task<bool> CheckCounter(long chatId, long userId, DateTime date);
+
+        Task UpdateElseCreateCounter(long chatId, long userId, DateTime date, long counts);
     }
 }
