@@ -70,7 +70,7 @@ namespace WordCounterBot.DAL.Postgresql
             {
                 await connection.OpenAsync();
                 var result = await connection.QueryAsync($@"select chat_id, user_id, counter, date from counters_dated
-                                 where counters_dated.chat_id = @chatId and (counters_dated.date between @dateFrom and (@dateFrom + @dateLimit))
+                                 where counters_dated.chat_id = @chatId and (counters_dated.date between (@dateFrom - @dateLimit) and @dateFrom)
                                  order by date desc, user_id
                                  limit extract(day from @dateLimit) * @userLimit",
                     new { chatId, dateFrom, dateLimit, userLimit });
