@@ -14,32 +14,29 @@ namespace WordCounterBot.BLL.Core
     public class UpdateRouter : IRouter
     {
         private readonly ILogger _logger;
-        private readonly UserUpdater _userUpdater;
 
-        public IEnumerable<IHandler> Handlers { get; set; }
-        public IHandler DefaultHandler { get; set; }
+        public IEnumerable<IHandler> Handlers { get; }
 
-        public UpdateRouter(ILogger<UpdateRouter> logger, IEnumerable<IHandler> handlers, DefaultHandler defaultHandler, UserUpdater userUpdater)
+        public UpdateRouter(ILogger<UpdateRouter> logger, IEnumerable<IHandler> handlers)
         {
             _logger = logger;
             Handlers = handlers;
-            DefaultHandler = defaultHandler;
-            _userUpdater = userUpdater;
         }
 
         public async Task Route(Update update)
         {
+            var handled = false;
+
             try
             {
-                await _userUpdater.Update(update.Message?.From);
                 foreach (var handler in Handlers)
                 {
                     if (await handler.IsHandable(update))
                     {
                         _logger.LogInformation(
-                            $"Update \"{JsonConvert.SerializeObject(update, Formatting.Indented)}\" matched with {handler.GetType()} handler");
+                            $"Update\n\"{JsonConvert.SerializeObject(update, Formatting.Indented)}\"\nMatched with {handler.GetType()} handler.");
                         await handler.HandleUpdate(update);
-                        return;
+                        handled = true;
                     }
                 }
             }
@@ -55,17 +52,12 @@ namespace WordCounterBot.BLL.Core
                     $"Error during routing: {ex.Message};\nUpdate: {JsonConvert.SerializeObject(update, Formatting.Indented)}");
                 throw;
             }
-            //No filtered controller has matched
 
-            if (DefaultHandler != null)
+            if (!handled)
             {
-                await DefaultHandler.HandleUpdate(update);
-                return;
+                _logger.LogInformation(
+                    $"No handlers have handled that message:\n{JsonConvert.SerializeObject(update, Formatting.Indented)}");
             }
-            //No default controller
-
-            _logger.LogError($"Error during routing: Controller for that update was not found. Default controller is not specified.");
-            throw new InvalidOperationException("Controller for that update was not found. Default controller is not specified.");
         }
     }
 }

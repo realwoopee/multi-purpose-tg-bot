@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Telegram.Bot.Types;
+using WordCounterBot.Common.Entities;
 using WordCounterBot.DAL.Contracts;
 
 namespace WordCounterBot.DAL.Memory
@@ -18,6 +18,11 @@ namespace WordCounterBot.DAL.Memory
             }
 
             return Task.CompletedTask;
+        }
+
+        async Task<User> IUserDao.GetUserById(long userId)
+        {
+            return await GetUserById(userId);
         }
 
         public Task<User> GetUserById(long userId)

@@ -55,7 +55,6 @@ namespace WordCounterBot.APIL.WebApi
             services.AddSingleton(_appConfig);
 
             services.AddSingleton(_botClient);
-            services.AddScoped<UserUpdater>();
 
             services.AddScoped<ICounterDao, CounterDao>();
             services.AddScoped<ICounterDatedDao, CounterDatedDao>();
@@ -68,7 +67,7 @@ namespace WordCounterBot.APIL.WebApi
 
             services.AddTransient<IHandler, SystemMessageHandler>();
             services.AddTransient<IHandler, WordCounter>();
-            services.AddTransient<DefaultHandler>();
+            services.AddTransient<IHandler, UserInfoHandler>();
 
             services.AddScoped<IRouter, UpdateRouter>();
 
@@ -93,8 +92,10 @@ namespace WordCounterBot.APIL.WebApi
             {
                 app.UseDeveloperExceptionPage();
             }
-
-            app.UseHttpsRedirection();
+            else
+            {
+                app.UseHttpsRedirection();
+            }
 
             app.UseRouting();
 
