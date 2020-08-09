@@ -1,31 +1,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WordCounterBot.Common.Entities;
 using WordCounterBot.DAL.Contracts;
 
 namespace WordCounterBot.DAL.Memory
 {
-    internal class Counter
-    {
-        public long ChatId { get; set; }
-        public long UserId { get; set; }
-        public long Value { get; set; }
-
-        public Counter(long chatId, long userId, long value)
-        {
-            this.ChatId = chatId;
-            this.UserId = userId;
-            this.Value = value;
-        }
-    }
-
     public class CounterDao : ICounterDao
     {
         private readonly List<Counter> _counters = new List<Counter>();
 
         private Task Add(long chatId, long userId, long value)
         {
-            _counters.Add(new Counter(chatId, userId, value));
+            _counters.Add(new Counter{ ChatId = chatId, UserId =  userId, Value = value });
             return Task.CompletedTask;
         }
 
@@ -39,61 +26,27 @@ namespace WordCounterBot.DAL.Memory
             return Task.CompletedTask;
         }
 
-        public async Task AddCounter(long chatId, long userId) => 
-            await Add(chatId, userId, 0);
-        
-        public async Task AddCounter(long chatId, long userId, long value) => 
-            await Add(chatId, userId, value);
-
-        public Task IncrementCounter(long chatId, long userId)
-            => Increment(chatId, userId, 1);
-
-        public Task IncrementCounter(long chatId, long userId, long value)
-            => Increment(chatId, userId, value);
-
-        public Task ResetCounter(long chatId, long userId)
+        public async Task UpdateElseCreateCounter(long chatId, long userId, long counts)
         {
-            var counter = _counters
-                .First(c => 
-                    c.ChatId == chatId 
-                    && c.UserId == userId);
-            counter.Value = 0;
-            return Task.CompletedTask;
+            if (_counters.Any(c => c.ChatId == chatId && c.UserId == userId))
+            {
+                await Increment(chatId, userId, counts);
+            }
+            else
+            {
+                await Add(chatId, userId, counts);
+            }
         }
 
-        public Task<long> GetCounter(long chatId, long userId)
-        {
-            var counter = _counters
-                .First(c => 
-                    c.ChatId == chatId 
-                    && c.UserId == userId);
-            return Task.FromResult(counter.Value);
-        }
-
-        public Task<List<(long userId, long counter)>> GetCounters(long chatId)
+        public Task<List<Counter>> GetCountersWithLimit(long chatId, int limit = 10)
         {
             var values = _counters
                 .Where(c => c.ChatId == chatId)
-                .Select(c => (c.UserId, c.Value))
-                .ToList();
-            return Task.FromResult(values);
-        }
-
-        public Task<List<(long userId, long counter)>> GetCountersWithLimit(long chatId, int limit)
-        {
-            var values = _counters
-                .Where(c => c.ChatId == chatId)
-                .Select(c => (c.UserId, c.Value))
+                .OrderByDescending(c => c.Value)
                 .Take(limit)
                 .ToList();
-            return Task.FromResult(values);
-        }
 
-        public Task<bool> CheckCounter(long chatId, long userId)
-        {
-            var exists = _counters
-                .Any(c => c.ChatId == chatId && c.UserId == userId);
-            return Task.FromResult(exists);
+            return Task.FromResult(values);
         }
     }
 }
