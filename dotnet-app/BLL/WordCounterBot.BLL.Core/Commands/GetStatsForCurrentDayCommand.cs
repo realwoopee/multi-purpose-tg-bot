@@ -36,8 +36,6 @@ namespace WordCounterBot.BLL.Contracts
             var date = update.Message.Date.Date;
             var counters = await _counterDatedDao.GetCounters(update.Message.Chat.Id, date, N);
 
-            N = Math.Min(counters.Count(), N);
-
             var userCounters =
                 await Task.WhenAll(counters.Select(async (c) => new
                 {

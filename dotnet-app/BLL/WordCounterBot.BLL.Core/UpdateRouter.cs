@@ -15,7 +15,7 @@ namespace WordCounterBot.BLL.Core
     {
         private readonly ILogger _logger;
 
-        public IEnumerable<IHandler> Handlers { get;}
+        public IEnumerable<IHandler> Handlers { get; }
 
         public UpdateRouter(ILogger<UpdateRouter> logger, IEnumerable<IHandler> handlers)
         {
