@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Text;
-
-namespace WordCounterBot.Common.Entities
+﻿namespace WordCounterBot.Common.Entities
 {
     public class Counter
     {

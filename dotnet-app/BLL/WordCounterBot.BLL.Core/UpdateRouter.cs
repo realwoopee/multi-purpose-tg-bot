@@ -5,9 +5,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Telegram.Bot.Exceptions;
 using Telegram.Bot.Types;
-using WordCounterBot.BLL.Common;
 using WordCounterBot.BLL.Contracts;
-using WordCounterBot.BLL.Core.Controllers;
 
 namespace WordCounterBot.BLL.Core
 {
