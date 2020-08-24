@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Telegram.Bot.Types;
 using WordCounterBot.BLL.Common;
 using WordCounterBot.BLL.Contracts;

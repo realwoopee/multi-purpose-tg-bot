@@ -1,4 +1,3 @@
-using System;
 using System.Net;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -6,12 +5,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Console;
-using Microsoft.Extensions.Options;
 using MihaZupan;
 using Telegram.Bot;
 using Telegram.Bot.Types.InputFiles;
-using WordCounterBot.BLL.Common;
 using WordCounterBot.BLL.Contracts;
 using WordCounterBot.BLL.Core;
 using WordCounterBot.BLL.Core.Controllers;

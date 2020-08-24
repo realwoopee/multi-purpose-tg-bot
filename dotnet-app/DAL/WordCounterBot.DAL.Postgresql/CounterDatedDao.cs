@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Dapper;
 using Npgsql;
@@ -63,17 +62,17 @@ namespace WordCounterBot.DAL.Postgresql
             }
         }
 
-        public async Task<List<CounterDated>> GetCounters(long chatId, DateTime dateFrom, TimeSpan dateLimit, int userLimit)
+        public async Task<List<CounterDated>> GetCounters(long chatId, DateTime startDate, DateTime endDate, int userLimit)
         {
             var connection = new NpgsqlConnection(_connectionString);
             try
             {
                 await connection.OpenAsync();
                 var result = await connection.QueryAsync($@"select chat_id, user_id, counter, date from counters_dated
-                                 where counters_dated.chat_id = @chatId and (counters_dated.date between (@dateFrom - @dateLimit) and @dateFrom)
+                                 where counters_dated.chat_id = @chatId and (counters_dated.date between @startDate and @endDate)
                                  order by date desc, user_id
-                                 limit extract(day from @dateLimit) * @userLimit",
-                    new { chatId, dateFrom, dateLimit, userLimit });
+                                 limit (EXTRACT(epoch FROM (@endDate - @startDate))/86400::int + 1) * @userLimit",
+                    new { chatId, startDate, endDate, userLimit });
 
                 return result.Select(c => new CounterDated
                 {
