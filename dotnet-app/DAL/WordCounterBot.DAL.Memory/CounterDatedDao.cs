@@ -43,7 +43,7 @@ namespace WordCounterBot.DAL.Memory
             var values = _counters
                 .Where(c => c.ChatId == chatId && c.Date >= startDate.Date  && c.Date <= endDate.Date)
                 .OrderByDescending(c => c.Date)
-                .Take(userLimit * (int)((endDate - startDate).TotalDays) + 1)
+                .Take(userLimit * ((int)(endDate - startDate).TotalDays + 1))
                 .ToList();
 
             return Task.FromResult(values);
