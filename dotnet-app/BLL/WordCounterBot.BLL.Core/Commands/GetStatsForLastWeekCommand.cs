@@ -37,7 +37,7 @@ namespace WordCounterBot.BLL.Contracts
             var chatId = update.Message.Chat.Id;
             var dateLimit = TimeSpan.FromDays(7);
 
-            var counters = await _counterDatedDao.GetCounters(chatId, msgDate, dateLimit, N);
+            var counters = await _counterDatedDao.GetCounters(chatId, msgDate - new TimeSpan(6, 0, 0, 0), msgDate, N);
 
             var countersSummed = counters.GroupBy(c => (c.ChatId, c.UserId))
                                          .Select(g => (g.Key, g.Sum(c => c.Value)));

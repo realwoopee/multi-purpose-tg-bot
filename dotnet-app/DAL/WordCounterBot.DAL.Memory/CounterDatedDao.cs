@@ -38,12 +38,12 @@ namespace WordCounterBot.DAL.Memory
             return Task.FromResult(values);
         }
 
-        public Task<List<CounterDated>> GetCounters(long chatId, DateTime dateFrom, TimeSpan dateLimit, int userLimit)
+        public Task<List<CounterDated>> GetCounters(long chatId, DateTime startDate, DateTime endDate, int userLimit)
         {
             var values = _counters
-                .Where(c => c.ChatId == chatId && c.Date >= dateFrom.Date - dateLimit && c.Date <= dateFrom)
+                .Where(c => c.ChatId == chatId && c.Date >= startDate.Date  && c.Date <= endDate.Date)
                 .OrderByDescending(c => c.Date)
-                .Take(userLimit * (int)dateLimit.TotalDays)
+                .Take(userLimit * (int)((endDate - startDate).TotalDays) + 1)
                 .ToList();
 
             return Task.FromResult(values);
