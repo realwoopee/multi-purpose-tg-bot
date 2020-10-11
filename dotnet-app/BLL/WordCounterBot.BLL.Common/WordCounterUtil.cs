@@ -7,7 +7,7 @@ namespace WordCounterBot.BLL.Common
     {
         public static int CountWords(string text)
         {
-            var regex = new Regex(@"\S+", RegexOptions.Compiled);
+            var regex = new Regex(@"\w+", RegexOptions.Compiled);
 
             var matchesCount = regex.Matches(text).Count;
 
