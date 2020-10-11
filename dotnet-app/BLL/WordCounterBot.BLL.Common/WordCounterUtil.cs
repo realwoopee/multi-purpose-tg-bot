@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace WordCounterBot.BLL.Common
 {
@@ -6,9 +7,11 @@ namespace WordCounterBot.BLL.Common
     {
         public static int CountWords(string text)
         {
-            return text
-                .Split(' ')
-                .Count(s => !string.IsNullOrEmpty(s));
+            var regex = new Regex(@"\S+", RegexOptions.Compiled);
+
+            var matchesCount = regex.Matches(text).Count;
+
+            return matchesCount;
         }
     }
 }
