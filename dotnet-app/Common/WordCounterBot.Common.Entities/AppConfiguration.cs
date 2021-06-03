@@ -31,10 +31,10 @@ namespace WordCounterBot.Common.Entities
             TelegramToken = configuration["TgToken"];
             WebhookUrl = new Uri(configuration["WebhookUrl"]);
             SSLCertPath = configuration["SSLCertPath"];
-            UseSocks5 = bool.Parse(configuration["UseSocks5"]);
+            UseSocks5 = configuration.GetValue<bool>("UseSocks5");
             Socks5Host = configuration["Socks5Host"];
-            Socks5Port = int.Parse(configuration["Socks5Port"], new NumberFormatInfo());
-            UserIdForLogger = int.Parse(configuration["UserToLog"], new NumberFormatInfo());
+            Socks5Port = configuration.GetValue<int>("Socks5Port");
+            UserIdForLogger = configuration.GetValue<int>("UserToLog");
         }
     }
 }

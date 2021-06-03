@@ -7,7 +7,7 @@ namespace WordCounterBot.BLL.Core.Controllers
     public class DefaultHandler : IHandler
     {
         public async Task<bool> IsHandable(Update update) => 
-            await Task.Run(() => true);
+            await Task.FromResult(false);
 
         public async Task HandleUpdate(Update update) => 
             await Task.CompletedTask;

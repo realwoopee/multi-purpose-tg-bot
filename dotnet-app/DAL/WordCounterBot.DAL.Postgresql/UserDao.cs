@@ -70,5 +70,36 @@ namespace WordCounterBot.DAL.Postgresql
                 await connection.CloseAsync();
             }
         }
+
+        public async Task<User> GetUserByUserName(string username)
+        {
+            var connection = new NpgsqlConnection(_connectionString);
+            try
+            {
+                await connection.OpenAsync();
+                var result = await connection.QuerySingleOrDefaultAsync(
+                    @"select * from users where LOWER(user_name) = LOWER(@user_name)",
+                    new {user_name = username});
+                
+                if (result != null)
+                {
+                    return new User
+                    {
+                        Id = (int) result.user_id,
+                        FirstName = result.first_name,
+                        LastName = result.last_name,
+                        Username = result.user_name
+                    };
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            finally
+            {
+                await connection.CloseAsync();
+            }
+        }
     }
 }

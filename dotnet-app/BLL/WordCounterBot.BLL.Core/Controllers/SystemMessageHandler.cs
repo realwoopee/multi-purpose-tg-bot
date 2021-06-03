@@ -40,18 +40,26 @@ namespace WordCounterBot.BLL.Core.Controllers
                         replyToMessageId: update.Message.MessageId);
                     break;
                 case MessageType.ChatTitleChanged:
+                    await _client.SendTextMessageAsync(update.Message.Chat.Id, @"Прошлое название было лучше!",
+                        replyToMessageId: update.Message.MessageId);
+                    break;
                 case MessageType.ChatPhotoChanged:
+                    await _client.SendTextMessageAsync(update.Message.Chat.Id, @"Чё за хуй на аве? Верните старую.",
+                        replyToMessageId: update.Message.MessageId);
+                    break;
                 case MessageType.MessagePinned:
+                    await _client.SendTextMessageAsync(update.Message.Chat.Id, @"Заебали эти пины с нотифаем",
+                        replyToMessageId: update.Message.MessageId);
+                    break;
                 case MessageType.ChatPhotoDeleted:
                 case MessageType.GroupCreated:
                 case MessageType.SupergroupCreated:
                 case MessageType.ChannelCreated:
                 case MessageType.MigratedToSupergroup:
                 case MessageType.MigratedFromGroup:
+                default:
                     await Task.CompletedTask;
                     break;
-                default:
-                    throw new ArgumentOutOfRangeException();
             }
         }
     }

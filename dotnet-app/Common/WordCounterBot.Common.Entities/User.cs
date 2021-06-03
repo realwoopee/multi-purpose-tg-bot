@@ -20,5 +20,7 @@ namespace WordCounterBot.Common.Entities
             LastName = user.LastName;
             Username = user.Username;
         }
+
+        public string GetFullName() => $@"{this.FirstName} {this.LastName}";
     }
 }

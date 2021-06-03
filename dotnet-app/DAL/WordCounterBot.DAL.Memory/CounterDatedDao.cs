@@ -60,5 +60,20 @@ namespace WordCounterBot.DAL.Memory
                 await Add(chatId, userId, counts, date.Date);
             }
         }
+
+        public async Task<List<CounterDated>> GetPersonalCounters(long chatId, long userId, DateTime startDate, DateTime endDate)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<List<CounterDated>> GetPersonalCounters(long chatId, long userId, DateTime date)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<CounterDated> GetPersonalLastCounter(long chatId, long userId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

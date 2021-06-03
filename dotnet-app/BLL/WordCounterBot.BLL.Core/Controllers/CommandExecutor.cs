@@ -17,8 +17,9 @@ namespace WordCounterBot.BLL.Core.Controllers
 
         public async Task<bool> IsHandable(Update update) =>
             await Task.Run(() =>
-                update.Message?.Text != null &&
-                update.Message.Text.StartsWith('/'));
+                update.Message?.ForwardFrom == null && update.Message?.ForwardFromChat == null 
+                && update.Message?.Text != null 
+                && update.Message.Text.StartsWith('/'));
 
         public async Task HandleUpdate(Update update)
         {

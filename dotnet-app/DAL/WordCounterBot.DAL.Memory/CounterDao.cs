@@ -38,6 +38,11 @@ namespace WordCounterBot.DAL.Memory
             }
         }
 
+        public async Task<Counter> GetPersonalCounter(long chatId, long userId)
+        {
+            throw new System.NotImplementedException();
+        }
+
         public Task<List<Counter>> GetCountersWithLimit(long chatId, int limit = 10)
         {
             var values = _counters

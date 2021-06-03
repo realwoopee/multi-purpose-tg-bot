@@ -31,5 +31,12 @@ namespace WordCounterBot.DAL.Memory
 
             return Task.FromResult(user);
         }
+
+        public Task<User> GetUserByUserName(string username)
+        {
+            var user = _users.FirstOrDefault(u => u.Username == username);
+
+            return Task.FromResult(user);
+        }
     }
 }

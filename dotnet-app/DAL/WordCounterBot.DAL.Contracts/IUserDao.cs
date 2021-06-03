@@ -8,5 +8,7 @@ namespace WordCounterBot.DAL.Contracts
         Task UpdateUser(User user);
 
         Task<User> GetUserById(long userId);
+
+        Task<User> GetUserByUserName(string username);
     }
 }
