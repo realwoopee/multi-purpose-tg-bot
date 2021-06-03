@@ -1,10 +1,10 @@
 Multi-purpose Telegram Bot
 ======
 ![](https://img.shields.io/github/v/release/admiralwoop/multi-purpose-tg-bot?include_prereleases&sort=semver)
+[![](https://img.shields.io/badge/docker%20hub-099cec)](https://hub.docker.com/r/admiralwoop/multi-purpose-tg-bot)
+
 ![](https://img.shields.io/github/last-commit/admiralWoop/multi-purpose-tg-bot/master)
 [![](https://www.codefactor.io/repository/github/admiralwoop/multi-purpose-tg-bot/badge)](https://www.codefactor.io/repository/github/admiralwoop/multi-purpose-tg-bot)
-
-[![](https://img.shields.io/badge/docker%20hub-099cec)](https://hub.docker.com/r/admiralwoop/multi-purpose-tg-bot)
 
 **Multi-purpose Telegram Bot** is a telegram bot based on ASP.NET Core & [Telegram.Bot](https://github.com/TelegramBots/Telegram.Bot).
 
