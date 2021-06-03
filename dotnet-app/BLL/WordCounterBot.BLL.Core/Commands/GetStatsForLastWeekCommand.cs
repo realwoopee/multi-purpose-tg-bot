@@ -65,19 +65,9 @@ namespace WordCounterBot.BLL.Contracts
 
         private static string CreateText(IEnumerable<(string Username, long Counter)> users)
         {
-            var text = new StringBuilder();
-
             var values = users.ToList();
 
-            text.AppendLine($@"Top {values.Count()} counters for 7 days:");
-
-            var table = TableGenerator.GenerateNumberedList(
-                values.OrderByDescending(uc => uc.Counter)
-                    .Select(uc => ((object)uc.Username, (object)uc.Counter)));
-
-            text.AppendLine(table);
-
-            return text.ToString();
+            return TableGenerator.GenerateTop($@"Top {values.Count()} counters for last 7 days:", values);
         }
     }
 }

@@ -7,7 +7,7 @@ namespace WordCounterBot.DAL.Contracts
     public interface ICounterDao
     {
         /// <summary>
-        /// Get top N counters for all time from specified chat
+        /// Gets top N counters for all time from specified chat
         /// </summary>
         /// <param name="chatId"></param>
         /// <param name="limit"></param>
@@ -22,5 +22,13 @@ namespace WordCounterBot.DAL.Contracts
         /// <param name="counts"></param>
         /// <returns></returns>
         Task UpdateElseCreateCounter(long chatId, long userId, long counts);
+
+        /// <summary>
+        /// Gets counter for user from specified chat for all time
+        /// </summary>
+        /// <param name="chatId"></param>
+        /// <param name="limit"></param>
+        /// <returns></returns>
+        Task<Counter> GetPersonalCounter(long chatId, long userId);
     }
 }

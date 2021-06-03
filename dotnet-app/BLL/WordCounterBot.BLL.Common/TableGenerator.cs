@@ -22,5 +22,22 @@ namespace WordCounterBot.BLL.Common
 
             return table.ToString();
         }
+
+        public static string GenerateTop(string message, IEnumerable<(string Username, long Counter)> users)
+        {
+            var text = new StringBuilder();
+
+            var values = users.ToList();
+
+            text.AppendLine(message);
+
+            var table = TableGenerator.GenerateNumberedList(
+                values.OrderByDescending(uc => uc.Counter)
+                    .Select(uc => ((object) uc.Username, (object) uc.Counter)));
+
+            text.AppendLine(table);
+
+            return text.ToString();
+        }
     }
 }

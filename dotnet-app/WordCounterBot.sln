@@ -29,6 +29,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WordCounterBot.DAL.Memory",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WordCounterBot.Common.Logging", "Common\WordCounterBot.Common.Logging\WordCounterBot.Common.Logging.csproj", "{69B381ED-E2BD-43F1-AF47-EDC06AE5039F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WordCounterBot.Tests", "WordCounterBot.Tests\WordCounterBot.Tests.csproj", "{A823BAA3-F158-4C33-B47A-B5DF86234BEC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -71,6 +73,10 @@ Global
 		{69B381ED-E2BD-43F1-AF47-EDC06AE5039F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{69B381ED-E2BD-43F1-AF47-EDC06AE5039F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{69B381ED-E2BD-43F1-AF47-EDC06AE5039F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A823BAA3-F158-4C33-B47A-B5DF86234BEC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A823BAA3-F158-4C33-B47A-B5DF86234BEC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A823BAA3-F158-4C33-B47A-B5DF86234BEC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A823BAA3-F158-4C33-B47A-B5DF86234BEC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

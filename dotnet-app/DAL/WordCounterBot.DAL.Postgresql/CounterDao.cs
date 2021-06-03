@@ -23,7 +23,7 @@ namespace WordCounterBot.DAL.Postgresql
             try
             {
                 await connection.OpenAsync();
-                await connection.ExecuteAsync($@"insert into counters(chat_id, user_id, counter)
+                await connection.ExecuteAsync(@"insert into counters(chat_id, user_id, counter)
                                     values (@chatId, @userId, @counts)
                                     on conflict (chat_id, user_id) do update
                                     set counter = counters.counter + @counts",
@@ -41,7 +41,7 @@ namespace WordCounterBot.DAL.Postgresql
             try
             {
                 await connection.OpenAsync();
-                var result = await connection.QueryAsync($@"select chat_id, user_id, counter from counters
+                var result = await connection.QueryAsync(@"select chat_id, user_id, counter from counters
                                      where counters.chat_id = @chatId
                                      order by counter desc
                                      limit @limit",
@@ -54,6 +54,29 @@ namespace WordCounterBot.DAL.Postgresql
                         Value = c.counter
                     })
                     .ToList();
+            }
+            finally
+            {
+                await connection.CloseAsync();
+            }
+        }
+
+        public async Task<Counter> GetPersonalCounter(long chatId, long userId)
+        {
+            var connection = new NpgsqlConnection(_connectionString);
+            try
+            {
+                await connection.OpenAsync();
+                var result = await connection.QuerySingleAsync(@"select chat_id, user_id, counter from counters 
+                                    where chat_id = @chatId and user_id = @userId",
+                    new {chatId, userId});
+
+                return new Counter
+                {
+                    ChatId = result.chat_id,
+                    UserId = result.user_id,
+                    Value = result.counter
+                };
             }
             finally
             {
