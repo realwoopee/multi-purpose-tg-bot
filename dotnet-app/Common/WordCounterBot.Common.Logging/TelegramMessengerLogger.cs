@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net.Http;
 using Microsoft.Extensions.Logging;
 using MihaZupan;
 using Telegram.Bot;
@@ -18,15 +19,19 @@ namespace WordCounterBot.Common.Logging
             _name = name;
             _config = config;
 
-            HttpToSocks5Proxy proxy = null;
             if (_config.UseSocks5)
             {
-                proxy = new HttpToSocks5Proxy(_config.Socks5Host, _config.Socks5Port);
+                var httpClientHandler = new HttpClientHandler
+                {
+                    Proxy = new HttpToSocks5Proxy(_config.Socks5Host, _config.Socks5Port),
+                    UseProxy = true
+                };
+                var httpClient = new HttpClient(httpClientHandler);
+
+                _botClient = new TelegramBotClient(_config.TelegramToken, httpClient);
             }
 
-            _botClient = new TelegramBotClient(
-                _config.TelegramToken,
-                proxy);
+            _botClient = new TelegramBotClient(_config.TelegramToken);
         }
 
         public IDisposable BeginScope<TState>(TState state) => null;
