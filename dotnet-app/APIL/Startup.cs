@@ -1,4 +1,5 @@
 using System.Net;
+using System.Net.Http;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -33,12 +34,17 @@ namespace WordCounterBot.APIL.WebApi
 
             if (_appConfig.UseSocks5)
             {
-                proxy = new HttpToSocks5Proxy(_appConfig.Socks5Host, _appConfig.Socks5Port);
+                var httpClientHandler = new HttpClientHandler
+                {
+                    Proxy = new HttpToSocks5Proxy(_appConfig.Socks5Host, _appConfig.Socks5Port),
+                    UseProxy = true
+                };
+                var httpClient = new HttpClient(httpClientHandler);
+
+                _botClient = new TelegramBotClient(_appConfig.TelegramToken, httpClient);
             }
 
-            _botClient = new TelegramBotClient(
-                _appConfig.TelegramToken,
-                proxy);
+            _botClient = new TelegramBotClient(_appConfig.TelegramToken);
         }
 
         public IConfiguration Configuration { get; }
