@@ -30,8 +30,6 @@ namespace WordCounterBot.APIL.WebApi
 
             _appConfig = new AppConfiguration(Configuration);
 
-            IWebProxy proxy = null;
-
             if (_appConfig.UseSocks5)
             {
                 var httpClientHandler = new HttpClientHandler
