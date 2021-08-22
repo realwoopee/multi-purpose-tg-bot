@@ -65,6 +65,7 @@ namespace WordCounterBot.APIL.WebApi
             services.AddTransient<IHandler, SystemMessageHandler>();
             services.AddTransient<IHandler, WordCounter>();
             services.AddTransient<IHandler, UserInfoHandler>();
+            services.AddTransient<IHandler, StringReplacer>();
 
             services.AddScoped<IRouter, UpdateRouter>();
 
