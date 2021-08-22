@@ -10,24 +10,21 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v2
     - name: Get tag version
       id: get_version
-      run: echo ::set-env name=TAG_NAME::$(echo ${GITHUB_REF/refs\/tags\//})
-    - name: Setup .NET Core SDK
+      run: echo "TAG_NAME=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+    - name: Setup dotnet
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 3.0.100
+        dotnet-version: 5.0.400
     - name: Build .NET Core App
       run: dotnet publish dotnet-app/APIL/WordCounterBot.APIL.WebApi.csproj -c Release -o ./app
     - name: Build & Publish Docker image
       if: success()
-      uses: opspresso/action-docker@v0.2.1
+      uses: opspresso/action-docker@v0.2.17
       env:
         USERNAME: ${{ secrets.DOCKER_USERNAME }}
         PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
         IMAGE_NAME: "admiralwoop/multi-purpose-tg-bot"
         LATEST: "true"
-    - name: Notify MicroBadger
-      if: success()
-      run: curl -X POST https://hooks.microbadger.com/images/admiralwoop/multi-purpose-tg-bot/LPihsqNbWfnJYRdtST6fL5NyRmc=
