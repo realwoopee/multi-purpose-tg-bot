@@ -20,6 +20,6 @@ jobs:
     - name: Setup .NET Core SDK
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 3.0.100
+        dotnet-version: 5.0.0
     - name: Build API layer
       run: dotnet build dotnet-app/APIL/WordCounterBot.APIL.WebApi.csproj -c Release -o ./app
