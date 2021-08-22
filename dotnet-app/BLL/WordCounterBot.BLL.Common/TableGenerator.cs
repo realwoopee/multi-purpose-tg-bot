@@ -31,7 +31,7 @@ namespace WordCounterBot.BLL.Common
 
             text.AppendLine(message);
 
-            var table = TableGenerator.GenerateNumberedList(
+            var table = GenerateNumberedList(
                 values.OrderByDescending(uc => uc.Counter)
                     .Select(uc => ((object) uc.Username, (object) uc.Counter)));
 

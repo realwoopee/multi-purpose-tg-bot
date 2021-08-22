@@ -91,7 +91,7 @@ namespace WordCounterBot.BLL.Contracts
                    $"Total count - 0d{totalCounter} <i>words</i>.\n\n" +
                    $"Today count - 0d{todayCounter} <i>words</i>.\n" +
                    $"This week count - 0d{weekCounter} <i>words</i>.\n" +
-                   $"This motnth count - 0d{monthCounter} <i>words</i>.\n\n" +
+                   $"This month count - 0d{monthCounter} <i>words</i>.\n\n" +
                    $"Last message was on {lastMessageDate:dd MMMM yyyy}\n";
         }
     }
