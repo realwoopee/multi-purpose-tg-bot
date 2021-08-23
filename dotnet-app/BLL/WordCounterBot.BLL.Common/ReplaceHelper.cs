@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -17,6 +18,16 @@ namespace WordCounterBot.BLL.Common
             return pattern.StartsWith("s/") && pattern.Count(x => x == '/') >= 2;
         }
 
+        public static bool IsHandable(List<string> patterns)
+        {
+            return patterns.Any(IsHandable);
+        }
+
+        public static string Replace(string input, List<string> patterns)
+        {
+            return patterns.Aggregate(input, Replace);
+        }
+        
         public static string Replace(string input, string pattern)
         {
             if (!IsHandable(pattern)) 
@@ -45,7 +56,8 @@ namespace WordCounterBot.BLL.Common
 
         private static Options ToOptions(string pattern)
         {
-            var options = pattern.TrimStart('s', '/').Split('/');
+            var options = Regex.Split(pattern.Substring(2), @"(?<!(?<![^\\]\\(?:\\{2}){0,10})\\)/");
+            options = options.Select(x => x.Replace(@"\/", @"/").Replace(@"\\", @"\")).ToArray();
             var regex = options[0];
             var @string = options.Length > 1 ? options[1] : "";
             var flags = options.Length > 2 ? options[2] : "";
