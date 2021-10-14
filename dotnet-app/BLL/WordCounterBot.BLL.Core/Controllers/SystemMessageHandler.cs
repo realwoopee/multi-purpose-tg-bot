@@ -32,11 +32,11 @@ namespace WordCounterBot.BLL.Core.Controllers
             switch (update.Message.Type)
             {
                 case MessageType.ChatMembersAdded:
-                    await _client.SendTextMessageAsync(update.Message.Chat.Id, @"Представься. Особо молчаливых кикаем наххой.",
+                    await _client.SendTextMessageAsync(update.Message.Chat.Id, @"Представься. Особо молчаливых кикаем.",
                         replyToMessageId: update.Message.MessageId);
                     break;
                 case MessageType.ChatMemberLeft:
-                    await _client.SendTextMessageAsync(update.Message.Chat.Id, @"Давай, пиздуй-бороздуй.",
+                    await _client.SendTextMessageAsync(update.Message.Chat.Id, @"Ну и вали.",
                         replyToMessageId: update.Message.MessageId);
                     break;
                 case MessageType.ChatTitleChanged:
@@ -44,11 +44,11 @@ namespace WordCounterBot.BLL.Core.Controllers
                         replyToMessageId: update.Message.MessageId);
                     break;
                 case MessageType.ChatPhotoChanged:
-                    await _client.SendTextMessageAsync(update.Message.Chat.Id, @"Чё за хуй на аве? Верните старую.",
+                    await _client.SendTextMessageAsync(update.Message.Chat.Id, @"Верните старую.",
                         replyToMessageId: update.Message.MessageId);
                     break;
                 case MessageType.MessagePinned:
-                    await _client.SendTextMessageAsync(update.Message.Chat.Id, @"Заебали эти пины с нотифаем",
+                    await _client.SendTextMessageAsync(update.Message.Chat.Id, @"Надоели эти пины с нотифаем",
                         replyToMessageId: update.Message.MessageId);
                     break;
                 case MessageType.ChatPhotoDeleted:
