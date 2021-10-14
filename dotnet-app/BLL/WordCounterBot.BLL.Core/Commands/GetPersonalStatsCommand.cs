@@ -56,7 +56,7 @@ namespace WordCounterBot.BLL.Contracts
         {
             var user = await _userDao.GetUserById(userId);
             if (user == null)
-                return "Какого-то хуя пользователя в базе майора не нашли";
+                return "Пользователя в базе майора не нашли";
 
             return await GetStats(user, update);
         }
@@ -65,7 +65,7 @@ namespace WordCounterBot.BLL.Contracts
         {
             var user = await _userDao.GetUserByUserName(username);
             if (user == null)
-                return "Какого-то хуя пользователя в базе майора не нашли";
+                return "Пользователя в базе майора не нашли";
 
             return await GetStats(user, update);
         }
@@ -87,7 +87,7 @@ namespace WordCounterBot.BLL.Contracts
                 .Sum(c => c.Value);
             var lastMessageDate = (await _counterDatedDao.GetPersonalLastCounter(chatId, user.Id)).Date.Date;
 
-            return $"<b>{user.GetFullName()}</b>\n\nА че это за хуй?\n\n" +
+            return $"<b>{user.GetFullName()}</b>\n\nА че это за чел?\n\n" +
                    $"Total count - 0d{totalCounter} <i>words</i>.\n\n" +
                    $"Today count - 0d{todayCounter} <i>words</i>.\n" +
                    $"This week count - 0d{weekCounter} <i>words</i>.\n" +
