@@ -28,3 +28,11 @@ jobs:
         PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
         IMAGE_NAME: "admiralwoop/multi-purpose-tg-bot"
         LATEST: "true"
+    - name: Deploy on remote
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USER }}
+        key: ${{ secrets.SSH_KEY }}
+        port: ${{ secrets.SSH_PORT }}
+        script: cd multi-purpose-tg-bot && sh update.sh
