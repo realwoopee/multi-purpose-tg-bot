@@ -3,8 +3,7 @@ services:
   bot:
     image: admiralwoop/multi-purpose-tg-bot:latest
     ports:
-      - "443"
-    network_mode: "host"
+      - "443:443"
     env_file: env
     restart: unless-stopped
     secrets:
@@ -12,6 +11,15 @@ services:
         target: /app/ssl.pfx
       - source: bot-ssl-pem
         target: /app/ssl.pem
+  db:
+    image: postgres:14
+    env_file: env
+    ports:
+      - "35432:5432"
+    expose:
+      - 5432
+    volumes:
+      - ./db-data/:/var/lib/postgresql/data/
 secrets:
   bot-ssl-pfx:
     file: ./cert/ssl.pfx
