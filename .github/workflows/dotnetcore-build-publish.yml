@@ -35,4 +35,7 @@ jobs:
         username: ${{ secrets.SSH_USER }}
         key: ${{ secrets.SSH_KEY }}
         port: ${{ secrets.SSH_PORT }}
-        script: cd multi-purpose-tg-bot && sh update.sh
+        script: |
+          cd wcb-bot
+          docker pull admiralwoop/multi-purpose-tg-bot
+          docker-compose up -d
