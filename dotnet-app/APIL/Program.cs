@@ -18,7 +18,7 @@ namespace WordCounterBot.APIL.WebApi
         private static void EnsurePfxCertExists()
         {
             var certbotEnabled =
-                Environment.GetEnvironmentVariable("certbotEnabled") == "true";
+                Environment.GetEnvironmentVariable("CertbotEnabled") == "true";
 
             if (!certbotEnabled)
             {
