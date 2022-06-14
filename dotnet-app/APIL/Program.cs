@@ -20,14 +20,9 @@ namespace WordCounterBot.APIL.WebApi
             var certbotEnabled =
                 Environment.GetEnvironmentVariable("CertbotEnabled") == "true";
 
-            if (!certbotEnabled)
-            {
-                return;
-            }
-
             var pfxFilePath = 
                 Environment.GetEnvironmentVariable("ASPNETCORE_Kestrel__Certificates__Default__Path");
-            var pemCertPath = Environment.GetEnvironmentVariable("SLLCertPath");
+            var pemCertPath = Environment.GetEnvironmentVariable("SSLCertPath");
             var pemKeyPath = Environment.GetEnvironmentVariable("CertKeyPath");
             var certPassword =
                 Environment.GetEnvironmentVariable("ASPNETCORE_Kestrel__Certificates__Default__Password");
@@ -38,7 +33,8 @@ namespace WordCounterBot.APIL.WebApi
                 || string.IsNullOrEmpty(pemCertPath) 
                 || string.IsNullOrEmpty(pemKeyPath) 
                 || string.IsNullOrEmpty(certPassword)
-                || (!string.IsNullOrEmpty(environment) && environment == "development"))
+                || (!string.IsNullOrEmpty(environment) && environment == "development")
+                || !certbotEnabled)
             {
                 Console.WriteLine("Certbot is disabled");
                 return;
