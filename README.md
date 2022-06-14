@@ -6,6 +6,8 @@ Multi-purpose Telegram Bot
 ![](https://img.shields.io/github/last-commit/admiralWoop/multi-purpose-tg-bot/master)
 [![](https://www.codefactor.io/repository/github/admiralwoop/multi-purpose-tg-bot/badge)](https://www.codefactor.io/repository/github/admiralwoop/multi-purpose-tg-bot)
 
+![](https://img.shields.io/endpoint?url=https%3A%2F%2F37-140-199-177.cloudvps.regruhosting.ru%2Fapi%2Ftotal-count)
+
 **Multi-purpose Telegram Bot** is a telegram bot based on ASP.NET Core & [Telegram.Bot](https://github.com/TelegramBots/Telegram.Bot).
 
 The main idea of this bot is use of filter-handler architecture similar to ASP.NET routes and controllers.
