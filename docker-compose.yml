@@ -20,6 +20,16 @@ services:
       - 5432
     volumes:
       - ./db-data/:/var/lib/postgresql/data/
+  certbot:
+    image: jkz0/certbot:latest
+    environment:
+      - ACCOUNT_EMAIL=danilapokhabov@gmail.com
+    ports:
+      - "80:80"
+    volumes:
+      - ./domains.json:/conf
+      - ./cert/:/certs
+    restart: always
 secrets:
   bot-ssl-pfx:
     file: ./cert/ssl.pfx
