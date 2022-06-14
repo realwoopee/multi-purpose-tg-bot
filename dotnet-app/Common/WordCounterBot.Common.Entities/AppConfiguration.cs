@@ -14,6 +14,8 @@ namespace WordCounterBot.Common.Entities
 
         public string SSLCertPath { get; }
 
+        public bool IsSSLCertSelfSigned { get; }
+
         public bool UseSocks5 { get; }
 
         public string Socks5Host { get; }
@@ -35,6 +37,7 @@ namespace WordCounterBot.Common.Entities
             Socks5Host = configuration["Socks5Host"];
             Socks5Port = configuration.GetValue<int>("Socks5Port");
             UserIdForLogger = configuration.GetValue<int>("UserToLog");
+            IsSSLCertSelfSigned = configuration.GetValue<bool>("IsSSLCertSelfSigned");
         }
     }
 }

@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using MihaZupan;
+using Newtonsoft.Json;
 using Telegram.Bot;
 using Telegram.Bot.Types.InputFiles;
 using WordCounterBot.BLL.Contracts;
@@ -110,18 +111,31 @@ namespace WordCounterBot.APIL.WebApi
                 endpoints.MapControllers();
             });
 
-            InputFileStream sslCert = null;
-
-            if (!string.IsNullOrEmpty(_appConfig.SSLCertPath))
+            if (_appConfig.IsSSLCertSelfSigned)
             {
-                sslCert = new InputFileStream(env.ContentRootFileProvider.GetFileInfo(_appConfig.SSLCertPath).CreateReadStream());
+                var certFileInfo = env.ContentRootFileProvider.GetFileInfo(_appConfig.SSLCertPath)
+                InputFileStream sslCert = new InputFileStream(certFileInfo.CreateReadStream());
+
+                _botClient.DeleteWebhookAsync()
+                    .ContinueWith(async (t) =>
+                        await _botClient.SetWebhookAsync(_appConfig.WebhookUrl.ToString(), sslCert))
+                    .ContinueWith((t) =>
+                        logger.LogInformation(
+                            "Set webhook to {Url}, SSL cert is {Cert}", _appConfig.WebhookUrl,
+                            certFileInfo.Name));
+            }
+            else
+            {
+                _botClient.DeleteWebhookAsync()
+                    .ContinueWith(async (t) =>
+                        await _botClient.SetWebhookAsync(_appConfig.WebhookUrl.ToString()))
+                    .ContinueWith((t) =>
+                        logger.LogInformation(
+                            "Set webhook to {Url}", _appConfig.WebhookUrl));
             }
 
-            _botClient.DeleteWebhookAsync()
-                .ContinueWith(async (t) => await _botClient.SetWebhookAsync(_appConfig.WebhookUrl.ToString(), sslCert))
-                .ContinueWith((t) => logger.LogInformation($"Set webhook to {_appConfig.WebhookUrl}, SSL cert is {sslCert?.ToString() ?? "null"}"));
-
-            logger.LogInformation($"Configured HTTP pipeline. AppSettings is {_appConfig}");
+            logger.LogInformation("Configured HTTP pipeline. AppSettings is {Config}", 
+                JsonConvert.SerializeObject(_appConfig, Formatting.Indented));
         }
     }
 }

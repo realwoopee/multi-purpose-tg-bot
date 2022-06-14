@@ -6,6 +6,7 @@
         "DbConnectionString": "",
         "TgToken": "",
         "WebhookUrl": "",
+        "IsSSLCertSelfSigned": false,
         "SSLCertPath": "ssl.pem",
         "UseSocks5": false,
         "Socks5Host": "",

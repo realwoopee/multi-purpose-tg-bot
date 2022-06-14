@@ -25,7 +25,7 @@ namespace WordCounterBot.APIL.WebApi.Controllers
             {
                 schemaVersion = 1,
                 label = "Total word count",
-                message = await _serivce.GetTotalWords(),
+                message = (await _serivce.GetTotalWords()).ToString(),
                 color = "blue"
             });
         }
