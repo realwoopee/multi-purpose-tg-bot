@@ -10,11 +10,11 @@ Multi-purpose Telegram Bot
 
 **Multi-purpose Telegram Bot** is a telegram bot based on ASP.NET Core & [Telegram.Bot](https://github.com/TelegramBots/Telegram.Bot).
 
-The main idea of this bot is use of filter-handler architecture similar to ASP.NET routes and controllers.
+The main idea of this bot is to use filter-handler architecture similar to ASP.NET routes and controllers.
+
+It consists of a single router and many filters that decide what handler will with a received message. Thus handlers have only one responsibility - get some information from the message and do something based on that info.
 
 That way you don't need to put all your logic in a single controller.
-
-What you have is a single router and many filters that decide what handler will with a received message. Thus handlers have only one responsibility - get some information from the message and do something based on that info.
 
 ### Third party libraries
 * [Telegram.Bot library](https://github.com/TelegramBots/Telegram.Bot)
