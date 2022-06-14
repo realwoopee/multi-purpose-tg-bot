@@ -17,13 +17,13 @@ namespace WordCounterBot.BLL.Core.Controllers
             _counterDatedDao = counterDatedDao;
         }
 
-        public async  Task<bool> IsHandable(Update update) =>
+        public async  Task<bool> IsHandleable(Update update) =>
             await Task.Run(() =>
                 update.Message?.ForwardFrom == null && update.Message?.ForwardFromChat == null 
-                && update.Message?.Text != null && !update.Message.Text.StartsWith('/')
+                && update.Message?.Text != null
                 || update.Message?.Caption != null);
 
-        public async Task HandleUpdate(Update update)
+        public async Task<bool> HandleUpdate(Update update)
         {
             var chatId = update.Message.Chat.Id;
             var userId = update.Message.From.Id;
@@ -41,6 +41,8 @@ namespace WordCounterBot.BLL.Core.Controllers
                     userId,
                     currDate,
                     wordsCount);
+
+            return true;
         }
     }
 }

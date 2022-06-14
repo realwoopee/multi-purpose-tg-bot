@@ -29,12 +29,11 @@ namespace WordCounterBot.BLL.Core
             {
                 foreach (var handler in Handlers)
                 {
-                    if (await handler.IsHandable(update))
+                    if (await handler.IsHandleable(update))
                     {
                         _logger.LogInformation(
                             $"Update\n\"{JsonConvert.SerializeObject(update, Formatting.Indented)}\"\nMatched with {handler.GetType()} handler.");
-                        await handler.HandleUpdate(update);
-                        handled = true;
+                        handled = await handler.HandleUpdate(update);
                     }
                 }
             }

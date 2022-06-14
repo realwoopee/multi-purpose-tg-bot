@@ -14,15 +14,16 @@ namespace WordCounterBot.BLL.Core.Controllers
             _userDao = userDao;
         }
 
-        public Task<bool> IsHandable(Update update) => Task.FromResult(true);
+        public Task<bool> IsHandleable(Update update) => Task.FromResult(true);
 
-        public async Task HandleUpdate(Update update)
+        public async Task<bool> HandleUpdate(Update update)
         {
             var user = update.Message?.From;
 
-            if (user == null) return;
+            if (user == null) return false;
 
             await _userDao.UpdateUser(new WordCounterBot.Common.Entities.User(user));
+            return true;
         }
     }
 }

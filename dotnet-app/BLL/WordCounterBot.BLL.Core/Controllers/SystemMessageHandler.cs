@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
+using WordCounterBot.BLL.Common;
 using WordCounterBot.BLL.Contracts;
 
 namespace WordCounterBot.BLL.Core.Controllers
@@ -24,10 +25,10 @@ namespace WordCounterBot.BLL.Core.Controllers
             _client = client;
         }
 
-        public async Task<bool> IsHandable(Update update) =>
-            await Task.Run(() => update.Message != null && _allowedMessageTypes.Contains(update.Message.Type));
+        public async Task<bool> IsHandleable(Update update) =>
+            await Task.Run(() => update.Message != null && update.Message.Type.In(_allowedMessageTypes));
 
-        public async Task HandleUpdate(Update update)
+        public async Task<bool> HandleUpdate(Update update)
         {
             switch (update.Message.Type)
             {
@@ -48,7 +49,7 @@ namespace WordCounterBot.BLL.Core.Controllers
                         replyToMessageId: update.Message.MessageId);
                     break;
                 case MessageType.MessagePinned:
-                    await _client.SendTextMessageAsync(update.Message.Chat.Id, @"Надоели эти пины с нотифаем",
+                    await _client.SendTextMessageAsync(update.Message.Chat.Id, @"Надоели эти пины с нотифаем.",
                         replyToMessageId: update.Message.MessageId);
                     break;
                 case MessageType.ChatPhotoDeleted:
@@ -58,9 +59,11 @@ namespace WordCounterBot.BLL.Core.Controllers
                 case MessageType.MigratedToSupergroup:
                 case MessageType.MigratedFromGroup:
                 default:
-                    await Task.CompletedTask;
+                    return false;
                     break;
             }
+
+            return true;
         }
     }
 }

@@ -6,10 +6,10 @@ namespace WordCounterBot.BLL.Core.Controllers
 {
     public class DefaultHandler : IHandler
     {
-        public async Task<bool> IsHandable(Update update) => 
+        public async Task<bool> IsHandleable(Update update) => 
             await Task.FromResult(false);
 
-        public async Task HandleUpdate(Update update) => 
-            await Task.CompletedTask;
+        public async Task<bool> HandleUpdate(Update update) => 
+            await Task.FromResult(true);
     }
 }

@@ -18,7 +18,7 @@ namespace WordCounterBot.BLL.Core.Controllers
             _client = client;
         }
         
-        public async Task<bool> IsHandable(Update update)
+        public async Task<bool> IsHandleable(Update update)
         {
             var a = update.Message?.Text?.Length > 0
                     && (update.Message?.ReplyToMessage?.Text?.Length > 0
@@ -29,7 +29,7 @@ namespace WordCounterBot.BLL.Core.Controllers
             return ReplaceHelper.IsHandable(patterns);
         }
 
-        public async Task HandleUpdate(Update update)
+        public async Task<bool> HandleUpdate(Update update)
         {
             var input = update.Message.ReplyToMessage.Text ?? update.Message.ReplyToMessage.Caption;
             var patterns = update.Message.Text.Split('\n', '\r').ToList();
@@ -41,12 +41,14 @@ namespace WordCounterBot.BLL.Core.Controllers
                 await _client.SendTextMessageAsync(update.Message.Chat.Id, 
                     reply, 
                     replyToMessageId: update.Message.ReplyToMessage.MessageId);
+                return true;
             }
             catch (RegexParseException e)
             {
                 await _client.SendTextMessageAsync(update.Message.Chat.Id,
                     "Regex parse error",
                     replyToMessageId: update.Message.MessageId);
+                return false;
             }
         }
     }

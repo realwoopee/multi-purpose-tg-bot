@@ -9,7 +9,7 @@ namespace WordCounterBot.Tests
         [Fact]
         public void Test()
         {
-            var text = "Красная собака поймала синюю (лису) ( ).\n The red dog catched a blue fox.";
+            var text = "РљСЂР°СЃРЅР°СЏ СЃРѕР±Р°РєР° РїРѕР№РјР°Р»Р° СЃРёРЅСЋСЋ (Р»РёСЃСѓ) ( ).\n The red dog catched a blue fox.";
 
             Assert.Equal(12, WordCounterUtil.CountWords(text));
         }

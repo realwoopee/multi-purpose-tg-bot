@@ -15,13 +15,13 @@ namespace WordCounterBot.BLL.Core.Controllers
             _commands = commands;
         }
 
-        public async Task<bool> IsHandable(Update update) =>
+        public async Task<bool> IsHandleable(Update update) =>
             await Task.Run(() =>
                 update.Message?.ForwardFrom == null && update.Message?.ForwardFromChat == null 
                 && update.Message?.Text != null 
                 && update.Message.Text.StartsWith('/'));
 
-        public async Task HandleUpdate(Update update)
+        public async Task<bool> HandleUpdate(Update update)
         {
             var text = update.Message.Text.Substring(1);
             var name = text.Split(' ', '@').First();
@@ -29,12 +29,13 @@ namespace WordCounterBot.BLL.Core.Controllers
 
             foreach (var command in _commands)
             {
-                if (name == command.Name)
-                {
-                    await command.Execute(update, name, args);
-                    return;
-                }
+                if (name != command.Name) continue;
+                
+                await command.Execute(update, name, args);
+                return true;
             }
+
+            return false;
         }
     }
 }
