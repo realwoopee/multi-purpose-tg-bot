@@ -4,8 +4,8 @@ on:
   push:
     branches: [ master ]
     paths:
-      - 'dotnet-app/*'
-      - '.github/workflows/*'
+      - 'dotnet-app/**'
+      - '.github/workflows/**'
       - 'Dockerfile'
       - '.dockerignore'
       - '.gitignore'
