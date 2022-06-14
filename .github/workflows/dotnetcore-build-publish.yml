@@ -32,6 +32,7 @@ jobs:
       with:
         images: admiralwoop/multi-purpose-tg-bot
         tags: |
+          type=raw,value=latest
           type=ref,event=branch,suffix=-{{sha}}
           type=semver,pattern={{version}}
 
@@ -59,4 +60,4 @@ jobs:
           script: |
             cd wcb-bot
             docker pull admiralwoop/multi-purpose-tg-bot
-            docker-compose up -d
+            docker compose up -d
