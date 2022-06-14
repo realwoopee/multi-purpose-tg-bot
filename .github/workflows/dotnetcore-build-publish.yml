@@ -67,5 +67,5 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           script: |
             cd wcb-bot
-            docker pull admiralwoop/multi-purpose-tg-bot
-            docker compose up -d
+            docker compose pull
+            docker compose up --force-recreate -d
