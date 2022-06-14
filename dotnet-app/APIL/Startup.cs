@@ -113,8 +113,8 @@ namespace WordCounterBot.APIL.WebApi
 
             if (_appConfig.IsSSLCertSelfSigned)
             {
-                var certFileInfo = env.ContentRootFileProvider.GetFileInfo(_appConfig.SSLCertPath)
-                InputFileStream sslCert = new InputFileStream(certFileInfo.CreateReadStream());
+                var certFileInfo = env.ContentRootFileProvider.GetFileInfo(_appConfig.SSLCertPath);
+                var sslCert = new InputFileStream(certFileInfo.CreateReadStream());
 
                 _botClient.DeleteWebhookAsync()
                     .ContinueWith(async (t) =>
