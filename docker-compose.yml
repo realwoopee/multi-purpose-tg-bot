@@ -6,11 +6,8 @@ services:
       - "443:443"
     env_file: env
     restart: unless-stopped
-    secrets:
-      - source: bot-ssl-pfx
-        target: /app/ssl.pfx
-      - source: bot-ssl-pem
-        target: /app/ssl.pem
+    volumes:
+      - ./cert/:/app/cert
   db:
     image: postgres:14
     env_file: env
@@ -24,14 +21,10 @@ services:
     image: jkz0/certbot:latest
     environment:
       - ACCOUNT_EMAIL=your.email@example.com
+      #- RUN_ONCE=true 
     ports:
       - "80:80"
     volumes:
       - ./domains.json:/conf
       - ./cert/:/certs
     restart: always
-secrets:
-  bot-ssl-pfx:
-    file: ./cert/ssl.pfx
-  bot-ssl-pem:
-    file: ./cert/ssl.pem
