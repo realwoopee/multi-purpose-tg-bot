@@ -40,6 +40,7 @@ namespace WordCounterBot.APIL.WebApi
                 || string.IsNullOrEmpty(certPassword)
                 || (!string.IsNullOrEmpty(environment) && environment == "development"))
             {
+                Console.WriteLine("Certbot is disabled");
                 return;
             }
 
@@ -50,6 +51,8 @@ namespace WordCounterBot.APIL.WebApi
                 if (File.Exists(pfxFilePath))
                 {
                     certificateExists = true;
+
+                    Console.WriteLine("Pfx file has been created");
                     continue;
                 }
 
