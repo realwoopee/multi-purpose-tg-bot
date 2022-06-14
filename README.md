@@ -4,6 +4,7 @@ Multi-purpose Telegram Bot
 [![](https://img.shields.io/badge/docker%20hub-099cec)](https://hub.docker.com/r/admiralwoop/multi-purpose-tg-bot)
 
 ![](https://img.shields.io/github/last-commit/admiralWoop/multi-purpose-tg-bot/master)
+[![Build & Publish](https://github.com/admiralWoop/multi-purpose-tg-bot/actions/workflows/dotnetcore-build-publish.yml/badge.svg?branch=master)](https://github.com/admiralWoop/multi-purpose-tg-bot/actions/workflows/dotnetcore-build-publish.yml)
 [![](https://www.codefactor.io/repository/github/admiralwoop/multi-purpose-tg-bot/badge)](https://www.codefactor.io/repository/github/admiralwoop/multi-purpose-tg-bot)
 
 ![](https://img.shields.io/endpoint?url=https%3A%2F%2F37-140-199-177.cloudvps.regruhosting.ru%2Fapi%2Ftotal-count)
