@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Telegram.Bot.Types;
 using WordCounterBot.BLL.Contracts;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace WordCounterBot.APIL.WebApi.Controllers
 {
@@ -27,9 +28,10 @@ namespace WordCounterBot.APIL.WebApi.Controllers
                 await _router.Route(update);
                 return Ok();
             }
-            catch (InvalidOperationException ex)
+            catch (Exception ex)
             {
-                _logger.LogError(ex, $"Error during processing update with BotController: {ex.Message};\nUpdate: {update}");
+                _logger.LogError(ex, "Error during processing update with BotController: {Message};\nUpdate: {Update}", ex.Message,
+                    JsonConvert.SerializeObject(update, Formatting.Indented));
                 throw;
             }
         }

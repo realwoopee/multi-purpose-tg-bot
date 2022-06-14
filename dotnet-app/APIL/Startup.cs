@@ -73,6 +73,8 @@ namespace WordCounterBot.APIL.WebApi
 
             services.AddScoped<IRouter, UpdateRouter>();
 
+            services.AddScoped<StatusService>();
+
             services.AddLogging(builder => builder
                 .AddProvider(new TelegramMessengerLoggerProvider(
                     new TelegramMessengerLoggerConfiguration

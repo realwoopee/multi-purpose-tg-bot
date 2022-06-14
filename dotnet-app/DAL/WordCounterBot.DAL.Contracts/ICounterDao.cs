@@ -30,5 +30,10 @@ namespace WordCounterBot.DAL.Contracts
         /// <param name="limit"></param>
         /// <returns></returns>
         Task<Counter> GetPersonalCounter(long chatId, long userId);
+
+        /// <summary>
+        /// Gets the sum of all counters
+        /// </summary>
+        Task<long> GetTotalCount();
     }
 }

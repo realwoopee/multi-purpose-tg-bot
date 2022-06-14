@@ -83,5 +83,21 @@ namespace WordCounterBot.DAL.Postgresql
                 await connection.CloseAsync();
             }
         }
+
+        public async Task<long> GetTotalCount()
+        {
+            var connection = new NpgsqlConnection(_connectionString);
+            try
+            {
+                await connection.OpenAsync();
+                var result = await connection.ExecuteScalarAsync<long>(@"select sum(counter) from counters");
+
+                return result;
+            }
+            finally
+            {
+                await connection.CloseAsync();
+            }
+        }
     }
 }

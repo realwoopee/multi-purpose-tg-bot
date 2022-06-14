@@ -43,6 +43,11 @@ namespace WordCounterBot.DAL.Memory
             throw new System.NotImplementedException();
         }
 
+        public async Task<long> GetTotalCount()
+        {
+            return _counters.Sum(c => c.Value);
+        }
+
         public Task<List<Counter>> GetCountersWithLimit(long chatId, int limit = 10)
         {
             var values = _counters

@@ -25,16 +25,16 @@ namespace WordCounterBot.BLL.Core
         {
             var handled = false;
 
+            _logger.LogInformation("New update:\n{Message}", JsonConvert.SerializeObject(update, Formatting.Indented));
+            
             try
             {
                 foreach (var handler in Handlers)
                 {
-                    _logger.LogInformation(
-                        $"Update\n\"{JsonConvert.SerializeObject(update, Formatting.Indented)}\"");
                     if (await handler.IsHandleable(update))
                     {
                         _logger.LogInformation(
-                            $"Matched with {handler.GetType()} handler.");
+                            "Matched with {HandlerType} handler", handler.GetType().Name);
                         handled = await handler.HandleUpdate(update);
                     }
                 }
@@ -42,20 +42,20 @@ namespace WordCounterBot.BLL.Core
             catch (ApiRequestException ex)
             {
                 _logger.LogError(ex,
-                    $"Error during routing: {ex.Message};\nUpdate: {JsonConvert.SerializeObject(update, Formatting.Indented)}");
+                    "Error during routing: {Error}", ex.Message);
                 return;
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex,
-                    $"Error during routing: {ex.Message};\nUpdate: {JsonConvert.SerializeObject(update, Formatting.Indented)}");
+                    "Error during routing: {Error}", ex.Message);
                 throw;
             }
 
             if (!handled)
             {
                 _logger.LogInformation(
-                    $"No handlers have handled that message:\n{JsonConvert.SerializeObject(update, Formatting.Indented)}");
+                    $"No handlers have handled that message");
             }
         }
     }
