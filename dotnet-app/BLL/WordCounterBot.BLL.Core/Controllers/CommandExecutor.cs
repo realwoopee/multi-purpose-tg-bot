@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Bot.Types;
+using Telegram.Bot.Types.Enums;
 using WordCounterBot.BLL.Contracts;
 
 namespace WordCounterBot.BLL.Core.Controllers
@@ -18,24 +19,22 @@ namespace WordCounterBot.BLL.Core.Controllers
         public async Task<bool> IsHandleable(Update update) =>
             await Task.Run(() =>
                 update.Message?.ForwardFrom == null && update.Message?.ForwardFromChat == null 
-                && update.Message?.Text != null 
-                && update.Message.Text.StartsWith('/'));
+                && (update.Message?.Entities.Any(x => x.Type == MessageEntityType.BotCommand) ?? false));
 
         public async Task<bool> HandleUpdate(Update update)
         {
             var text = update.Message.Text.Substring(1);
-            var name = text.Split(' ', '@').First();
+            var name = text.Split(' ', '@').First().ToLowerInvariant();
             var args = text.Split(' ').Skip(1).ToArray();
 
-            foreach (var command in _commands)
-            {
-                if (name != command.Name) continue;
-                
-                await command.Execute(update, name, args);
-                return true;
-            }
+            var command = _commands.FirstOrDefault(c => c.Name == name);
 
-            return false;
+            if (command is null) return false;
+            
+            await command.Execute(update, name, args);
+            
+            return true;
+
         }
     }
 }

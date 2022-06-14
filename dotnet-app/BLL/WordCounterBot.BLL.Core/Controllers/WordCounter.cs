@@ -20,8 +20,8 @@ namespace WordCounterBot.BLL.Core.Controllers
         public async  Task<bool> IsHandleable(Update update) =>
             await Task.Run(() =>
                 update.Message?.ForwardFrom == null && update.Message?.ForwardFromChat == null 
-                && update.Message?.Text != null
-                || update.Message?.Caption != null);
+                && (update.Message?.Text != null
+                || update.Message?.Caption != null));
 
         public async Task<bool> HandleUpdate(Update update)
         {
