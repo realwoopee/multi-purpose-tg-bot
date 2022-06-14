@@ -58,10 +58,10 @@ namespace WordCounterBot.APIL.WebApi
                     continue;
                 }
 
-                var command = $@"openssl pkcs12 -export -out {pfxFilePath} -inkey {pemKeyPath} -passin 'pass:{certPassword}' -passout 'pass:{certPassword}' -in {pemCertPath}";
+                var args = $@"pkcs12 -export -out {pfxFilePath} -inkey {pemKeyPath} -passin 'pass:{certPassword}' -passout 'pass:{certPassword}' -in {pemCertPath}";
                 
                 var startInfo = new ProcessStartInfo()
-                    { FileName = "/bin/bash", Arguments = command, };
+                    { FileName = "openssl", Arguments = args, };
                 var process = new Process() { StartInfo = startInfo, };
                 process.Start();
                 process.WaitForExit();
