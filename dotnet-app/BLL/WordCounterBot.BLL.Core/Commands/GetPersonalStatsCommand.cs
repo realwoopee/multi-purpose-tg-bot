@@ -88,10 +88,10 @@ namespace WordCounterBot.BLL.Contracts
             var lastMessageDate = (await _counterDatedDao.GetPersonalLastCounter(chatId, user.Id)).Date.Date;
 
             return $"<b>{user.GetFullName()}</b>\n\nА че это за чел?\n\n" +
-                   $"Total count - 0d{totalCounter} <i>words</i>.\n\n" +
-                   $"Today count - 0d{todayCounter} <i>words</i>.\n" +
-                   $"This week count - 0d{weekCounter} <i>words</i>.\n" +
-                   $"This month count - 0d{monthCounter} <i>words</i>.\n\n" +
+                   $"Total count - {totalCounter} <i>words</i>.\n\n" +
+                   $"Today count - {todayCounter} <i>words</i>.\n" +
+                   $"This week count - {weekCounter} <i>words</i>.\n" +
+                   $"This month count - {monthCounter} <i>words</i>.\n\n" +
                    $"Last message was on {lastMessageDate:dd MMMM yyyy}\n";
         }
     }
