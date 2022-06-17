@@ -16,7 +16,7 @@ namespace WordCounterBot.BLL.Common
             for (var i = 0; i < rows.Count(); i++)
             {
                 var element = rows.ElementAt(i);
-                var rowStr = $"<b>0x{i:X})</b> {element.User} — {element.Counter} <i>words</i>.";
+                var rowStr = $"<b>{i + 1})</b> {element.User} — {element.Counter} <i>words</i>.";
                 table.AppendLine(rowStr);
             }
 
