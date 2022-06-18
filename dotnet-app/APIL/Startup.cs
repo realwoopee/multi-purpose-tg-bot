@@ -10,6 +10,7 @@ using MihaZupan;
 using Newtonsoft.Json;
 using Telegram.Bot;
 using Telegram.Bot.Types.InputFiles;
+using WordCounterBot.BLL.Common;
 using WordCounterBot.BLL.Contracts;
 using WordCounterBot.BLL.Core;
 using WordCounterBot.BLL.Core.Controllers;
@@ -76,6 +77,8 @@ namespace WordCounterBot.APIL.WebApi
 
             services.AddScoped<StatusService>();
 
+            services.AddTransient<MemoryMessageStorage>();
+            
             services.AddLogging(builder => builder
                 .AddProvider(new TelegramMessengerLoggerProvider(
                     new TelegramMessengerLoggerConfiguration
