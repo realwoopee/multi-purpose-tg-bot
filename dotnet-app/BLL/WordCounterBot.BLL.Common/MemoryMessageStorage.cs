@@ -12,17 +12,17 @@ namespace WordCounterBot.BLL.Common
             _memoryCache = memoryCache;
         }
 
-        public void AddOrUpdate(long messageId, string text)
+        public void AddOrUpdate(long messageId, int wordCount)
         {
             var options = new MemoryCacheEntryOptions() { SlidingExpiration = new TimeSpan(0, 20, 0)};
 
-            _memoryCache.Set(messageId, text, options);
+            _memoryCache.Set(messageId, wordCount, options);
         }
 
-        public string? TryGetText(long messageId)
+        public int? TryGetCount(long messageId)
         {
-            _memoryCache.TryGetValue<string?>(messageId, out var text);
-            return text;
+            _memoryCache.TryGetValue<int>(messageId, out var wordCount);
+            return wordCount;
         }
     }
 }

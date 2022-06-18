@@ -36,24 +36,16 @@ namespace WordCounterBot.BLL.Core.Controllers
             var userId = body.From.Id;
             var date = body.Date.Date;
             var text = body.Text ?? body.Caption;
-            int wordsCount;
             
-            if (update.Message != null)
+            var wordsCount = WordCounterUtil.CountWords(text);
+            var cachedWordCount = _messageStorage.TryGetCount(body.MessageId);
+            
+            if (cachedWordCount != null)
             {
-                wordsCount = WordCounterUtil.CountWords(text);
-            }
-            else // update.EditedMessage != null
-            {
-                var cachedText = _messageStorage.TryGetText(body.MessageId);
-                if (cachedText == null)
-                {
-                    return true;
-                }
-
-                wordsCount = -1 * WordCounterUtil.CountWords(cachedText);
+                wordsCount -= cachedWordCount.Value;
             }
             
-            _messageStorage.AddOrUpdate(body.MessageId, text);
+            _messageStorage.AddOrUpdate(body.MessageId, wordsCount);
             
             await _counterDao.UpdateElseCreateCounter(
                 chatId,
