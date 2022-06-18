@@ -2,6 +2,7 @@ using System.Net;
 using System.Net.Http;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -77,6 +78,7 @@ namespace WordCounterBot.APIL.WebApi
 
             services.AddScoped<StatusService>();
 
+            services.AddMemoryCache();
             services.AddTransient<MemoryMessageStorage>();
             
             services.AddLogging(builder => builder
@@ -91,6 +93,7 @@ namespace WordCounterBot.APIL.WebApi
                         Socks5Port = _appConfig.Socks5Port
                     }))
                 .AddConsole(options => options.LogToStandardErrorThreshold = LogLevel.Trace));
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
