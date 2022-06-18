@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
+using WordCounterBot.BLL.Common;
 using WordCounterBot.BLL.Contracts;
 
 namespace WordCounterBot.BLL.Core.Controllers
@@ -16,24 +17,37 @@ namespace WordCounterBot.BLL.Core.Controllers
             _commands = commands;
         }
 
-        public async Task<bool> IsHandleable(Update update) =>
+        public async Task<bool> IsHandleable(Update update, HandleContext context) =>
             await Task.Run(() =>
                 update.Message?.ForwardFrom == null && update.Message?.ForwardFromChat == null 
                 && (update.Message?.Entities?.Any(x => x.Type == MessageEntityType.BotCommand) ?? false));
 
-        public async Task<bool> HandleUpdate(Update update)
+        public async Task<bool> HandleUpdate(Update update, HandleContext context)
         {
-            var text = update.Message.Text.Substring(1);
-            var name = text.Split(' ', '@').First().ToLowerInvariant();
-            var args = text.Split(' ').Skip(1).ToArray();
+            var commandsEntities = update.Message.Entities.Where(x => x.Type == MessageEntityType.BotCommand).ToList();
+            int lastEnd = 0;
+            var handled = false;
+            foreach (var commandEntity in commandsEntities)
+            {
+                if(commandEntity.Offset < lastEnd) continue;
+                
+                //offset is at '/'
+                var commandText = update.Message.Text.Substring(commandEntity.Offset + 1);
 
-            var command = _commands.FirstOrDefault(c => c.Name == name);
+                var name = commandText.Split(' ', '@').First().ToLowerInvariant();
+                var args = commandText.Split(' ').Skip(1).ToArray();
 
-            if (command is null) return false;
-            
-            await command.Execute(update, name, args);
-            
-            return true;
+                var command = _commands.FirstOrDefault(c => c.Name == name);
+
+                if (command is not null)
+                {
+                    await command.Execute(update, name, args);
+                    handled = true;
+                };
+                
+                lastEnd = update.Message.Text.IndexOf('\n', commandEntity.Offset);
+            }
+            return handled;
 
         }
     }

@@ -1,10 +1,12 @@
 ﻿using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Telegram.Bot.Exceptions;
 using Telegram.Bot.Types;
+using WordCounterBot.BLL.Common;
 using WordCounterBot.BLL.Contracts;
 
 namespace WordCounterBot.BLL.Core
@@ -23,19 +25,23 @@ namespace WordCounterBot.BLL.Core
 
         public async Task Route(Update update)
         {
-            var handled = false;
-
+            var handledBy = new List<string>();
             _logger.LogInformation("New update:\n{Message}", JsonConvert.SerializeObject(update, Formatting.Indented));
             
             try
             {
                 foreach (var handler in Handlers)
                 {
-                    if (await handler.IsHandleable(update))
+                    var handleContext = new HandleContext { HandledBy = handledBy };
+                    if (await handler.IsHandleable(update, handleContext))
                     {
                         _logger.LogInformation(
                             "Matched with {HandlerType} handler", handler.GetType().Name);
-                        handled = await handler.HandleUpdate(update);
+                        var handled = await handler.HandleUpdate(update, handleContext);
+                        if (handled)
+                        {
+                            handledBy.Add(handler.GetType().Name);
+                        }
                     }
                 }
             }
@@ -52,7 +58,7 @@ namespace WordCounterBot.BLL.Core
                 throw;
             }
 
-            if (!handled)
+            if (!handledBy.Any())
             {
                 _logger.LogInformation(
                     $"No handlers have handled that message");

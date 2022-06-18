@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Telegram.Bot.Types;
+using WordCounterBot.BLL.Common;
 using WordCounterBot.BLL.Contracts;
 using WordCounterBot.DAL.Contracts;
 
@@ -14,9 +15,9 @@ namespace WordCounterBot.BLL.Core.Controllers
             _userDao = userDao;
         }
 
-        public Task<bool> IsHandleable(Update update) => Task.FromResult(true);
+        public Task<bool> IsHandleable(Update update, HandleContext context) => Task.FromResult(true);
 
-        public async Task<bool> HandleUpdate(Update update)
+        public async Task<bool> HandleUpdate(Update update, HandleContext context)
         {
             var user = update.Message?.From;
 

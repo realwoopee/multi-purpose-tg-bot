@@ -18,7 +18,7 @@ namespace WordCounterBot.BLL.Core.Controllers
             _client = client;
         }
         
-        public async Task<bool> IsHandleable(Update update)
+        public async Task<bool> IsHandleable(Update update, HandleContext context)
         {
             var a = update.Message?.Text?.Length > 0
                     && (update.Message?.ReplyToMessage?.Text?.Length > 0
@@ -29,7 +29,7 @@ namespace WordCounterBot.BLL.Core.Controllers
             return ReplaceHelper.IsHandable(patterns);
         }
 
-        public async Task<bool> HandleUpdate(Update update)
+        public async Task<bool> HandleUpdate(Update update, HandleContext context)
         {
             var input = update.Message.ReplyToMessage.Text ?? update.Message.ReplyToMessage.Caption;
             var patterns = update.Message.Text.Split('\n', '\r').ToList();

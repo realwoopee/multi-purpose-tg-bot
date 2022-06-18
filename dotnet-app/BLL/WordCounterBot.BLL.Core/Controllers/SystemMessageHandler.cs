@@ -25,10 +25,10 @@ namespace WordCounterBot.BLL.Core.Controllers
             _client = client;
         }
 
-        public async Task<bool> IsHandleable(Update update) =>
+        public async Task<bool> IsHandleable(Update update, HandleContext context) =>
             await Task.Run(() => update.Message != null && update.Message.Type.In(_allowedMessageTypes));
 
-        public async Task<bool> HandleUpdate(Update update)
+        public async Task<bool> HandleUpdate(Update update, HandleContext context)
         {
             switch (update.Message.Type)
             {
