@@ -56,7 +56,6 @@ jobs:
   deploy:
     name: Deploy 
     runs-on: ubuntu-latest
-    if: ${{ false }}  # disable for now
     needs: 
       - build_and_publish
     steps:
@@ -69,5 +68,4 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           script: |
             cd wcb-bot
-            docker compose pull
-            docker compose up --force-recreate -d
+            sh ./update.sh
