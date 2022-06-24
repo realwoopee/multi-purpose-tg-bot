@@ -18,10 +18,9 @@ services:
     volumes:
       - ./db-data/:/var/lib/postgresql/data/
   certbot:
-    image: jkz0/certbot:latest
+    image: admiralwoop/certbot:latest
     environment:
       - ACCOUNT_EMAIL=your.email@example.com
-      #- RUN_ONCE=true 
     ports:
       - "80:80"
     volumes:
