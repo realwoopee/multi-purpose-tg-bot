@@ -24,6 +24,7 @@ services:
     ports:
       - "80:80"
     volumes:
+      - ./creds.ini:/freedns/credentials.ini
       - ./domains.json:/conf
       - ./cert/:/certs
     restart: always
