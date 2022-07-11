@@ -12,7 +12,7 @@ git clone -b example/docker https://github.com/admiralWoop/multi-purpose-tg-bot.
 ```bash
 # create a directory for certificates
 mkdir cert
-# create a certificate for the Kestrel
+# create a certificate that will be sent to the telegram server
 openssl req \
  -newkey rsa:2048 \
  -sha256 \
@@ -22,7 +22,7 @@ openssl req \
  -x509 \
  -days 365 \
  -out cert/ssl.pem
-# create a certificate that will be sent to the telegram server
+# create a certificate for the Kestrel
 openssl pkcs12 \
  -export \
  -out cert/ssl.pfx \
