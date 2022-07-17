@@ -67,15 +67,15 @@ namespace WordCounterBot.DAL.Postgresql
             try
             {
                 await connection.OpenAsync();
-                var result = await connection.QuerySingleAsync(@"select chat_id, user_id, counter from counters 
+                var result = await connection.QuerySingleOrDefaultAsync<long?>(@"select counter from counters 
                                     where chat_id = @chatId and user_id = @userId",
                     new {chatId, userId});
 
                 return new Counter
                 {
-                    ChatId = result.chat_id,
-                    UserId = result.user_id,
-                    Value = result.counter
+                    ChatId = chatId,
+                    UserId = userId,
+                    Value = result ?? 0
                 };
             }
             finally
