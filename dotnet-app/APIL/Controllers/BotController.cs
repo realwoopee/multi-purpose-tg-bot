@@ -26,14 +26,14 @@ namespace WordCounterBot.APIL.WebApi.Controllers
             try
             {
                 await _router.Route(update);
-                return Ok();
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error during processing update with BotController: {Message};\nUpdate: {Update}", ex.Message,
                     JsonConvert.SerializeObject(update, Formatting.Indented));
-                throw;
             }
+
+            return Ok(); //Always return 200 so telegram doesn't resend 500-causing updates making thousands of message in the log
         }
     }
 }
