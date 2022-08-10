@@ -2,6 +2,7 @@ using System.Net;
 using System.Net.Http;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -94,6 +95,10 @@ namespace WordCounterBot.APIL.WebApi
                     }))
                 .AddConsole(options => options.LogToStandardErrorThreshold = LogLevel.Trace));
 
+            services.Configure<ForwardedHeadersOptions>(options =>
+            {
+                options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -105,6 +110,7 @@ namespace WordCounterBot.APIL.WebApi
             }
             else
             {
+                app.UseForwardedHeaders();
                 app.UseHttpsRedirection();
             }
 
