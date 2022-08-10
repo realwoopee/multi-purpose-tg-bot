@@ -19,8 +19,14 @@ namespace WordCounterBot.APIL.WebApi.Controllers
         }
 
         [HttpGet("/api/total-count")]
+        [HttpHead("/api/total-count")]
         public async Task<IActionResult> Status()
         {
+            if (Request.Method == "HEAD")
+            {
+                return new OkResult();
+            }
+            
             return new JsonResult(new
             {
                 schemaVersion = 1,
@@ -28,6 +34,13 @@ namespace WordCounterBot.APIL.WebApi.Controllers
                 message = (await _serivce.GetTotalWords()).ToString(),
                 color = "blue"
             });
+        }
+
+        [HttpGet("/api/ping")]
+        [HttpHead("/api/ping")]
+        public async Task<IActionResult> Ping()
+        {
+            return new OkResult();
         }
     }
 }
