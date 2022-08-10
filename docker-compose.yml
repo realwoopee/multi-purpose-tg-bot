@@ -2,8 +2,8 @@ version: '3.7'
 services:
   bot:
     image: admiralwoop/multi-purpose-tg-bot:latest
-    ports:
-      - "443:443"
+    expose:
+      - 443
     env_file: env
     restart: unless-stopped
     volumes:
@@ -11,8 +11,6 @@ services:
   db:
     image: postgres:14
     env_file: env
-    ports:
-      - "35432:5432"
     expose:
       - 5432
     volumes:
@@ -21,10 +19,18 @@ services:
     image: admiralwoop/certbot:latest
     environment:
       - ACCOUNT_EMAIL=your.email@example.com
-    ports:
-      - "80:80"
+      - extra_args=-v
+    expose:
+      - 80
     volumes:
-      - ./creds.ini:/freedns/credentials.ini
       - ./domains.json:/conf
       - ./cert/:/certs
     restart: always
+  nginx:
+    image: arm32v7/nginx:latest
+    ports:
+      - "80:80"
+      - "35432:35432"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
