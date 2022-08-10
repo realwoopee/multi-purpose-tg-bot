@@ -4,13 +4,15 @@ services:
     image: admiralwoop/multi-purpose-tg-bot:latest
     expose:
       - 443
-    env_file: env
+    env_file: 
+      - main.env
+      - substitute.env
     restart: unless-stopped
-    volumes:
-      - ./cert/:/app/cert
   db:
     image: postgres:14
-    env_file: env
+    env_file: 
+      - main.env
+      - substitute.env
     expose:
       - 5432
     volumes:
@@ -27,6 +29,10 @@ services:
       - ./cert/:/certs
     restart: always
   nginx:
+    depends_on:
+      - bot
+      - db
+      - certbot
     image: arm32v7/nginx:latest
     ports:
       - "80:80"
@@ -34,3 +40,5 @@ services:
       - "443:443"
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
+      - ${SSLCertPath}:/etc/nginx/ssl.crt
+      - ${CertKeyPath}:/etc/nginx/ssl.key
