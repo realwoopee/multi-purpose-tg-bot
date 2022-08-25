@@ -37,7 +37,7 @@ namespace WordCounterBot.APIL.WebApi.Controllers
                 );
             }
 
-            return Ok(); //Always return 200 so telegram doesn't resend 500-causing updates making thousands of message in the log
+            return Ok(); //Always return 200 so telegram doesn't resend 500-causing updates making thousands of messages in the log
         }
     }
 }

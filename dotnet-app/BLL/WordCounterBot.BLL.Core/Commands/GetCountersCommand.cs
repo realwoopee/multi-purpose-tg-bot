@@ -39,14 +39,7 @@ namespace WordCounterBot.BLL.Contracts
             var chatId = update.Message.Chat.Id;
 
             var userCounters = await _counterDao.GetCountersAndUsersWithLimit(chatId, N);
-
-            // var userCounters =
-            //     await Task.WhenAll(counters.Select(async (c) => new
-            //     {
-            //         User = await _userDao.GetUserById(c.UserId),
-            //         Counter = c.Value
-            //     }));
-
+            
             var result = userCounters.Select(
                 uc =>
                     (
