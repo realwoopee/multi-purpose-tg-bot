@@ -17,14 +17,18 @@ namespace WordCounterBot.BLL.Core.Controllers
         {
             _client = client;
         }
-        
+
         public async Task<bool> IsHandleable(Update update, HandleContext context)
         {
-            var a = update.Message?.Text?.Length > 0
-                    && (update.Message?.ReplyToMessage?.Text?.Length > 0
-                        || update.Message?.ReplyToMessage?.Caption?.Length > 0);
-            if (!a) return false;
-            
+            var a =
+                update.Message?.Text?.Length > 0
+                && (
+                    update.Message?.ReplyToMessage?.Text?.Length > 0
+                    || update.Message?.ReplyToMessage?.Caption?.Length > 0
+                );
+            if (!a)
+                return false;
+
             var patterns = update.Message.Text.Split('\n', '\r').ToList();
             return ReplaceHelper.IsHandable(patterns);
         }
@@ -33,21 +37,25 @@ namespace WordCounterBot.BLL.Core.Controllers
         {
             var input = update.Message.ReplyToMessage.Text ?? update.Message.ReplyToMessage.Caption;
             var patterns = update.Message.Text.Split('\n', '\r').ToList();
-            
+
             try
             {
                 var reply = ReplaceHelper.Replace(input, patterns);
 
-                await _client.SendTextMessageAsync(update.Message.Chat.Id, 
-                    reply, 
-                    replyToMessageId: update.Message.ReplyToMessage.MessageId);
+                await _client.SendTextMessageAsync(
+                    update.Message.Chat.Id,
+                    reply,
+                    replyToMessageId: update.Message.ReplyToMessage.MessageId
+                );
                 return true;
             }
             catch (RegexParseException e)
             {
-                await _client.SendTextMessageAsync(update.Message.Chat.Id,
+                await _client.SendTextMessageAsync(
+                    update.Message.Chat.Id,
                     "Regex parse error",
-                    replyToMessageId: update.Message.MessageId);
+                    replyToMessageId: update.Message.MessageId
+                );
                 return false;
             }
         }

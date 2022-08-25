@@ -12,8 +12,11 @@ namespace WordCounterBot.BLL.Core.Controllers
         private readonly ICounterDatedDao _counterDatedDao;
         private readonly MemoryMessageStorage _messageStorage;
 
-        public WordCounter(ICounterDao counterDao, ICounterDatedDao counterDatedDao,
-            MemoryMessageStorage messageStorage)
+        public WordCounter(
+            ICounterDao counterDao,
+            ICounterDatedDao counterDatedDao,
+            MemoryMessageStorage messageStorage
+        )
         {
             _counterDao = counterDao;
             _counterDatedDao = counterDatedDao;
@@ -25,10 +28,9 @@ namespace WordCounterBot.BLL.Core.Controllers
             {
                 var body = update.Message ?? update.EditedMessage;
                 return !context.HandledBy.Contains(nameof(CommandExecutor))
-                       && body?.ForwardFrom == null
-                       && body?.ForwardFromChat == null
-                       && (body?.Text != null
-                           || body?.Caption != null);
+                    && body?.ForwardFrom == null
+                    && body?.ForwardFromChat == null
+                    && (body?.Text != null || body?.Caption != null);
             });
 
         public async Task<bool> HandleUpdate(Update update, HandleContext context)
@@ -49,16 +51,9 @@ namespace WordCounterBot.BLL.Core.Controllers
 
             _messageStorage.AddOrUpdate(body.MessageId, wordsCount);
 
-            await _counterDao.UpdateElseCreateCounter(
-                chatId,
-                userId,
-                wordsCount);
+            await _counterDao.UpdateElseCreateCounter(chatId, userId, wordsCount);
 
-            await _counterDatedDao.UpdateElseCreateCounter(
-                chatId,
-                userId,
-                date,
-                wordsCount);
+            await _counterDatedDao.UpdateElseCreateCounter(chatId, userId, date, wordsCount);
 
             return true;
         }

@@ -12,7 +12,10 @@ namespace WordCounterBot.DAL.Contracts
         /// <param name="chatId"></param>
         /// <param name="limit"></param>
         /// <returns></returns>
-        Task<List<Counter>> GetCountersWithLimit(long chatId, int limit);
+        Task<List<(User user, Counter counter)>> GetCountersAndUsersWithLimit(
+            long chatId,
+            int limit
+        );
 
         /// <summary>
         /// Tries to create a new counter with specified counts, if it already exists, updates existing one.

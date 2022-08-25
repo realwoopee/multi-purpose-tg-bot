@@ -13,20 +13,29 @@ namespace WordCounterBot.DAL.Memory
 
         private Task Add(long chatId, long userId, long value, DateTime date)
         {
-            _counters.Add(new CounterDated{ Date = date, ChatId = chatId, UserId =  userId, Value = value });
+            _counters.Add(
+                new CounterDated
+                {
+                    Date = date,
+                    ChatId = chatId,
+                    UserId = userId,
+                    Value = value
+                }
+            );
             return Task.CompletedTask;
         }
 
         private Task Increment(long chatId, long userId, long value, DateTime date)
-        { 
+        {
             _counters
-                .First(counter => 
-                    counter.ChatId == chatId 
-                    && counter.UserId == userId
-                    && counter.Date == date)
+                .First(
+                    counter =>
+                        counter.ChatId == chatId && counter.UserId == userId && counter.Date == date
+                )
                 .Value += value;
             return Task.CompletedTask;
         }
+
         public Task<List<CounterDated>> GetCounters(long chatId, DateTime date, int userLimit)
         {
             var values = _counters
@@ -38,10 +47,17 @@ namespace WordCounterBot.DAL.Memory
             return Task.FromResult(values);
         }
 
-        public Task<List<CounterDated>> GetCounters(long chatId, DateTime startDate, DateTime endDate, int userLimit)
+        public Task<List<CounterDated>> GetCounters(
+            long chatId,
+            DateTime startDate,
+            DateTime endDate,
+            int userLimit
+        )
         {
             var values = _counters
-                .Where(c => c.ChatId == chatId && c.Date >= startDate.Date  && c.Date <= endDate.Date)
+                .Where(
+                    c => c.ChatId == chatId && c.Date >= startDate.Date && c.Date <= endDate.Date
+                )
                 .OrderByDescending(c => c.Date)
                 .Take(userLimit * ((int)(endDate - startDate).TotalDays + 1))
                 .ToList();
@@ -49,7 +65,12 @@ namespace WordCounterBot.DAL.Memory
             return Task.FromResult(values);
         }
 
-        public async Task UpdateElseCreateCounter(long chatId, long userId, DateTime date, long counts)
+        public async Task UpdateElseCreateCounter(
+            long chatId,
+            long userId,
+            DateTime date,
+            long counts
+        )
         {
             if (_counters.Any(c => c.ChatId == chatId && c.UserId == userId && c.Date == date.Date))
             {
@@ -61,12 +82,21 @@ namespace WordCounterBot.DAL.Memory
             }
         }
 
-        public async Task<List<CounterDated>> GetPersonalCounters(long chatId, long userId, DateTime startDate, DateTime endDate)
+        public async Task<List<CounterDated>> GetPersonalCounters(
+            long chatId,
+            long userId,
+            DateTime startDate,
+            DateTime endDate
+        )
         {
             throw new NotImplementedException();
         }
 
-        public async Task<List<CounterDated>> GetPersonalCounters(long chatId, long userId, DateTime date)
+        public async Task<List<CounterDated>> GetPersonalCounters(
+            long chatId,
+            long userId,
+            DateTime date
+        )
         {
             throw new NotImplementedException();
         }

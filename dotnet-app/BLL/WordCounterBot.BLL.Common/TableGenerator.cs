@@ -6,10 +6,11 @@ namespace WordCounterBot.BLL.Common
 {
     public static class TableGenerator
     {
-        public static string GenerateNumberedList(
-            IEnumerable<(object, object)> values)
+        public static string GenerateNumberedList(IEnumerable<(object, object)> values)
         {
-            var rows = values.Select(v => new {User = v.Item1.ToString(), Counter = v.Item2.ToString()}).ToList();
+            var rows = values
+                .Select(v => new { User = v.Item1.ToString(), Counter = v.Item2.ToString() })
+                .ToList();
 
             var table = new StringBuilder();
 
@@ -23,7 +24,10 @@ namespace WordCounterBot.BLL.Common
             return table.ToString();
         }
 
-        public static string GenerateTop(string message, IEnumerable<(string Username, long Counter)> users)
+        public static string GenerateTop(
+            string message,
+            IEnumerable<(string Username, long Counter)> users
+        )
         {
             var text = new StringBuilder();
 
@@ -32,8 +36,10 @@ namespace WordCounterBot.BLL.Common
             text.AppendLine(message);
 
             var table = GenerateNumberedList(
-                values.OrderByDescending(uc => uc.Counter)
-                    .Select(uc => ((object) uc.Username, (object) uc.Counter)));
+                values
+                    .OrderByDescending(uc => uc.Counter)
+                    .Select(uc => ((object)uc.Username, (object)uc.Counter))
+            );
 
             text.AppendLine(table);
 

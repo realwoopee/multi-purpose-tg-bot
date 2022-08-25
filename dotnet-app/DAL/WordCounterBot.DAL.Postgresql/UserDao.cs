@@ -9,6 +9,7 @@ namespace WordCounterBot.DAL.Postgresql
     public class UserDaoPostgreSQL : IUserDao
     {
         private readonly string _connectionString;
+
         public UserDaoPostgreSQL(AppConfiguration appConfig)
         {
             _connectionString = appConfig.DbConnectionString;
@@ -33,7 +34,8 @@ namespace WordCounterBot.DAL.Postgresql
                         user_name = user.Username,
                         first_name = user.FirstName,
                         last_name = user.LastName,
-                    });
+                    }
+                );
             }
             finally
             {
@@ -49,7 +51,8 @@ namespace WordCounterBot.DAL.Postgresql
                 await connection.OpenAsync();
                 var result = await connection.QuerySingleOrDefaultAsync(
                     $@"select * from users where user_id = @user_id",
-                    new { user_id = userId });
+                    new { user_id = userId }
+                );
                 if (result != null)
                 {
                     return new User
@@ -79,13 +82,14 @@ namespace WordCounterBot.DAL.Postgresql
                 await connection.OpenAsync();
                 var result = await connection.QuerySingleOrDefaultAsync(
                     @"select * from users where LOWER(user_name) = LOWER(@user_name)",
-                    new {user_name = username});
-                
+                    new { user_name = username }
+                );
+
                 if (result != null)
                 {
                     return new User
                     {
-                        Id = (int) result.user_id,
+                        Id = (int)result.user_id,
                         FirstName = result.first_name,
                         LastName = result.last_name,
                         Username = result.user_name

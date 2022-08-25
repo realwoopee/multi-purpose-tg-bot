@@ -1,5 +1,4 @@
-﻿
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using WordCounterBot.BLL.Core.Controllers;
@@ -26,14 +25,16 @@ namespace WordCounterBot.APIL.WebApi.Controllers
             {
                 return new OkResult();
             }
-            
-            return new JsonResult(new
-            {
-                schemaVersion = 1,
-                label = "Total word count",
-                message = (await _serivce.GetTotalWords()).ToString(),
-                color = "blue"
-            });
+
+            return new JsonResult(
+                new
+                {
+                    schemaVersion = 1,
+                    label = "Total word count",
+                    message = (await _serivce.GetTotalWords()).ToString(),
+                    color = "blue"
+                }
+            );
         }
 
         [HttpGet("/api/ping")]

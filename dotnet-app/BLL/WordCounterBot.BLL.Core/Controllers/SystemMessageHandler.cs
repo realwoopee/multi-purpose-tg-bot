@@ -13,11 +13,19 @@ namespace WordCounterBot.BLL.Core.Controllers
     {
         private TelegramBotClient _client;
 
-        private static readonly MessageType[] _allowedMessageTypes = {
-            MessageType.ChatMemberLeft, MessageType.ChatMembersAdded, MessageType.ChannelCreated,
-            MessageType.ChatTitleChanged, MessageType.MessagePinned, MessageType.MigratedFromGroup,
-            MessageType.MigratedToSupergroup, MessageType.ChatPhotoChanged, MessageType.ChatPhotoDeleted,
-            MessageType.GroupCreated, MessageType.SupergroupCreated
+        private static readonly MessageType[] _allowedMessageTypes =
+        {
+            MessageType.ChatMemberLeft,
+            MessageType.ChatMembersAdded,
+            MessageType.ChannelCreated,
+            MessageType.ChatTitleChanged,
+            MessageType.MessagePinned,
+            MessageType.MigratedFromGroup,
+            MessageType.MigratedToSupergroup,
+            MessageType.ChatPhotoChanged,
+            MessageType.ChatPhotoDeleted,
+            MessageType.GroupCreated,
+            MessageType.SupergroupCreated
         };
 
         public SystemMessageHandler(TelegramBotClient client)
@@ -26,31 +34,48 @@ namespace WordCounterBot.BLL.Core.Controllers
         }
 
         public async Task<bool> IsHandleable(Update update, HandleContext context) =>
-            await Task.Run(() => update.Message != null && update.Message.Type.In(_allowedMessageTypes));
+            await Task.Run(
+                () => update.Message != null && update.Message.Type.In(_allowedMessageTypes)
+            );
 
         public async Task<bool> HandleUpdate(Update update, HandleContext context)
         {
             switch (update.Message.Type)
             {
                 case MessageType.ChatMembersAdded:
-                    await _client.SendTextMessageAsync(update.Message.Chat.Id, @"Представься. Особо молчаливых кикаем.",
-                        replyToMessageId: update.Message.MessageId);
+                    await _client.SendTextMessageAsync(
+                        update.Message.Chat.Id,
+                        @"Представься. Особо молчаливых кикаем.",
+                        replyToMessageId: update.Message.MessageId
+                    );
                     break;
                 case MessageType.ChatMemberLeft:
-                    await _client.SendTextMessageAsync(update.Message.Chat.Id, @"Ну и вали.",
-                        replyToMessageId: update.Message.MessageId);
+                    await _client.SendTextMessageAsync(
+                        update.Message.Chat.Id,
+                        @"Ну и вали.",
+                        replyToMessageId: update.Message.MessageId
+                    );
                     break;
                 case MessageType.ChatTitleChanged:
-                    await _client.SendTextMessageAsync(update.Message.Chat.Id, @"Прошлое название было лучше!",
-                        replyToMessageId: update.Message.MessageId);
+                    await _client.SendTextMessageAsync(
+                        update.Message.Chat.Id,
+                        @"Прошлое название было лучше!",
+                        replyToMessageId: update.Message.MessageId
+                    );
                     break;
                 case MessageType.ChatPhotoChanged:
-                    await _client.SendTextMessageAsync(update.Message.Chat.Id, @"Верните старую.",
-                        replyToMessageId: update.Message.MessageId);
+                    await _client.SendTextMessageAsync(
+                        update.Message.Chat.Id,
+                        @"Верните старую.",
+                        replyToMessageId: update.Message.MessageId
+                    );
                     break;
                 case MessageType.MessagePinned:
-                    await _client.SendTextMessageAsync(update.Message.Chat.Id, @"Надоели эти пины с нотифаем.",
-                        replyToMessageId: update.Message.MessageId);
+                    await _client.SendTextMessageAsync(
+                        update.Message.Chat.Id,
+                        @"Надоели эти пины с нотифаем.",
+                        replyToMessageId: update.Message.MessageId
+                    );
                     break;
                 case MessageType.ChatPhotoDeleted:
                 case MessageType.GroupCreated:

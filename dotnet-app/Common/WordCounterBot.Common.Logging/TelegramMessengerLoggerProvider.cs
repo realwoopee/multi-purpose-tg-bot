@@ -6,7 +6,8 @@ namespace WordCounterBot.Common.Logging
     public class TelegramMessengerLoggerProvider : ILoggerProvider
     {
         private readonly TelegramMessengerLoggerConfiguration _config;
-        private readonly ConcurrentDictionary<string, TelegramMessengerLogger> _loggers = new ConcurrentDictionary<string, TelegramMessengerLogger>();
+        private readonly ConcurrentDictionary<string, TelegramMessengerLogger> _loggers =
+            new ConcurrentDictionary<string, TelegramMessengerLogger>();
 
         public TelegramMessengerLoggerProvider(TelegramMessengerLoggerConfiguration config)
         {
@@ -15,7 +16,10 @@ namespace WordCounterBot.Common.Logging
 
         public ILogger CreateLogger(string categoryName)
         {
-            return _loggers.GetOrAdd(categoryName, name => new TelegramMessengerLogger(name, _config));
+            return _loggers.GetOrAdd(
+                categoryName,
+                name => new TelegramMessengerLogger(name, _config)
+            );
         }
 
         public void Dispose()

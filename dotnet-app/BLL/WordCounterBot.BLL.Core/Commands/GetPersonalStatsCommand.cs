@@ -17,18 +17,23 @@ namespace WordCounterBot.BLL.Contracts
         private readonly TelegramBotClient _client;
         public string Name { get; } = @"getpersonalstats";
 
-        public GetPersonalStatsCommand(ICounterDao counterDao, ICounterDatedDao counterDatedDao, IUserDao userDao, TelegramBotClient client)
+        public GetPersonalStatsCommand(
+            ICounterDao counterDao,
+            ICounterDatedDao counterDatedDao,
+            IUserDao userDao,
+            TelegramBotClient client
+        )
         {
             _counterDao = counterDao;
             _counterDatedDao = counterDatedDao;
             _userDao = userDao;
             _client = client;
         }
-        
+
         public async Task Execute(Update update, string command, params string[] args)
         {
             string text = "";
-            
+
             if (args.Length > 0)
             {
                 text = await GetStats(args[0].TrimStart('@'), update);
@@ -49,7 +54,8 @@ namespace WordCounterBot.BLL.Contracts
                 update.Message.Chat.Id,
                 text,
                 replyToMessageId: update.Message.MessageId,
-                parseMode: ParseMode.Html);
+                parseMode: ParseMode.Html
+            );
         }
 
         private async Task<string> GetStats(long userId, Update update)
@@ -69,30 +75,45 @@ namespace WordCounterBot.BLL.Contracts
 
             return await GetStats(user, update);
         }
-        
+
         private async Task<string> GetStats(User user, Update update)
         {
             var msgDate = update.Message.Date.Date;
             var chatId = update.Message.Chat.Id;
-            
+
             var weekSpan = TimeSpan.FromDays(6);
             var monthSpan = TimeSpan.FromDays(30);
 
             var totalCounter = (await _counterDao.GetPersonalCounter(chatId, user.Id)).Value;
-            var todayCounter = (await _counterDatedDao.GetPersonalCounters(chatId, user.Id, msgDate))
-                .Sum(c => c.Value);
-            var weekCounter = (await _counterDatedDao.GetPersonalCounters(chatId, user.Id, msgDate - weekSpan, msgDate))
-                .Sum(c => c.Value);
-            var monthCounter = (await _counterDatedDao.GetPersonalCounters(chatId, user.Id, msgDate - monthSpan, msgDate))
-                .Sum(c => c.Value);
-            var lastMessageDate = (await _counterDatedDao.GetPersonalLastCounter(chatId, user.Id)).Date.Date;
+            var todayCounter = (
+                await _counterDatedDao.GetPersonalCounters(chatId, user.Id, msgDate)
+            ).Sum(c => c.Value);
+            var weekCounter = (
+                await _counterDatedDao.GetPersonalCounters(
+                    chatId,
+                    user.Id,
+                    msgDate - weekSpan,
+                    msgDate
+                )
+            ).Sum(c => c.Value);
+            var monthCounter = (
+                await _counterDatedDao.GetPersonalCounters(
+                    chatId,
+                    user.Id,
+                    msgDate - monthSpan,
+                    msgDate
+                )
+            ).Sum(c => c.Value);
+            var lastMessageDate = (await _counterDatedDao.GetPersonalLastCounter(chatId, user.Id))
+                .Date
+                .Date;
 
-            return $"<b>{user.GetFullName()}</b>\n\nА че это за чел?\n\n" +
-                   $"Total count - {totalCounter} <i>words</i>.\n\n" +
-                   $"Today count - {todayCounter} <i>words</i>.\n" +
-                   $"This week count - {weekCounter} <i>words</i>.\n" +
-                   $"This month count - {monthCounter} <i>words</i>.\n\n" +
-                   $"Last message was on {lastMessageDate:dd MMMM yyyy}\n";
+            return $"<b>{user.GetFullName()}</b>\n\nА че это за чел?\n\n"
+                + $"Total count - {totalCounter} <i>words</i>.\n\n"
+                + $"Today count - {todayCounter} <i>words</i>.\n"
+                + $"This week count - {weekCounter} <i>words</i>.\n"
+                + $"This month count - {monthCounter} <i>words</i>.\n\n"
+                + $"Last message was on {lastMessageDate:dd MMMM yyyy}\n";
         }
     }
 }

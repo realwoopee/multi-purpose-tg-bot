@@ -18,8 +18,7 @@ namespace WordCounterBot.APIL.WebApi
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseKestrel()
-                        .UseStartup<Startup>();
+                    webBuilder.UseKestrel().UseStartup<Startup>();
                 });
     }
 }

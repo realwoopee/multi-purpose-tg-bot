@@ -18,7 +18,11 @@ namespace WordCounterBot.BLL.Contracts
         private readonly TelegramBotClient _client;
         private readonly ICounterDao _counterDao;
 
-        public GetCountersCommand(ICounterDao counterDao, IUserDao userDao, TelegramBotClient client)
+        public GetCountersCommand(
+            ICounterDao counterDao,
+            IUserDao userDao,
+            TelegramBotClient client
+        )
         {
             _userDao = userDao;
             _client = client;
@@ -34,19 +38,26 @@ namespace WordCounterBot.BLL.Contracts
         {
             var chatId = update.Message.Chat.Id;
 
-            var counters = await _counterDao.GetCountersWithLimit(chatId, N);
+            var userCounters = await _counterDao.GetCountersAndUsersWithLimit(chatId, N);
 
-            var userCounters =
-                await Task.WhenAll(counters.Select(async (c) => new
-                {
-                    User = await _userDao.GetUserById(c.UserId),
-                    Counter = c.Value
-                }));
+            // var userCounters =
+            //     await Task.WhenAll(counters.Select(async (c) => new
+            //     {
+            //         User = await _userDao.GetUserById(c.UserId),
+            //         Counter = c.Value
+            //     }));
 
-            var result = userCounters
-                .Select(uc => (
-                    (uc.User != null ? uc.User.FirstName + " " + uc.User.LastName : "%Unknown%").Escape(), 
-                    uc.Counter));
+            var result = userCounters.Select(
+                uc =>
+                    (
+                        (
+                            uc.user != null
+                                ? uc.user.FirstName + " " + uc.user.LastName
+                                : "%Unknown%"
+                        ).Escape(),
+                        uc.counter.Value
+                    )
+            );
 
             var text = await CreateText(result);
 
@@ -54,7 +65,8 @@ namespace WordCounterBot.BLL.Contracts
                 update.Message.Chat.Id,
                 text,
                 replyToMessageId: update.Message.MessageId,
-                parseMode: ParseMode.Html);
+                parseMode: ParseMode.Html
+            );
         }
 
         private static Task<string> CreateText(IEnumerable<(string Username, long Counter)> users)
@@ -66,8 +78,10 @@ namespace WordCounterBot.BLL.Contracts
             text.AppendLine($@"Top {values.Count()} counters:");
 
             var table = TableGenerator.GenerateNumberedList(
-                values.OrderByDescending(uc => uc.Counter)
-                    .Select(uc => ((object)uc.Username, (object)uc.Counter)));
+                values
+                    .OrderByDescending(uc => uc.Counter)
+                    .Select(uc => ((object)uc.Username, (object)uc.Counter))
+            );
 
             text.AppendLine(table);
 

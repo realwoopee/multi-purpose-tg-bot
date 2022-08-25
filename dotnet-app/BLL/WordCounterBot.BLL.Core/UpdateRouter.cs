@@ -26,8 +26,11 @@ namespace WordCounterBot.BLL.Core
         public async Task Route(Update update)
         {
             var handledBy = new List<string>();
-            _logger.LogInformation("New update:\n{Message}", JsonConvert.SerializeObject(update, Formatting.Indented));
-            
+            _logger.LogInformation(
+                "New update:\n{Message}",
+                JsonConvert.SerializeObject(update, Formatting.Indented)
+            );
+
             try
             {
                 foreach (var handler in Handlers)
@@ -36,7 +39,9 @@ namespace WordCounterBot.BLL.Core
                     if (await handler.IsHandleable(update, handleContext))
                     {
                         _logger.LogInformation(
-                            "Matched with {HandlerType} handler", handler.GetType().Name);
+                            "Matched with {HandlerType} handler",
+                            handler.GetType().Name
+                        );
                         var handled = await handler.HandleUpdate(update, handleContext);
                         if (handled)
                         {
@@ -47,21 +52,18 @@ namespace WordCounterBot.BLL.Core
             }
             catch (ApiRequestException ex)
             {
-                _logger.LogError(ex,
-                    "Error during routing: {Error}", ex.Message);
+                _logger.LogError(ex, "Error during routing: {Error}", ex.Message);
                 return;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex,
-                    "Error during routing: {Error}", ex.Message);
+                _logger.LogError(ex, "Error during routing: {Error}", ex.Message);
                 throw;
             }
 
             if (!handledBy.Any())
             {
-                _logger.LogInformation(
-                    $"No handlers have handled that message");
+                _logger.LogInformation($"No handlers have handled that message");
             }
         }
     }

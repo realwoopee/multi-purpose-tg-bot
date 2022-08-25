@@ -19,7 +19,11 @@ namespace WordCounterBot.BLL.Contracts
         private readonly TelegramBotClient _client;
         private readonly ICounterDatedDao _counterDatedDao;
 
-        public GetStatsForLastWeekCommand(ICounterDatedDao counterDatedDao, IUserDao userDao, TelegramBotClient client)
+        public GetStatsForLastWeekCommand(
+            ICounterDatedDao counterDatedDao,
+            IUserDao userDao,
+            TelegramBotClient client
+        )
         {
             _userDao = userDao;
             _client = client;
@@ -37,22 +41,35 @@ namespace WordCounterBot.BLL.Contracts
             var chatId = update.Message.Chat.Id;
             var dateSpan = TimeSpan.FromDays(6);
 
-            var counters = await _counterDatedDao.GetCounters(chatId, msgDate - dateSpan, msgDate, N);
+            var counters = await _counterDatedDao.GetCounters(
+                chatId,
+                msgDate - dateSpan,
+                msgDate,
+                N
+            );
 
-            var countersSummed = counters.GroupBy(c => (c.ChatId, c.UserId))
-                                         .Select(g => (g.Key, g.Sum(c => c.Value)));
+            var countersSummed = counters
+                .GroupBy(c => (c.ChatId, c.UserId))
+                .Select(g => (g.Key, g.Sum(c => c.Value)));
 
-            var userCounters =
-                await Task.WhenAll(countersSummed.Select(async (c) => new
-                {
-                    User = await _userDao.GetUserById(c.Key.UserId),
-                    Counter = c.Item2
-                }));
+            var userCounters = await Task.WhenAll(
+                countersSummed.Select(
+                    async (c) =>
+                        new { User = await _userDao.GetUserById(c.Key.UserId), Counter = c.Item2 }
+                )
+            );
 
-            var result = userCounters
-                .Select(uc => (
-                    (uc.User != null ? uc.User.FirstName + " " + uc.User.LastName : "%Unknown%").Escape(), 
-                    uc.Counter));
+            var result = userCounters.Select(
+                uc =>
+                    (
+                        (
+                            uc.User != null
+                                ? uc.User.FirstName + " " + uc.User.LastName
+                                : "%Unknown%"
+                        ).Escape(),
+                        uc.Counter
+                    )
+            );
 
             var text = CreateText(result);
 
@@ -60,14 +77,18 @@ namespace WordCounterBot.BLL.Contracts
                 update.Message.Chat.Id,
                 text,
                 replyToMessageId: update.Message.MessageId,
-                parseMode: ParseMode.Html);
+                parseMode: ParseMode.Html
+            );
         }
 
         private static string CreateText(IEnumerable<(string Username, long Counter)> users)
         {
             var values = users.ToList();
 
-            return TableGenerator.GenerateTop($@"Top {values.Count()} counters for last 7 days:", values);
+            return TableGenerator.GenerateTop(
+                $@"Top {values.Count()} counters for last 7 days:",
+                values
+            );
         }
     }
 }

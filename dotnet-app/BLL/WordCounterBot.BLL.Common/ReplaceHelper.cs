@@ -27,10 +27,10 @@ namespace WordCounterBot.BLL.Common
         {
             return patterns.Aggregate(input, Replace);
         }
-        
+
         public static string Replace(string input, string pattern)
         {
-            if (!IsHandable(pattern)) 
+            if (!IsHandable(pattern))
                 return input;
 
             var options = ToOptions(pattern);
@@ -39,9 +39,12 @@ namespace WordCounterBot.BLL.Common
 
             var ignoreCase = options.flags.Contains('i');
             var global = options.flags.Contains('g');
-            
-            var regex = new Regex(options.regex, ignoreCase ? RegexOptions.IgnoreCase : RegexOptions.None);
-            
+
+            var regex = new Regex(
+                options.regex,
+                ignoreCase ? RegexOptions.IgnoreCase : RegexOptions.None
+            );
+
             if (global)
             {
                 output = regex.Replace(input, options.@string);
@@ -50,7 +53,7 @@ namespace WordCounterBot.BLL.Common
             {
                 output = regex.Replace(input, options.@string, 1);
             }
-            
+
             return output;
         }
 

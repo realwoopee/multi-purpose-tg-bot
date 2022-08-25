@@ -54,8 +54,7 @@ namespace WordCounterBot.APIL.WebApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers()
-                .AddNewtonsoftJson();
+            services.AddControllers().AddNewtonsoftJson();
             services.AddSingleton(_appConfig);
 
             services.AddSingleton(_botClient);
@@ -81,30 +80,43 @@ namespace WordCounterBot.APIL.WebApi
 
             services.AddMemoryCache();
             services.AddTransient<MemoryMessageStorage>();
-            
-            services.AddLogging(builder => builder
-                .AddProvider(new TelegramMessengerLoggerProvider(
-                    new TelegramMessengerLoggerConfiguration
-                    {
-                        LogLevel = LogLevel.Warning,
-                        TelegramToken = _appConfig.TelegramToken,
-                        UserId = _appConfig.UserIdForLogger,
-                        UseSocks5 = _appConfig.UseSocks5,
-                        Socks5Host = _appConfig.Socks5Host,
-                        Socks5Port = _appConfig.Socks5Port
-                    }))
-                .AddConsole(options => options.LogToStandardErrorThreshold = LogLevel.Trace));
+
+            services.AddLogging(
+                builder =>
+                    builder
+                        .AddProvider(
+                            new TelegramMessengerLoggerProvider(
+                                new TelegramMessengerLoggerConfiguration
+                                {
+                                    LogLevel = LogLevel.Warning,
+                                    TelegramToken = _appConfig.TelegramToken,
+                                    UserId = _appConfig.UserIdForLogger,
+                                    UseSocks5 = _appConfig.UseSocks5,
+                                    Socks5Host = _appConfig.Socks5Host,
+                                    Socks5Port = _appConfig.Socks5Port
+                                }
+                            )
+                        )
+                        .AddConsole(options => options.LogToStandardErrorThreshold = LogLevel.Trace)
+            );
 
             services.Configure<ForwardedHeadersOptions>(options =>
             {
-                options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedHost;
+                options.ForwardedHeaders =
+                    ForwardedHeaders.XForwardedFor
+                    | ForwardedHeaders.XForwardedProto
+                    | ForwardedHeaders.XForwardedHost;
                 options.KnownProxies.Clear();
                 options.KnownNetworks.Clear();
             });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> logger)
+        public void Configure(
+            IApplicationBuilder app,
+            IWebHostEnvironment env,
+            ILogger<Startup> logger
+        )
         {
             if (env.IsDevelopment())
             {
@@ -129,26 +141,41 @@ namespace WordCounterBot.APIL.WebApi
                 var certFileInfo = env.ContentRootFileProvider.GetFileInfo(_appConfig.SSLCertPath);
                 var sslCert = new InputFileStream(certFileInfo.CreateReadStream());
 
-                _botClient.DeleteWebhookAsync()
-                    .ContinueWith(async (t) =>
-                        await _botClient.SetWebhookAsync(_appConfig.WebhookUrl.ToString(), sslCert))
-                    .ContinueWith((t) =>
-                        logger.LogInformation(
-                            "Set webhook to {Url}, SSL cert is {Cert}", _appConfig.WebhookUrl,
-                            certFileInfo.Name));
+                _botClient
+                    .DeleteWebhookAsync()
+                    .ContinueWith(
+                        async (t) =>
+                            await _botClient.SetWebhookAsync(
+                                _appConfig.WebhookUrl.ToString(),
+                                sslCert
+                            )
+                    )
+                    .ContinueWith(
+                        (t) =>
+                            logger.LogInformation(
+                                "Set webhook to {Url}, SSL cert is {Cert}",
+                                _appConfig.WebhookUrl,
+                                certFileInfo.Name
+                            )
+                    );
             }
             else
             {
-                _botClient.DeleteWebhookAsync()
-                    .ContinueWith(async (t) =>
-                        await _botClient.SetWebhookAsync(_appConfig.WebhookUrl.ToString()))
-                    .ContinueWith((t) =>
-                        logger.LogInformation(
-                            "Set webhook to {Url}", _appConfig.WebhookUrl));
+                _botClient
+                    .DeleteWebhookAsync()
+                    .ContinueWith(
+                        async (t) =>
+                            await _botClient.SetWebhookAsync(_appConfig.WebhookUrl.ToString())
+                    )
+                    .ContinueWith(
+                        (t) => logger.LogInformation("Set webhook to {Url}", _appConfig.WebhookUrl)
+                    );
             }
 
-            logger.LogInformation("Configured HTTP pipeline. AppSettings is {Config}", 
-                JsonConvert.SerializeObject(_appConfig, Formatting.Indented));
+            logger.LogInformation(
+                "Configured HTTP pipeline. AppSettings is {Config}",
+                JsonConvert.SerializeObject(_appConfig, Formatting.Indented)
+            );
         }
     }
 }

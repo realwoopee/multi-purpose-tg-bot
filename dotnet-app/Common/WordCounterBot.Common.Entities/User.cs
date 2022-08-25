@@ -9,11 +9,12 @@ namespace WordCounterBot.Common.Entities
         public string LastName { get; set; }
         public string Username { get; set; }
 
-        public User() {}
+        public User() { }
 
         public User(Telegram.Bot.Types.User user)
         {
-            if (user == null) throw new ArgumentNullException(nameof(user));
+            if (user == null)
+                throw new ArgumentNullException(nameof(user));
 
             Id = user.Id;
             FirstName = user.FirstName;

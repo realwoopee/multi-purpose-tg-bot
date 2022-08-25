@@ -21,7 +21,7 @@ namespace WordCounterBot.APIL.WebApi.Controllers
         }
 
         [HttpPost("/api/update")]
-        public async Task<IActionResult> Update([FromBody]Update update)
+        public async Task<IActionResult> Update([FromBody] Update update)
         {
             try
             {
@@ -29,8 +29,12 @@ namespace WordCounterBot.APIL.WebApi.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error during processing update with BotController: {Message};\nUpdate: {Update}", ex.Message,
-                    JsonConvert.SerializeObject(update, Formatting.Indented));
+                _logger.LogError(
+                    ex,
+                    "Error during processing update with BotController: {Message};\nUpdate: {Update}",
+                    ex.Message,
+                    JsonConvert.SerializeObject(update, Formatting.Indented)
+                );
             }
 
             return Ok(); //Always return 200 so telegram doesn't resend 500-causing updates making thousands of message in the log

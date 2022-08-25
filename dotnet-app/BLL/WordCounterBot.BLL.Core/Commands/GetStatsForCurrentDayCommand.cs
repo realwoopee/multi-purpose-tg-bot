@@ -19,7 +19,11 @@ namespace WordCounterBot.BLL.Contracts
         private readonly TelegramBotClient _client;
         private readonly ICounterDatedDao _counterDatedDao;
 
-        public GetStatsForCurrentDayCommand(ICounterDatedDao counterDatedDao, IUserDao userDao, TelegramBotClient client)
+        public GetStatsForCurrentDayCommand(
+            ICounterDatedDao counterDatedDao,
+            IUserDao userDao,
+            TelegramBotClient client
+        )
         {
             _userDao = userDao;
             _client = client;
@@ -36,17 +40,24 @@ namespace WordCounterBot.BLL.Contracts
             var date = update.Message.Date.Date;
             var counters = await _counterDatedDao.GetCounters(update.Message.Chat.Id, date, N);
 
-            var userCounters =
-                await Task.WhenAll(counters.Select(async (c) => new
-                {
-                    User = await _userDao.GetUserById(c.UserId),
-                    Counter = c.Value
-                }));
+            var userCounters = await Task.WhenAll(
+                counters.Select(
+                    async (c) =>
+                        new { User = await _userDao.GetUserById(c.UserId), Counter = c.Value }
+                )
+            );
 
-            var result = userCounters
-                .Select(uc => (
-                    (uc.User != null ? uc.User.FirstName + " " + uc.User.LastName : "%Unknown%").Escape(), 
-                    uc.Counter));
+            var result = userCounters.Select(
+                uc =>
+                    (
+                        (
+                            uc.User != null
+                                ? uc.User.FirstName + " " + uc.User.LastName
+                                : "%Unknown%"
+                        ).Escape(),
+                        uc.Counter
+                    )
+            );
 
             var text = CreateText(result, date);
 
@@ -54,14 +65,21 @@ namespace WordCounterBot.BLL.Contracts
                 update.Message.Chat.Id,
                 text,
                 replyToMessageId: update.Message.MessageId,
-                parseMode: ParseMode.Html);
+                parseMode: ParseMode.Html
+            );
         }
 
-        private static string CreateText(IEnumerable<(string Username, long Counter)> users, DateTime date)
+        private static string CreateText(
+            IEnumerable<(string Username, long Counter)> users,
+            DateTime date
+        )
         {
             var values = users.ToList();
 
-            return TableGenerator.GenerateTop($@"Top {values.Count()} counters for {date:dd MMMM yyyy}:", values);
+            return TableGenerator.GenerateTop(
+                $@"Top {values.Count()} counters for {date:dd MMMM yyyy}:",
+                values
+            );
         }
     }
 }

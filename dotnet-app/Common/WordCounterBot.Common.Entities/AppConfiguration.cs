@@ -26,9 +26,9 @@ namespace WordCounterBot.Common.Entities
 
         public AppConfiguration(IConfiguration configuration)
         {
-            if (configuration == null) 
+            if (configuration == null)
                 throw new ArgumentNullException(nameof(configuration));
-            
+
             DbConnectionString = configuration["DbConnectionString"];
             TelegramToken = configuration["TgToken"];
             WebhookUrl = new Uri(configuration["WebhookUrl"]);

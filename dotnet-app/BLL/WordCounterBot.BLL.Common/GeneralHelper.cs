@@ -6,7 +6,7 @@ namespace WordCounterBot.BLL.Common
 {
     public static class GeneralHelper
     {
-        public static bool In<T>([NotNull]this T element, IEnumerable<T> enumerable)
+        public static bool In<T>([NotNull] this T element, IEnumerable<T> enumerable)
         {
             return enumerable?.Contains(element) ?? false;
         }

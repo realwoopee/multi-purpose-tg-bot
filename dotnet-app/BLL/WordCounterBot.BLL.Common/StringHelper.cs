@@ -4,7 +4,7 @@ namespace WordCounterBot.BLL.Common
 {
     public static class StringHelper
     {
-        public static string Escape([NotNull]this string input)
+        public static string Escape([NotNull] this string input)
         {
             return input
                 .Replace("<", "&lt;")

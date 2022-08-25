@@ -12,16 +12,21 @@ namespace WordCounterBot.DAL.Memory
 
         private Task Add(long chatId, long userId, long value)
         {
-            _counters.Add(new Counter{ ChatId = chatId, UserId =  userId, Value = value });
+            _counters.Add(
+                new Counter
+                {
+                    ChatId = chatId,
+                    UserId = userId,
+                    Value = value
+                }
+            );
             return Task.CompletedTask;
         }
 
         private Task Increment(long chatId, long userId, long value)
-        { 
+        {
             _counters
-                .First(counter => 
-                    counter.ChatId == chatId 
-                    && counter.UserId == userId)
+                .First(counter => counter.ChatId == chatId && counter.UserId == userId)
                 .Value += value;
             return Task.CompletedTask;
         }
