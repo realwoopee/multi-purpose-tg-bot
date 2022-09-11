@@ -26,7 +26,7 @@ jobs:
         dotnet-version: '6.0.x'
 
     - name: Build .NET Core App
-      run: dotnet publish dotnet-app/APIL/WordCounterBot.APIL.WebApi.csproj -r linux-arm -c Release -o ./app
+      run: dotnet publish dotnet-app/APIL/WordCounterBot.APIL.WebApi.csproj -r linux-arm64 -c Release -o ./app
       
     - name: Log in to Docker Hub
       uses: docker/login-action@v2
