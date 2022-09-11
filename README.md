@@ -8,23 +8,9 @@ Please check [docker documentation](https://docs.docker.com/get-started/)
 git clone -b example/docker https://github.com/admiralWoop/multi-purpose-tg-bot.git
 ```
 ## 3. Prepare for deployment
-### 3.1 Create certificates
-```bash
-# create a directory for certificates
-mkdir cert
-# create a certificate that will be sent to the telegram server
-openssl req \
- -newkey rsa:2048 \
- -sha256 \
- -subj "/CN=[your domain]" \
- -passout 'pass:[your password]' \
- -keyout cert/ssl.key \
- -x509 \
- -days 365 \
- -out cert/ssl.pem
-```
-### 3.2 Configure the app
-Remove `.example` postfixes from files and fill in your values
+### 3.1 Configure the app
+Remove `.example` postfixes from files and fill in your values.
+Don't forget about filling your email in docker-compose.yml file
 ## 4. Deploy using docker-compose
 #### 4.1 Get docker-compose
 Use [this guide from docker](https://docs.docker.com/compose/install/)
