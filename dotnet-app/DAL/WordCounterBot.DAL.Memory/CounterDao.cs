@@ -31,6 +31,14 @@ namespace WordCounterBot.DAL.Memory
             return Task.CompletedTask;
         }
 
+        public Task<List<(User user, Counter counter)>> GetCountersAndUsersWithLimit(
+            long chatId,
+            int limit
+        )
+        {
+            throw new System.NotImplementedException();
+        }
+
         public async Task UpdateElseCreateCounter(long chatId, long userId, long counts)
         {
             if (_counters.Any(c => c.ChatId == chatId && c.UserId == userId))
@@ -51,17 +59,6 @@ namespace WordCounterBot.DAL.Memory
         public async Task<long> GetTotalCount()
         {
             return _counters.Sum(c => c.Value);
-        }
-
-        public Task<List<Counter>> GetCountersWithLimit(long chatId, int limit = 10)
-        {
-            var values = _counters
-                .Where(c => c.ChatId == chatId)
-                .OrderByDescending(c => c.Value)
-                .Take(limit)
-                .ToList();
-
-            return Task.FromResult(values);
         }
     }
 }

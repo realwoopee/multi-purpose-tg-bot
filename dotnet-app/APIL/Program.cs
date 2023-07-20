@@ -1,24 +1,12 @@
-using System;
-using System.Diagnostics;
-using System.IO;
-using System.Threading;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
+using WordCounterBot.APIL.WebApi;
 
-namespace WordCounterBot.APIL.WebApi
-{
-    public class Program
+Host.CreateDefaultBuilder(args)
+    .ConfigureWebHostDefaults(webBuilder =>
     {
-        public static void Main(string[] args)
-        {
-            CreateHostBuilder(args).Build().Run();
-        }
-
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    webBuilder.UseKestrel().UseStartup<Startup>();
-                });
-    }
-}
+        webBuilder.UseKestrel().UseStartup<Startup>();
+    })
+    .Build()
+    .Run();
