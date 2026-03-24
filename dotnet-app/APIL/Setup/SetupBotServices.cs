@@ -16,6 +16,8 @@ public static class SetupBotServices
         services.AddScoped<UserResolver>();
         services.AddScoped<UserStatistics>();
         services.AddScoped<LeaderboardRow>();
+        services.AddScoped<UserStatsService>();
+        services.AddScoped<LeaderboardService>();
         
         // Commands
         services.AddTransient<ICommand, GetPersonalStatsCommand>();
