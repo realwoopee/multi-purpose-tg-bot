@@ -1,6 +1,6 @@
-﻿using System.Net.Http;
+﻿using System.Net;
+using System.Net.Http;
 using Microsoft.Extensions.DependencyInjection;
-using MihaZupan;
 using Telegram.Bot;
 using WordCounterBot.Common.Entities;
 
@@ -10,7 +10,8 @@ public static class SetupTelegram
 {
     public static IServiceCollection AddTelegramBotClient(
         this IServiceCollection services,
-        AppConfiguration appConfig)
+        AppConfiguration appConfig
+    )
     {
         TelegramBotClient botClient;
 
@@ -18,11 +19,16 @@ public static class SetupTelegram
         {
             var httpClientHandler = new HttpClientHandler
             {
-                Proxy = new HttpToSocks5Proxy(appConfig.Socks5Host, appConfig.Socks5Port),
-                UseProxy = true
+                Proxy = new WebProxy($"socks5://{appConfig.Socks5Host}:{appConfig.Socks5Port}")
+                {
+                    Credentials = new NetworkCredential(
+                        appConfig.Socks5User,
+                        appConfig.Socks5Password
+                    ),
+                },
+                UseProxy = true,
             };
             var httpClient = new HttpClient(httpClientHandler);
-
             botClient = new TelegramBotClient(appConfig.TelegramToken, httpClient);
         }
         else

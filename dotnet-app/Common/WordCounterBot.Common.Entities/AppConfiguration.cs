@@ -24,6 +24,10 @@ namespace WordCounterBot.Common.Entities
 
         public int UserIdForLogger { get; }
 
+        public string Socks5User { get; set; }
+
+        public string Socks5Password { get; set; }
+
         public AppConfiguration(IConfiguration configuration)
         {
             if (configuration == null)
@@ -36,6 +40,8 @@ namespace WordCounterBot.Common.Entities
             UseSocks5 = configuration.GetValue<bool>("UseSocks5");
             Socks5Host = configuration["Socks5Host"];
             Socks5Port = configuration.GetValue<int>("Socks5Port");
+            Socks5User = configuration["Socks5User"];
+            Socks5Password = configuration["Socks5Password"];
             UserIdForLogger = configuration.GetValue<int>("UserToLog");
             IsSSLCertSelfSigned = configuration.GetValue<bool>("IsSSLCertSelfSigned");
         }
