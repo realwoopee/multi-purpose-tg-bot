@@ -1,3 +1,5 @@
+using System;
+using System.Threading.Tasks;
 using System.Net;
 using System.Net.Http;
 using Microsoft.AspNetCore.Builder;
@@ -42,11 +44,12 @@ namespace WordCounterBot.APIL.WebApi
                     UseProxy = true
                 };
                 var httpClient = new HttpClient(httpClientHandler);
-
                 _botClient = new TelegramBotClient(_appConfig.TelegramToken, httpClient);
             }
-
-            _botClient = new TelegramBotClient(_appConfig.TelegramToken);
+            else
+            {
+                _botClient = new TelegramBotClient(_appConfig.TelegramToken);
+            }
         }
 
         public IConfiguration Configuration { get; }
