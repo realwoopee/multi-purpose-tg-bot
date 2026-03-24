@@ -136,41 +136,34 @@ namespace WordCounterBot.APIL.WebApi
                 endpoints.MapControllers();
             });
 
-            if (_appConfig.IsSSLCertSelfSigned)
+            _ = Task.Run(async () =>
             {
-                var certFileInfo = env.ContentRootFileProvider.GetFileInfo(_appConfig.SSLCertPath);
-                var sslCert = new InputFileStream(certFileInfo.CreateReadStream());
-
-                _botClient
-                    .DeleteWebhookAsync()
-                    .ContinueWith(
-                        async (t) =>
-                            await _botClient.SetWebhookAsync(
-                                _appConfig.WebhookUrl.ToString(),
-                                sslCert
-                            )
-                    )
-                    .ContinueWith(
-                        (t) =>
-                            logger.LogInformation(
-                                "Set webhook to {Url}, SSL cert is {Cert}",
-                                _appConfig.WebhookUrl,
-                                certFileInfo.Name
-                            )
-                    );
-            }
-            else
-            {
-                _botClient
-                    .DeleteWebhookAsync()
-                    .ContinueWith(
-                        async (t) =>
-                            await _botClient.SetWebhookAsync(_appConfig.WebhookUrl.ToString())
-                    )
-                    .ContinueWith(
-                        (t) => logger.LogInformation("Set webhook to {Url}", _appConfig.WebhookUrl)
-                    );
-            }
+                try
+                {
+                    await _botClient.DeleteWebhookAsync();
+            
+                    if (_appConfig.IsSSLCertSelfSigned)
+                    {
+                        var certFileInfo = env.ContentRootFileProvider.GetFileInfo(_appConfig.SSLCertPath);
+                        var sslCert = new InputFileStream(certFileInfo.CreateReadStream());
+                        await _botClient.SetWebhookAsync(_appConfig.WebhookUrl.ToString(), sslCert);
+                        logger.LogInformation(
+                            "Set webhook to {Url}, SSL cert is {Cert}",
+                            _appConfig.WebhookUrl,
+                            certFileInfo.Name
+                        );
+                    }
+                    else
+                    {
+                        await _botClient.SetWebhookAsync(_appConfig.WebhookUrl.ToString());
+                        logger.LogInformation("Set webhook to {Url}", _appConfig.WebhookUrl);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    logger.LogError(ex, "Failed to set webhook to {Url}", _appConfig.WebhookUrl);
+                }
+            });
 
             logger.LogInformation(
                 "Configured HTTP pipeline. AppSettings is {Config}",
