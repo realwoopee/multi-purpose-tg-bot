@@ -1,7 +1,6 @@
-﻿using System.Linq;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 
-namespace WordCounterBot.BLL.Common
+namespace WordCounterBot.BLL.Common.Helpers
 {
     public static class WordCounterUtil
     {

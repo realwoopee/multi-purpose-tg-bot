@@ -1,119 +1,56 @@
 ﻿using System;
-using System.Linq;
 using System.Threading.Tasks;
-using Telegram.Bot;
 using Telegram.Bot.Types;
-using Telegram.Bot.Types.Enums;
-using WordCounterBot.DAL.Contracts;
+using WordCounterBot.BLL.Common;
+using WordCounterBot.BLL.Common.Helpers;
+using WordCounterBot.BLL.Common.Services;
+using WordCounterBot.BLL.Contracts;
 using User = WordCounterBot.Common.Entities.User;
 
-namespace WordCounterBot.BLL.Contracts
+namespace WordCounterBot.BLL.Core.Commands
 {
     public class GetPersonalStatsCommand : ICommand
     {
-        private readonly ICounterDao _counterDao;
-        private readonly ICounterDatedDao _counterDatedDao;
-        private readonly IUserDao _userDao;
-        private readonly TelegramBotClient _client;
+        private readonly MessageSender _messageSender;
+        private readonly UserResolver _userResolver;
+        private readonly UserStatsService _userStatsService;
         public string Name { get; } = @"getpersonalstats";
 
         public GetPersonalStatsCommand(
-            ICounterDao counterDao,
-            ICounterDatedDao counterDatedDao,
-            IUserDao userDao,
-            TelegramBotClient client
-        )
+            UserResolver userResolver,
+            MessageSender messageSender, 
+            UserStatsService userStatsService)
         {
-            _counterDao = counterDao;
-            _counterDatedDao = counterDatedDao;
-            _userDao = userDao;
-            _client = client;
+            _userResolver = userResolver;
+            _messageSender = messageSender;
+            _userStatsService = userStatsService;
         }
 
         public async Task Execute(Update update, string command, params string[] args)
         {
-            string text = "";
+            var user = await _userResolver.ResolveTargetUser(args, update);
 
-            if (args.Length > 0)
-            {
-                text = await GetStats(args[0].TrimStart('@'), update);
-            }
-            else
-            {
-                if (update.Message.ReplyToMessage != null)
-                {
-                    text = await GetStats(update.Message.ReplyToMessage.From.Id, update);
-                }
-                else
-                {
-                    text = await GetStats(update.Message.From.Id, update);
-                }
-            }
-
-            await _client.SendTextMessageAsync(
-                update.Message.Chat.Id,
-                text,
-                replyToMessageId: update.Message.MessageId,
-                parseMode: ParseMode.Html
-            );
-        }
-
-        private async Task<string> GetStats(long userId, Update update)
-        {
-            var user = await _userDao.GetUserById(userId);
             if (user == null)
-                return "Пользователя в базе майора не нашли";
+            {
+                await _messageSender.SendHtmlReplyAsync(update, "Пользователя в базе майора не нашли");
+                return;
+            }
+            
+            var stats = await _userStatsService.GetUserStatistics(update.GetChatId(), user.Id, update.GetMessageDate());
+            
+            var statsText = FormatStatsMessage(user, stats);
 
-            return await GetStats(user, update);
+            await _messageSender.SendHtmlReplyAsync(update, statsText);
         }
 
-        private async Task<string> GetStats(string username, Update update)
+        private static string FormatStatsMessage(User user, UserStatistics stats)
         {
-            var user = await _userDao.GetUserByUserName(username);
-            if (user == null)
-                return "Пользователя в базе майора не нашли";
-
-            return await GetStats(user, update);
-        }
-
-        private async Task<string> GetStats(User user, Update update)
-        {
-            var msgDate = update.Message.Date.Date;
-            var chatId = update.Message.Chat.Id;
-
-            var weekSpan = TimeSpan.FromDays(6);
-            var monthSpan = TimeSpan.FromDays(30);
-
-            var totalCounter = (await _counterDao.GetPersonalCounter(chatId, user.Id)).Value;
-            var todayCounter = (
-                await _counterDatedDao.GetPersonalCounters(chatId, user.Id, msgDate)
-            ).Sum(c => c.Value);
-            var weekCounter = (
-                await _counterDatedDao.GetPersonalCounters(
-                    chatId,
-                    user.Id,
-                    msgDate - weekSpan,
-                    msgDate
-                )
-            ).Sum(c => c.Value);
-            var monthCounter = (
-                await _counterDatedDao.GetPersonalCounters(
-                    chatId,
-                    user.Id,
-                    msgDate - monthSpan,
-                    msgDate
-                )
-            ).Sum(c => c.Value);
-            var lastMessageDate = (await _counterDatedDao.GetPersonalLastCounter(chatId, user.Id))
-                .Date
-                .Date;
-
-            return $"<b>{user.GetFullName()}</b>\n\nА че это за чел?\n\n"
-                + $"Total count - {totalCounter} <i>words</i>.\n\n"
-                + $"Today count - {todayCounter} <i>words</i>.\n"
-                + $"This week count - {weekCounter} <i>words</i>.\n"
-                + $"This month count - {monthCounter} <i>words</i>.\n\n"
-                + $"Last message was on {lastMessageDate:dd MMMM yyyy}\n";
+            return $"{UserFormatter.FormatUserName(user).HtmlBold()}\n\nА че это за чел?\n\n"
+                   + $"Total count - {stats.Total} {"words".HtmlItalic()}.\n\n"
+                   + $"Today count - {stats.Today} {"words".HtmlItalic()}.\n"
+                   + $"This week count - {stats.Week} {"words".HtmlItalic()}.\n"
+                   + $"This month count - {stats.Month} {"words".HtmlItalic()}.\n\n"
+                   + $"Last message was on {stats.LastMessageDate:dd MMMM yyyy}\n";
         }
     }
 }

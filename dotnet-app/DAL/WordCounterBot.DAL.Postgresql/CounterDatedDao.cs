@@ -3,217 +3,157 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
-using Npgsql;
 using WordCounterBot.Common.Entities;
 using WordCounterBot.DAL.Contracts;
 
 namespace WordCounterBot.DAL.Postgresql
 {
-    public class CounterDatedDao : ICounterDatedDao
+    public class CounterDatedDao : BaseDao, ICounterDatedDao
     {
-        private readonly string _connectionString;
-
-        public CounterDatedDao(AppConfiguration appConfig)
+        public CounterDatedDao(AppConfiguration appConfig) : base(appConfig)
         {
-            _connectionString = appConfig.DbConnectionString;
         }
 
         public async Task UpdateElseCreateCounter(
             long chatId,
             long userId,
             DateTime date,
-            long counts
-        )
+            long counts)
         {
-            var connection = new NpgsqlConnection(_connectionString);
-            try
-            {
-                await connection.OpenAsync();
-                await connection.ExecuteAsync(
-                    @"insert into counters_dated(date, chat_id, user_id, counter)
-                                    values (@date, @chatId, @userId, @counts)
-                                    on conflict (chat_id, user_id, date) do update
-                                    set counter = counters_dated.counter + @counts",
-                    new { date.Date, chatId, userId, counts }
-                );
-            }
-            finally
-            {
-                await connection.CloseAsync();
-            }
+            await ExecuteAsync(connection => connection.ExecuteAsync(
+                """
+                insert into counters_dated(date, chat_id, user_id, counter)
+                                  values (@date, @chatId, @userId, @counts)
+                                  on conflict (chat_id, user_id, date) do update
+                                  set counter = counters_dated.counter + @counts
+                """,
+                new { date = date.Date, chatId, userId, counts }
+            ));
         }
 
         public async Task<List<CounterDated>> GetCounters(long chatId, DateTime date, int userLimit)
         {
-            var connection = new NpgsqlConnection(_connectionString);
-            try
+            return await ExecuteAsync(async connection =>
             {
-                await connection.OpenAsync();
                 var result = await connection.QueryAsync(
-                    @"select chat_id, user_id, counter, date from counters_dated
-                                 where counters_dated.chat_id = @chatId and counters_dated.date = @date
-                                 order by counter desc
-                                 limit @userLimit",
+                    """
+                    select chat_id, user_id, counter, date from counters_dated
+                                          where counters_dated.chat_id = @chatId and counters_dated.date = @date
+                                          order by counter desc
+                                          limit @userLimit
+                    """,
                     new { chatId, date, userLimit }
                 );
 
                 return result
-                    .Select(
-                        c =>
-                            new CounterDated
-                            {
-                                Date = c.date,
-                                ChatId = c.chat_id,
-                                UserId = c.user_id,
-                                Value = c.counter
-                            }
-                    )
+                    .Select(c => new CounterDated(c.date, c.chat_id, c.user_id, c.counter))
                     .ToList();
-            }
-            finally
-            {
-                await connection.CloseAsync();
-            }
+            });
         }
 
         public async Task<List<CounterDated>> GetCounters(
             long chatId,
-            DateTime startDate,
-            DateTime endDate,
-            int userLimit
-        )
+            DateRange dateRange,
+            int userLimit)
         {
-            var connection = new NpgsqlConnection(_connectionString);
-            try
+            return await ExecuteAsync(async connection =>
             {
-                await connection.OpenAsync();
                 var result = await connection.QueryAsync(
-                    @"select chat_id, user_id, counter, date from counters_dated
-                                 where counters_dated.chat_id = @chatId and (counters_dated.date between @startDate and @endDate)
-                                 order by date desc, user_id
-                                 limit (EXTRACT(epoch FROM (@endDate - @startDate))/86400::int + 1) * @userLimit",
-                    new { chatId, startDate, endDate, userLimit }
+                    """
+                    select chat_id, user_id, counter, date from counters_dated
+                                          where counters_dated.chat_id = @chatId 
+                                            and (counters_dated.date between @startDate and @endDate)
+                                          order by date desc, user_id
+                                          limit @limitCount
+                    """,
+                    new
+                    {
+                        chatId,
+                        startDate = dateRange.StartDate,
+                        endDate = dateRange.EndDate,
+                        limitCount = userLimit * dateRange.DaysCount
+                    }
                 );
 
                 return result
-                    .Select(
-                        c =>
-                            new CounterDated
-                            {
-                                Date = c.date,
-                                ChatId = c.chat_id,
-                                UserId = c.user_id,
-                                Value = c.counter
-                            }
-                    )
+                    .Select(c => new CounterDated(c.date, c.chat_id, c.user_id, c.counter))
                     .ToList();
-            }
-            finally
-            {
-                await connection.CloseAsync();
-            }
+            });
         }
 
         public async Task<List<CounterDated>> GetPersonalCounters(
             long chatId,
             long userId,
-            DateTime startDate,
-            DateTime endDate
-        )
+            DateRange dateRange)
         {
-            var connection = new NpgsqlConnection(_connectionString);
-            try
+            return await ExecuteAsync(async connection =>
             {
-                await connection.OpenAsync();
                 var result = await connection.QueryAsync(
-                    @"select chat_id, user_id, counter, date from counters_dated
-                                 where counters_dated.chat_id = @chatId and counters_dated.user_id = @userId and (counters_dated.date between @startDate and @endDate)
-                                 order by date desc, user_id
-                                 limit (EXTRACT(epoch FROM (@endDate - @startDate))/86400::int + 1)",
-                    new { chatId, userId, startDate, endDate }
+                    """
+                    select chat_id, user_id, counter, date from counters_dated
+                                          where counters_dated.chat_id = @chatId 
+                                            and counters_dated.user_id = @userId 
+                                            and (counters_dated.date between @startDate and @endDate)
+                                          order by date desc, user_id
+                                          limit @limitCount
+                    """,
+                    new
+                    {
+                        chatId,
+                        userId,
+                        startDate = dateRange.StartDate,
+                        endDate = dateRange.EndDate,
+                        limitCount = dateRange.DaysCount
+                    }
                 );
 
                 return result
-                    .Select(
-                        c =>
-                            new CounterDated
-                            {
-                                Date = c.date,
-                                ChatId = c.chat_id,
-                                UserId = c.user_id,
-                                Value = c.counter
-                            }
-                    )
+                    .Select(c => new CounterDated(c.date, c.chat_id, c.user_id, c.counter))
                     .ToList();
-            }
-            finally
-            {
-                await connection.CloseAsync();
-            }
+            });
         }
 
         public async Task<List<CounterDated>> GetPersonalCounters(
             long chatId,
             long userId,
-            DateTime date
-        )
+            DateTime date)
         {
-            var connection = new NpgsqlConnection(_connectionString);
-            try
+            return await ExecuteAsync(async connection =>
             {
-                await connection.OpenAsync();
                 var result = await connection.QueryAsync(
-                    @"select chat_id, user_id, counter, date from counters_dated
-                                 where counters_dated.chat_id = @chatId and counters_dated.user_id = @userId and counters_dated.date = @date
-                                 order by counter desc",
+                    """
+                    select chat_id, user_id, counter, date from counters_dated
+                                          where counters_dated.chat_id = @chatId 
+                                            and counters_dated.user_id = @userId 
+                                            and counters_dated.date = @date
+                                          order by counter desc
+                    """,
                     new { chatId, userId, date }
                 );
 
                 return result
-                    .Select(
-                        c =>
-                            new CounterDated
-                            {
-                                Date = c.date,
-                                ChatId = c.chat_id,
-                                UserId = c.user_id,
-                                Value = c.counter
-                            }
-                    )
+                    .Select(c => new CounterDated(c.date, c.chat_id, c.user_id, c.counter))
                     .ToList();
-            }
-            finally
-            {
-                await connection.CloseAsync();
-            }
+            });
         }
 
         public async Task<CounterDated> GetPersonalLastCounter(long chatId, long userId)
         {
-            var connection = new NpgsqlConnection(_connectionString);
-            try
+            return await ExecuteAsync(async connection =>
             {
-                await connection.OpenAsync();
                 var result = await connection.QuerySingleAsync(
-                    @"select chat_id, user_id, counter, date from counters_dated
-                                 where counters_dated.chat_id = @chatId and counters_dated.user_id = @userId
-                                 order by date desc
-                                 limit 1",
+                    """
+                    select chat_id, user_id, counter, date from counters_dated
+                                          where counters_dated.chat_id = @chatId 
+                                            and counters_dated.user_id = @userId
+                                          order by date desc
+                                          limit 1
+                    """,
                     new { chatId, userId }
                 );
 
-                return new CounterDated
-                {
-                    Date = result.date,
-                    ChatId = result.chat_id,
-                    UserId = result.user_id,
-                    Value = result.counter
-                };
-            }
-            finally
-            {
-                await connection.CloseAsync();
-            }
+                return new CounterDated(result.date, result.chat_id, result.user_id, result.counter);
+            });
         }
     }
 }

@@ -11,8 +11,7 @@ namespace WordCounterBot.DAL.Contracts
 
         Task<List<CounterDated>> GetCounters(
             long chatId,
-            DateTime startDate,
-            DateTime endDate,
+            DateRange dateRange,
             int userLimit
         );
 
@@ -21,8 +20,7 @@ namespace WordCounterBot.DAL.Contracts
         Task<List<CounterDated>> GetPersonalCounters(
             long chatId,
             long userId,
-            DateTime startDate,
-            DateTime endDate
+            DateRange dateRange
         );
 
         Task<List<CounterDated>> GetPersonalCounters(long chatId, long userId, DateTime date);

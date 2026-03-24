@@ -1,9 +1,18 @@
-﻿namespace WordCounterBot.Common.Entities
+﻿using System;
+
+namespace WordCounterBot.Common.Entities
 {
-    public class Counter
+    public record Counter(long ChatId, long UserId, long Value)
     {
-        public long ChatId { get; set; }
-        public long UserId { get; set; }
-        public long Value { get; set; }
+        private readonly long _value = Value < 0 ? throw new ArgumentException("Value cannot be negative") : Value;
+
+        public long Value 
+        { 
+            get => _value; 
+            init => _value = value < 0 ? throw new ArgumentException("Value cannot be negative") : value; 
+        }
+        
+        public bool Matches(long chatId, long userId) => 
+            ChatId == chatId && UserId == userId;
     }
 }

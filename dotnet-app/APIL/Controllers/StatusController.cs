@@ -2,18 +2,19 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using WordCounterBot.BLL.Core.Controllers;
+using WordCounterBot.DAL.Contracts;
 
 namespace WordCounterBot.APIL.WebApi.Controllers
 {
     [ApiController]
     public class StatusController : ControllerBase
     {
-        private readonly StatusService _serivce;
+        private readonly ICounterDao _counterDao;
         private readonly ILogger<StatusController> _logger;
 
-        public StatusController(StatusService serivce, ILogger<StatusController> logger)
+        public StatusController(ICounterDao counterDao, ILogger<StatusController> logger)
         {
-            _serivce = serivce;
+            _counterDao = counterDao;
             _logger = logger;
         }
 
@@ -31,7 +32,7 @@ namespace WordCounterBot.APIL.WebApi.Controllers
                 {
                     schemaVersion = 1,
                     label = "Total word count",
-                    message = (await _serivce.GetTotalWords()).ToString(),
+                    message = (await _counterDao.GetTotalCount()).ToString(),
                     color = "blue"
                 }
             );

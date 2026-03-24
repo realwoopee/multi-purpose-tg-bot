@@ -1,177 +1,65 @@
-using System;
-using System.Threading.Tasks;
-using System.Net;
-using System.Net.Http;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
-using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using MihaZupan;
-using Newtonsoft.Json;
-using Telegram.Bot;
-using Telegram.Bot.Types.InputFiles;
-using WordCounterBot.BLL.Common;
-using WordCounterBot.BLL.Contracts;
-using WordCounterBot.BLL.Core;
-using WordCounterBot.BLL.Core.Controllers;
+using WordCounterBot.APIL.WebApi.Setup;
 using WordCounterBot.Common.Entities;
-using WordCounterBot.Common.Logging;
-using WordCounterBot.DAL.Contracts;
-using WordCounterBot.DAL.Postgresql;
 
-namespace WordCounterBot.APIL.WebApi
+namespace WordCounterBot.APIL.WebApi;
+
+public class Startup
 {
-    public class Startup
+    public IConfiguration Configuration { get; }
+
+    public Startup(IConfiguration configuration)
     {
-        private readonly TelegramBotClient _botClient;
-        private readonly AppConfiguration _appConfig;
+        Configuration = configuration;
+    }
 
-        public Startup(IConfiguration configuration)
+    public void ConfigureServices(IServiceCollection services)
+    {
+        var appConfig = new AppConfiguration(Configuration);
+
+        services.AddControllers().AddNewtonsoftJson();
+        services.AddSingleton(appConfig);
+
+        services.AddTelegramBotClient(appConfig);
+        services.AddDataAccessServices();
+        services.AddBotServices();
+        services.AddTelegramLogging(appConfig);
+
+        services.Configure<ForwardedHeadersOptions>(options =>
         {
-            Configuration = configuration;
+            options.ForwardedHeaders =
+                ForwardedHeaders.XForwardedFor
+                | ForwardedHeaders.XForwardedProto
+                | ForwardedHeaders.XForwardedHost;
+            options.KnownProxies.Clear();
+            options.KnownNetworks.Clear();
+        });
+    }
 
-            _appConfig = new AppConfiguration(Configuration);
-
-            if (_appConfig.UseSocks5)
-            {
-                var httpClientHandler = new HttpClientHandler
-                {
-                    Proxy = new WebProxy(_appConfig.Socks5Host),
-                    UseProxy = true
-                };
-                var httpClient = new HttpClient(httpClientHandler);
-                _botClient = new TelegramBotClient(_appConfig.TelegramToken, httpClient);
-            }
-            else
-            {
-                _botClient = new TelegramBotClient(_appConfig.TelegramToken);
-            }
+    public void Configure(
+        IApplicationBuilder app,
+        IWebHostEnvironment env,
+        ILogger<Startup> logger)
+    {
+        if (env.IsDevelopment())
+        {
+            app.UseDeveloperExceptionPage();
+        }
+        else
+        {
+            app.UseForwardedHeaders();
         }
 
-        public IConfiguration Configuration { get; }
+        app.UseRouting();
+        app.UseAuthorization();
+        app.UseEndpoints(endpoints => endpoints.MapControllers());
 
-        // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
-        {
-            services.AddControllers().AddNewtonsoftJson();
-            services.AddSingleton(_appConfig);
-
-            services.AddSingleton(_botClient);
-
-            services.AddScoped<ICounterDao, CounterDao>();
-            services.AddScoped<ICounterDatedDao, CounterDatedDao>();
-            services.AddScoped<IUserDao, UserDaoPostgreSQL>();
-
-            services.AddTransient<ICommand, GetPersonalStatsCommand>();
-            services.AddTransient<ICommand, GetCountersCommand>();
-            services.AddTransient<ICommand, GetStatsForCurrentDayCommand>();
-            services.AddTransient<ICommand, GetStatsForLastWeekCommand>();
-            services.AddTransient<IHandler, CommandExecutor>();
-
-            services.AddTransient<IHandler, SystemMessageHandler>();
-            services.AddTransient<IHandler, WordCounter>();
-            services.AddTransient<IHandler, UserInfoHandler>();
-            services.AddTransient<IHandler, StringReplacer>();
-
-            services.AddScoped<IRouter, UpdateRouter>();
-
-            services.AddScoped<StatusService>();
-
-            services.AddMemoryCache();
-            services.AddTransient<MemoryMessageStorage>();
-
-            services.AddLogging(
-                builder =>
-                    builder
-                        .AddProvider(
-                            new TelegramMessengerLoggerProvider(
-                                new TelegramMessengerLoggerConfiguration
-                                {
-                                    LogLevel = LogLevel.Warning,
-                                    TelegramToken = _appConfig.TelegramToken,
-                                    UserId = _appConfig.UserIdForLogger,
-                                    UseSocks5 = _appConfig.UseSocks5,
-                                    Socks5Host = _appConfig.Socks5Host,
-                                    Socks5Port = _appConfig.Socks5Port
-                                }
-                            )
-                        )
-                        .AddConsole(options => options.LogToStandardErrorThreshold = LogLevel.Trace)
-            );
-
-            services.Configure<ForwardedHeadersOptions>(options =>
-            {
-                options.ForwardedHeaders =
-                    ForwardedHeaders.XForwardedFor
-                    | ForwardedHeaders.XForwardedProto
-                    | ForwardedHeaders.XForwardedHost;
-                options.KnownProxies.Clear();
-                options.KnownNetworks.Clear();
-            });
-        }
-
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(
-            IApplicationBuilder app,
-            IWebHostEnvironment env,
-            ILogger<Startup> logger
-        )
-        {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                app.UseForwardedHeaders();
-            }
-
-            app.UseRouting();
-
-            app.UseAuthorization();
-
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-            });
-
-            _ = Task.Run(async () =>
-            {
-                try
-                {
-                    await _botClient.DeleteWebhookAsync();
-            
-                    if (_appConfig.IsSSLCertSelfSigned)
-                    {
-                        var certFileInfo = env.ContentRootFileProvider.GetFileInfo(_appConfig.SSLCertPath);
-                        var sslCert = new InputFileStream(certFileInfo.CreateReadStream());
-                        await _botClient.SetWebhookAsync(_appConfig.WebhookUrl.ToString(), sslCert);
-                        logger.LogInformation(
-                            "Set webhook to {Url}, SSL cert is {Cert}",
-                            _appConfig.WebhookUrl,
-                            certFileInfo.Name
-                        );
-                    }
-                    else
-                    {
-                        await _botClient.SetWebhookAsync(_appConfig.WebhookUrl.ToString());
-                        logger.LogInformation("Set webhook to {Url}", _appConfig.WebhookUrl);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    logger.LogError(ex, "Failed to set webhook to {Url}", _appConfig.WebhookUrl);
-                }
-            });
-
-            logger.LogInformation(
-                "Configured HTTP pipeline. AppSettings is {Config}",
-                JsonConvert.SerializeObject(_appConfig, Formatting.Indented)
-            );
-        }
+        app.UseTelegramWebhook(env, logger);
     }
 }

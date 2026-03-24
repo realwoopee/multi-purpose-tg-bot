@@ -35,7 +35,7 @@ namespace WordCounterBot.BLL.Core
             {
                 foreach (var handler in Handlers)
                 {
-                    var handleContext = new HandleContext { HandledBy = handledBy };
+                    var handleContext = new HandleContext(handledBy);
                     if (await handler.IsHandleable(update, handleContext))
                     {
                         _logger.LogInformation(

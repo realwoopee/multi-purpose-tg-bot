@@ -1,6 +1,9 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using Telegram.Bot.Types;
 using WordCounterBot.BLL.Common;
+using WordCounterBot.BLL.Common.Helpers;
+using WordCounterBot.BLL.Common.Services;
 using WordCounterBot.BLL.Contracts;
 using WordCounterBot.DAL.Contracts;
 
@@ -27,16 +30,19 @@ namespace WordCounterBot.BLL.Core.Controllers
             await Task.Run(() =>
             {
                 var body = update.Message ?? update.EditedMessage;
+                
+                if(body == null)
+                    return false;
+                
                 return !context.HandledBy.Contains(nameof(CommandExecutor))
-                    && body?.ForwardFrom == null
-                    && body?.ForwardFromChat == null
-                    && (body?.Text != null || body?.Caption != null);
+                    && body.IsNotForwarded()
+                    && body.GetText() != null;
             });
 
         public async Task<bool> HandleUpdate(Update update, HandleContext context)
         {
             var body = (update.Message ?? update.EditedMessage);
-            var chatId = body.Chat.Id;
+            var chatId = update.GetChatId();
             var userId = body.From.Id;
             var date = body.Date.Date;
             var text = body.Text ?? body.Caption;

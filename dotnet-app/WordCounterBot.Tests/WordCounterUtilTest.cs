@@ -1,5 +1,6 @@
 using System;
 using WordCounterBot.BLL.Common;
+using WordCounterBot.BLL.Common.Helpers;
 using Xunit;
 
 namespace WordCounterBot.Tests

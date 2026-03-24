@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace WordCounterBot.BLL.Common
+namespace WordCounterBot.BLL.Common.Helpers
 {
     public class ReplaceHelper
     {

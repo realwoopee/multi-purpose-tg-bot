@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Text;
 
-namespace WordCounterBot.BLL.Common
+namespace WordCounterBot.BLL.Common.Helpers
 {
     public static class TableGenerator
     {
@@ -17,7 +17,7 @@ namespace WordCounterBot.BLL.Common
             for (var i = 0; i < rows.Count(); i++)
             {
                 var element = rows.ElementAt(i);
-                var rowStr = $"<b>{i + 1})</b> {element.User} — {element.Counter} <i>words</i>.";
+                var rowStr = $"{$"{i + 1})".HtmlBold()} {element.User} — {element.Counter} {"words".HtmlItalic()}.";
                 table.AppendLine(rowStr);
             }
 

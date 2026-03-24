@@ -13,25 +13,21 @@ namespace WordCounterBot.DAL.Memory
         private Task Add(long chatId, long userId, long value)
         {
             _counters.Add(
-                new Counter
-                {
-                    ChatId = chatId,
-                    UserId = userId,
-                    Value = value
-                }
+                new Counter(chatId, userId, value)
             );
             return Task.CompletedTask;
         }
 
         private Task Increment(long chatId, long userId, long value)
         {
-            _counters
-                .First(counter => counter.ChatId == chatId && counter.UserId == userId)
-                .Value += value;
+            var counter = _counters
+                .First(counter => counter.Matches(chatId, userId));
+            _counters.Remove(counter);
+            _counters.Add(counter with { Value = counter.Value + value });
             return Task.CompletedTask;
         }
 
-        public Task<List<(User user, Counter counter)>> GetCountersAndUsersWithLimit(
+        public Task<List<LeaderboardEntry>> GetCountersAndUsersWithLimit(
             long chatId,
             int limit
         )
@@ -41,7 +37,7 @@ namespace WordCounterBot.DAL.Memory
 
         public async Task UpdateElseCreateCounter(long chatId, long userId, long counts)
         {
-            if (_counters.Any(c => c.ChatId == chatId && c.UserId == userId))
+            if (_counters.Any(c => c.Matches(chatId, userId)))
             {
                 await Increment(chatId, userId, counts);
             }

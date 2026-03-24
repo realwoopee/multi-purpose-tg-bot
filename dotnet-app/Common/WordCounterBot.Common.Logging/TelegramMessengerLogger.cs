@@ -5,6 +5,8 @@ using MihaZupan;
 using Telegram.Bot;
 using Telegram.Bot.Types.Enums;
 using WordCounterBot.BLL.Common;
+using WordCounterBot.BLL.Common.Helpers;
+using WordCounterBot.BLL.Common.Services;
 
 namespace WordCounterBot.Common.Logging
 {
@@ -12,12 +14,21 @@ namespace WordCounterBot.Common.Logging
     {
         private readonly string _name;
         private readonly TelegramMessengerLoggerConfiguration _config;
-        private readonly TelegramBotClient _botClient;
+        private readonly MessageSender _sender;
 
         public TelegramMessengerLogger(string name, TelegramMessengerLoggerConfiguration config)
         {
             _name = name;
             _config = config;
+
+            var botClient = InitTelegramClient();
+
+            _sender = new MessageSender(botClient);
+        }
+
+        private TelegramBotClient InitTelegramClient()
+        {
+            TelegramBotClient botClient;
 
             if (_config.UseSocks5)
             {
@@ -28,10 +39,14 @@ namespace WordCounterBot.Common.Logging
                 };
                 var httpClient = new HttpClient(httpClientHandler);
 
-                _botClient = new TelegramBotClient(_config.TelegramToken, httpClient);
+                botClient = new TelegramBotClient(_config.TelegramToken, httpClient);
+            }
+            else
+            {
+                botClient = new TelegramBotClient(_config.TelegramToken);
             }
 
-            _botClient = new TelegramBotClient(_config.TelegramToken);
+            return botClient;
         }
 
         public IDisposable BeginScope<TState>(TState state) => null;
@@ -49,22 +64,21 @@ namespace WordCounterBot.Common.Logging
             if (!IsEnabled(logLevel))
                 return;
 
-            if (_config.EventId == 0 || _config.EventId == eventId.Id)
+            if (_config.EventId != 0 && _config.EventId != eventId.Id) return;
+            
+            var message =
+                $"{"Level".HtmlBold()}: {logLevel.ToString().HtmlEscape()}\n"
+                + $"{"EventId".HtmlBold()}: {eventId.Id.ToString().HtmlEscape()}\n"
+                + $"{"LoggerName".HtmlBold()}: {_name.HtmlEscape()}\n"
+                + $"{"Error Formatted".HtmlBold()}: {formatter(state, exception).HtmlEscape()}\n";
+            if (exception != null)
             {
-                var message =
-                    $"<b>Level</b>: {logLevel.ToString().Escape()}\n"
-                    + $"<b>EventId</b>: {eventId.Id.ToString().Escape()}\n"
-                    + $"<b>LoggerName</b>: {_name.Escape()}\n"
-                    + $"<b>Error Formatted</b>: {formatter(state, exception).Escape()}\n";
-                if (exception != null)
-                {
-                    message +=
-                        $"<b>Exception message</b>: {exception.Message.Escape()}\n"
-                        + $"<b>Stack trace</b>: <code>{exception.StackTrace.Escape()}</code>";
-                }
-
-                await _botClient.SendTextMessageAsync(_config.UserId, message, ParseMode.Html);
+                message +=
+                    $"{"Exception message".HtmlBold()}: {exception.Message.HtmlEscape()}\n"
+                    + $"{"Stack trace".HtmlBold()}: {exception.StackTrace.HtmlEscape().HtmlCode()}";
             }
+
+            await _sender.SendHtmlToChatAsync(_config.UserId, message);
         }
     }
 }

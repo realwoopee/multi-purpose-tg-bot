@@ -1,7 +1,7 @@
 using System;
 using Microsoft.Extensions.Caching.Memory;
 
-namespace WordCounterBot.BLL.Common
+namespace WordCounterBot.BLL.Common.Services
 {
     public class MemoryMessageStorage
     {

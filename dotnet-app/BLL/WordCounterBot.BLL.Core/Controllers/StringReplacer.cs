@@ -1,32 +1,29 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Telegram.Bot;
 using Telegram.Bot.Types;
 using WordCounterBot.BLL.Common;
+using WordCounterBot.BLL.Common.Helpers;
+using WordCounterBot.BLL.Common.Services;
 using WordCounterBot.BLL.Contracts;
 
 namespace WordCounterBot.BLL.Core.Controllers
 {
     public class StringReplacer : IHandler
     {
-        private readonly TelegramBotClient _client;
+        private readonly MessageSender _messageSender;
 
-        public StringReplacer(TelegramBotClient client)
+        public StringReplacer(MessageSender messageSender)
         {
-            _client = client;
+            _messageSender = messageSender;
         }
 
         public async Task<bool> IsHandleable(Update update, HandleContext context)
         {
-            var a =
+            var canPerformReplacement =
                 update.Message?.Text?.Length > 0
-                && (
-                    update.Message?.ReplyToMessage?.Text?.Length > 0
-                    || update.Message?.ReplyToMessage?.Caption?.Length > 0
-                );
-            if (!a)
+                && update.GetReplyText()?.Length > 0;
+            if (!canPerformReplacement)
                 return false;
 
             var patterns = update.Message.Text.Split('\n', '\r').ToList();
@@ -35,27 +32,23 @@ namespace WordCounterBot.BLL.Core.Controllers
 
         public async Task<bool> HandleUpdate(Update update, HandleContext context)
         {
-            var input = update.Message.ReplyToMessage.Text ?? update.Message.ReplyToMessage.Caption;
+            var input = update.GetReplyText();
             var patterns = update.Message.Text.Split('\n', '\r').ToList();
 
             try
             {
                 var reply = ReplaceHelper.Replace(input, patterns);
 
-                await _client.SendTextMessageAsync(
-                    update.Message.Chat.Id,
-                    reply,
-                    replyToMessageId: update.Message.ReplyToMessage.MessageId
+                await _messageSender.SendReplyToMessageAsync(
+                    update,
+                    update.Message.ReplyToMessage.MessageId,
+                    reply
                 );
                 return true;
             }
-            catch (RegexParseException e)
+            catch (RegexParseException)
             {
-                await _client.SendTextMessageAsync(
-                    update.Message.Chat.Id,
-                    "Regex parse error",
-                    replyToMessageId: update.Message.MessageId
-                );
+                await _messageSender.SendReplyAsync(update, "Regex parse error");
                 return false;
             }
         }

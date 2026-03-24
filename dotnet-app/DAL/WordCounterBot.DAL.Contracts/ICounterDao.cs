@@ -12,7 +12,7 @@ namespace WordCounterBot.DAL.Contracts
         /// <param name="chatId"></param>
         /// <param name="limit"></param>
         /// <returns></returns>
-        Task<List<(User user, Counter counter)>> GetCountersAndUsersWithLimit(
+        Task<List<LeaderboardEntry>> GetCountersAndUsersWithLimit(
             long chatId,
             int limit
         );

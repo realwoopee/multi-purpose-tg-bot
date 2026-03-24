@@ -1,19 +1,19 @@
-﻿using System;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using WordCounterBot.BLL.Common;
+using WordCounterBot.BLL.Common.Helpers;
+using WordCounterBot.BLL.Common.Services;
 using WordCounterBot.BLL.Contracts;
 
 namespace WordCounterBot.BLL.Core.Controllers
 {
     public class SystemMessageHandler : IHandler
     {
-        private TelegramBotClient _client;
+        private readonly MessageSender _messageSender;
 
-        private static readonly MessageType[] _allowedMessageTypes =
+        private static readonly MessageType[] AllowedMessageTypes =
         {
             MessageType.ChatMemberLeft,
             MessageType.ChatMembersAdded,
@@ -28,65 +28,30 @@ namespace WordCounterBot.BLL.Core.Controllers
             MessageType.SupergroupCreated
         };
 
-        public SystemMessageHandler(TelegramBotClient client)
+        private static readonly Dictionary<MessageType, string> _messageMap = new()
         {
-            _client = client;
+            [MessageType.ChatMembersAdded] = "Представься. Особо молчаливых кикаем.",
+            [MessageType.ChatMemberLeft] = "Ну и вали.",
+            [MessageType.ChatTitleChanged] = "Прошлое название было лучше!",
+            [MessageType.ChatPhotoChanged] = "Верните старую.",
+            [MessageType.MessagePinned] = "Надоели эти пины с нотифаем."
+        };
+
+        public SystemMessageHandler(MessageSender messageSender)
+        {
+            _messageSender = messageSender;
         }
 
         public async Task<bool> IsHandleable(Update update, HandleContext context) =>
-            await Task.Run(
-                () => update.Message != null && update.Message.Type.In(_allowedMessageTypes)
+            await Task.Run(() => update.Message != null && update.Message.Type.In(AllowedMessageTypes)
             );
 
         public async Task<bool> HandleUpdate(Update update, HandleContext context)
         {
-            switch (update.Message.Type)
-            {
-                case MessageType.ChatMembersAdded:
-                    await _client.SendTextMessageAsync(
-                        update.Message.Chat.Id,
-                        @"Представься. Особо молчаливых кикаем.",
-                        replyToMessageId: update.Message.MessageId
-                    );
-                    break;
-                case MessageType.ChatMemberLeft:
-                    await _client.SendTextMessageAsync(
-                        update.Message.Chat.Id,
-                        @"Ну и вали.",
-                        replyToMessageId: update.Message.MessageId
-                    );
-                    break;
-                case MessageType.ChatTitleChanged:
-                    await _client.SendTextMessageAsync(
-                        update.Message.Chat.Id,
-                        @"Прошлое название было лучше!",
-                        replyToMessageId: update.Message.MessageId
-                    );
-                    break;
-                case MessageType.ChatPhotoChanged:
-                    await _client.SendTextMessageAsync(
-                        update.Message.Chat.Id,
-                        @"Верните старую.",
-                        replyToMessageId: update.Message.MessageId
-                    );
-                    break;
-                case MessageType.MessagePinned:
-                    await _client.SendTextMessageAsync(
-                        update.Message.Chat.Id,
-                        @"Надоели эти пины с нотифаем.",
-                        replyToMessageId: update.Message.MessageId
-                    );
-                    break;
-                case MessageType.ChatPhotoDeleted:
-                case MessageType.GroupCreated:
-                case MessageType.SupergroupCreated:
-                case MessageType.ChannelCreated:
-                case MessageType.MigratedToSupergroup:
-                case MessageType.MigratedFromGroup:
-                default:
-                    return false;
-                    break;
-            }
+            if (!_messageMap.TryGetValue(update.Message.Type, out var responseText))
+                return false;
+
+            await _messageSender.SendHtmlReplyAsync(update, responseText);
 
             return true;
         }

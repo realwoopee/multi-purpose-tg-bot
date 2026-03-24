@@ -2,12 +2,12 @@
 
 namespace WordCounterBot.Common.Entities
 {
-    public class User
+    public record User
     {
-        public long Id { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public string Username { get; set; }
+        public long Id { get; init; }
+        public string FirstName { get; init; }
+        public string LastName { get; init; }
+        public string Username { get; init; }
 
         public User() { }
 
@@ -22,6 +22,9 @@ namespace WordCounterBot.Common.Entities
             Username = user.Username;
         }
 
-        public string GetFullName() => $@"{this.FirstName} {this.LastName}";
+        public string FullName => string.IsNullOrWhiteSpace(LastName) 
+            ? FirstName 
+            : $"{FirstName} {LastName}";
+
     }
 }

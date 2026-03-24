@@ -1,94 +1,39 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Linq;
 using System.Threading.Tasks;
-using Telegram.Bot;
 using Telegram.Bot.Types;
-using Telegram.Bot.Types.Enums;
-using WordCounterBot.BLL.Common;
-using WordCounterBot.DAL.Contracts;
+using WordCounterBot.BLL.Common.Helpers;
+using WordCounterBot.BLL.Common.Services;
+using WordCounterBot.BLL.Contracts;
 
-namespace WordCounterBot.BLL.Contracts
+namespace WordCounterBot.BLL.Core.Commands
 {
     public class GetStatsForLastWeekCommand : ICommand
     {
         public string Name { get; } = @"getstatslastweek";
 
-        private readonly IUserDao _userDao;
-        private readonly TelegramBotClient _client;
-        private readonly ICounterDatedDao _counterDatedDao;
+        private readonly MessageSender _messageSender;
+        private readonly LeaderboardService _leaderboardService;
 
         public GetStatsForLastWeekCommand(
-            ICounterDatedDao counterDatedDao,
-            IUserDao userDao,
-            TelegramBotClient client
-        )
+            LeaderboardService leaderboardService,
+            MessageSender messageSender)
         {
-            _userDao = userDao;
-            _client = client;
-            _counterDatedDao = counterDatedDao;
+            _messageSender = messageSender;
+            _leaderboardService = leaderboardService;
         }
 
         public async Task Execute(Update update, string command, params string[] args)
         {
-            await GetTopNAndRespond(update, 16);
-        }
+            var msgDate = update.GetMessageDate();
+            var chatId = update.GetChatId();
 
-        private async Task GetTopNAndRespond(Update update, int N)
-        {
-            var msgDate = update.Message.Date.Date;
-            var chatId = update.Message.Chat.Id;
-            var dateSpan = TimeSpan.FromDays(6);
+            var rows = await _leaderboardService.GetWeeklyLeaderboard(chatId, msgDate, limit: 16);
 
-            var counters = await _counterDatedDao.GetCounters(
-                chatId,
-                msgDate - dateSpan,
-                msgDate,
-                N
-            );
+            var text = TableGenerator.GenerateTop(
+                $"Top {rows.Count} counters for last 7 days:",
+                rows.Select(r => (r.UserName, r.WordCount)));
 
-            var countersSummed = counters
-                .GroupBy(c => (c.ChatId, c.UserId))
-                .Select(g => (g.Key, g.Sum(c => c.Value)));
-
-            var userCounters = await Task.WhenAll(
-                countersSummed.Select(
-                    async (c) =>
-                        new { User = await _userDao.GetUserById(c.Key.UserId), Counter = c.Item2 }
-                )
-            );
-
-            var result = userCounters.Select(
-                uc =>
-                    (
-                        (
-                            uc.User != null
-                                ? uc.User.FirstName + " " + uc.User.LastName
-                                : "%Unknown%"
-                        ).Escape(),
-                        uc.Counter
-                    )
-            );
-
-            var text = CreateText(result);
-
-            await _client.SendTextMessageAsync(
-                update.Message.Chat.Id,
-                text,
-                replyToMessageId: update.Message.MessageId,
-                parseMode: ParseMode.Html
-            );
-        }
-
-        private static string CreateText(IEnumerable<(string Username, long Counter)> users)
-        {
-            var values = users.ToList();
-
-            return TableGenerator.GenerateTop(
-                $@"Top {values.Count()} counters for last 7 days:",
-                values
-            );
+            await _messageSender.SendHtmlReplyAsync(update, text);
         }
     }
 }
