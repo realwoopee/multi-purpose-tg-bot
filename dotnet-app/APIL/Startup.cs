@@ -38,7 +38,7 @@ namespace WordCounterBot.APIL.WebApi
             {
                 var httpClientHandler = new HttpClientHandler
                 {
-                    Proxy = new HttpToSocks5Proxy(_appConfig.Socks5Host, _appConfig.Socks5Port),
+                    Proxy = new WebProxy(_appConfig.Socks5Host),
                     UseProxy = true
                 };
                 var httpClient = new HttpClient(httpClientHandler);
