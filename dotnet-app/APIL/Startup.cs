@@ -13,6 +13,7 @@ namespace WordCounterBot.APIL.WebApi;
 public class Startup
 {
     public IConfiguration Configuration { get; }
+    private AppConfiguration _appConfig;
 
     public Startup(IConfiguration configuration)
     {
@@ -21,15 +22,18 @@ public class Startup
 
     public void ConfigureServices(IServiceCollection services)
     {
-        var appConfig = new AppConfiguration(Configuration);
+        _appConfig = new AppConfiguration(Configuration);
 
         services.AddControllers().AddNewtonsoftJson();
-        services.AddSingleton(appConfig);
+        services.AddSingleton(_appConfig);
 
-        services.AddTelegramBotClient(appConfig);
+        services.AddTelegramBotClient(_appConfig);
         services.AddDataAccessServices();
         services.AddBotServices();
-        services.AddTelegramLogging(appConfig);
+        services.AddTelegramLogging(_appConfig);
+
+        if (_appConfig.UsePolling)
+            services.AddHostedService<PollingService>();
 
         services.Configure<ForwardedHeadersOptions>(options =>
         {
@@ -60,6 +64,7 @@ public class Startup
         app.UseAuthorization();
         app.UseEndpoints(endpoints => endpoints.MapControllers());
 
-        app.UseTelegramWebhook(env, logger);
+        if (!_appConfig.UsePolling)
+            app.UseTelegramWebhook(env, logger);
     }
 }

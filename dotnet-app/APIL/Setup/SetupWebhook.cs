@@ -21,9 +21,7 @@ public static class SetupWebhook
         var botClient = app.ApplicationServices.GetRequiredService<TelegramBotClient>();
         var appConfig = app.ApplicationServices.GetRequiredService<AppConfiguration>();
 
-        _ = appConfig.IsSSLCertSelfSigned
-            ? SetWebhookWithCertificateAsync(botClient, appConfig, env, logger)
-            : SetWebhookWithoutCertificateAsync(botClient, appConfig, logger);
+        _ = SetWebhookAsync(botClient, appConfig, env, logger);
 
         logger.LogInformation(
             "Configured HTTP pipeline. AppSettings is {Config}",
@@ -33,7 +31,7 @@ public static class SetupWebhook
         return app;
     }
 
-    private static async Task SetWebhookWithCertificateAsync(
+    private static async Task SetWebhookAsync(
         TelegramBotClient botClient,
         AppConfiguration appConfig,
         IWebHostEnvironment env,
@@ -41,37 +39,20 @@ public static class SetupWebhook
     {
         try
         {
-            var certFileInfo = env.ContentRootFileProvider.GetFileInfo(appConfig.SSLCertPath);
-            await using var stream = certFileInfo.CreateReadStream();
-            var sslCert = new InputFileStream(stream);
-
             await botClient.DeleteWebhookAsync();
-            await botClient.SetWebhookAsync(appConfig.WebhookUrl.ToString(), sslCert);
 
-            logger.LogInformation(
-                "Set webhook to {Url}, SSL cert is {Cert}",
-                appConfig.WebhookUrl,
-                certFileInfo.Name
-            );
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "Failed to set webhook with certificate");
-        }
-    }
-
-
-    private static async Task SetWebhookWithoutCertificateAsync(
-        TelegramBotClient botClient,
-        AppConfiguration appConfig,
-        ILogger logger)
-    {
-        try
-        {
-            await botClient.DeleteWebhookAsync();
-            await botClient.SetWebhookAsync(appConfig.WebhookUrl.ToString());
-
-            logger.LogInformation("Set webhook to {Url}", appConfig.WebhookUrl);
+            if (appConfig.IsSSLCertSelfSigned)
+            {
+                var certFileInfo = env.ContentRootFileProvider.GetFileInfo(appConfig.SSLCertPath);
+                await using var stream = certFileInfo.CreateReadStream();
+                await botClient.SetWebhookAsync(appConfig.WebhookUrl.ToString(), new InputFileStream(stream));
+                logger.LogInformation("Set webhook to {Url}, SSL cert is {Cert}", appConfig.WebhookUrl, certFileInfo.Name);
+            }
+            else
+            {
+                await botClient.SetWebhookAsync(appConfig.WebhookUrl.ToString());
+                logger.LogInformation("Set webhook to {Url}", appConfig.WebhookUrl);
+            }
         }
         catch (Exception ex)
         {

@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
 using System;
-using System.Globalization;
 
 namespace WordCounterBot.Common.Entities
 {
@@ -9,6 +8,8 @@ namespace WordCounterBot.Common.Entities
         public string DbConnectionString { get; }
 
         public string TelegramToken { get; }
+
+        public bool UsePolling { get; }
 
         public Uri WebhookUrl { get; }
 
@@ -35,7 +36,8 @@ namespace WordCounterBot.Common.Entities
 
             DbConnectionString = configuration["DbConnectionString"];
             TelegramToken = configuration["TgToken"];
-            WebhookUrl = new Uri(configuration["WebhookUrl"]);
+            UsePolling = configuration.GetValue<bool>("UsePolling");
+            WebhookUrl = UsePolling ? null : new Uri(configuration["WebhookUrl"]);
             SSLCertPath = configuration["SSLCertPath"];
             UseSocks5 = configuration.GetValue<bool>("UseSocks5");
             Socks5Host = configuration["Socks5Host"];
